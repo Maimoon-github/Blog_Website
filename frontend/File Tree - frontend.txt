@@ -1,0 +1,68 @@
+File Tree: frontend
+Root path: /home/maimoon-ai-system/Antigravity code/Blog_Website/frontend
+
+────────────────────────────────────────────────────────────────────────────────
+
+├── 📁 public/
+│   ├── 🖼️ file.svg
+│   ├── 🖼️ globe.svg
+│   ├── 🖼️ next.svg
+│   ├── 🖼️ vercel.svg
+│   └── 🖼️ window.svg
+├── 📁 src/
+│   ├── 📁 app/
+│   │   ├── 📁 (blog)/
+│   │   │   ├── 📁 authors/
+│   │   │   │   ├── 📁 [slug]/
+│   │   │   │   │   └── 📄 page.tsx
+│   │   │   │   └── 📄 page.tsx
+│   │   │   ├── 📁 blog/
+│   │   │   │   ├── 📁 [slug]/
+│   │   │   │   │   └── 📄 page.tsx
+│   │   │   │   └── 📄 page.tsx
+│   │   │   ├── 📁 categories/
+│   │   │   │   ├── 📁 [slug]/
+│   │   │   │   │   └── 📄 page.tsx
+│   │   │   │   └── 📄 page.tsx
+│   │   │   ├── 📁 search/
+│   │   │   │   └── 📄 page.tsx
+│   │   │   ├── 📁 tags/
+│   │   │   │   ├── 📁 [slug]/
+│   │   │   │   │   └── 📄 page.tsx
+│   │   │   │   └── 📄 page.tsx
+│   │   │   └── 📄 layout.tsx
+│   │   ├── 📁 (site)/
+│   │   │   ├── 📁 about/
+│   │   │   │   └── 📄 page.tsx
+│   │   │   ├── 📁 contact/
+│   │   │   │   └── 📄 page.tsx
+│   │   │   ├── 📁 privacy-policy/
+│   │   │   │   └── 📄 page.tsx
+│   │   │   ├── 📁 services/
+│   │   │   │   └── 📄 page.tsx
+│   │   │   ├── 📁 terms/
+│   │   │   │   └── 📄 page.tsx
+│   │   │   ├── 📄 layout.tsx
+│   │   │   └── 📄 page.tsx
+│   │   ├── 📄 favicon.ico
+│   │   ├── 🎨 globals.css
+│   │   ├── 📄 layout.tsx
+│   │   ├── 📄 not-found.tsx
+│   │   ├── 📄 robots.ts
+│   │   └── 📄 sitemap.ts
+│   ├── 📁 hooks/
+│   ├── 📁 lib/
+│   ├── 📁 styles/
+│   └── 📁 types/
+├── ⚙️ .gitignore
+├── 📝 AGENTS.md
+├── 📝 CLAUDE.md
+├── 📝 README.md
+├── 📄 eslint.config.mjs
+├── 📄 next.config.ts
+├── ⚙️ package-lock.json
+├── ⚙️ package.json
+├── 📄 postcss.config.mjs
+└── ⚙️ tsconfig.json
+
+────────────────────────────────────────────────────────────────────────────────
