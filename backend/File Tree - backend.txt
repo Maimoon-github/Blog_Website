@@ -1,0 +1,86 @@
+File Tree - backend
+Root path: /home/maimoon-ai-system/Antigravity code/Blog_Website/backend
+
+────────────────────────────────────────────────────────────────────────────────
+
+├── 📁 authors/
+│   ├── 📁 migrations/
+│   │   └── 🐍 __init__.py
+│   ├── 🐍 __init__.py
+│   ├── 🐍 models.py
+│   ├── 🐍 serializers.py
+│   ├── 🐍 urls.py
+│   ├── 🐍 views.py
+│   └── 🐍 wagtail_hooks.py
+├── 📁 blog/
+│   ├── 📁 migrations/
+│   │   └── 🐍 __init__.py
+│   ├── 🐍 __init__.py
+│   ├── 🐍 models.py
+│   ├── 🐍 serializers.py
+│   ├── 🐍 urls.py
+│   ├── 🐍 views.py
+│   └── 🐍 wagtail_hooks.py
+├── 📁 categories/
+│   ├── 📁 migrations/
+│   │   └── 🐍 __init__.py
+│   ├── 🐍 __init__.py
+│   ├── 🐍 models.py
+│   ├── 🐍 serializers.py
+│   ├── 🐍 urls.py
+│   ├── 🐍 views.py
+│   └── 🐍 wagtail_hooks.py
+├── 📁 config/
+│   ├── 📁 settings/
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 base.py
+│   │   ├── 🐍 development.py
+│   │   └── 🐍 production.py
+│   ├── 🐍 __init__.py
+│   ├── 🐍 asgi.py
+│   ├── 🐍 urls.py
+│   └── 🐍 wsgi.py
+├── 📁 core/
+│   ├── 📁 migrations/
+│   │   └── 🐍 __init__.py
+│   ├── 🐍 __init__.py
+│   ├── 🐍 api.py
+│   ├── 🐍 models.py
+│   ├── 🐍 pagination.py
+│   ├── 🐍 permissions.py
+│   ├── 🐍 serializers.py
+│   ├── 🐍 urls.py
+│   └── 🐍 wagtail_hooks.py
+├── 📁 pages/
+│   ├── 📁 migrations/
+│   │   └── 🐍 __init__.py
+│   ├── 🐍 __init__.py
+│   ├── 🐍 models.py
+│   ├── 🐍 serializers.py
+│   ├── 🐍 urls.py
+│   ├── 🐍 views.py
+│   └── 🐍 wagtail_hooks.py
+├── 📁 requirements/
+│   ├── 📄 base.txt
+│   ├── 📄 development.txt
+│   └── 📄 production.txt
+├── 📁 search/
+│   ├── 🐍 __init__.py
+│   ├── 🐍 serializers.py
+│   ├── 🐍 urls.py
+│   └── 🐍 views.py
+├── 📁 tags/
+│   ├── 📁 migrations/
+│   │   └── 🐍 __init__.py
+│   ├── 🐍 __init__.py
+│   ├── 🐍 models.py
+│   ├── 🐍 serializers.py
+│   ├── 🐍 urls.py
+│   ├── 🐍 views.py
+│   └── 🐍 wagtail_hooks.py
+├── ⚙️ .env.example
+├── 🐳 Dockerfile
+├── ⚙️ docker-compose.yml
+└── 🐍 manage.py
+
+────────────────────────────────────────────────────────────────────────────────
