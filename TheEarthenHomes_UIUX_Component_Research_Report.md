@@ -28,10 +28,10 @@ Across six pages, the same dozen content patterns recur: hero blocks, prose sect
 The "Did You Know?" / sidebar-box treatment appears at least eleven times across the six pages, but it carries **fundamentally different content types**: a single statistic ("30% of the world's population live in homes built with earth"), a multi-item principle list (the Earthship six design principles), a real-world case example ("A family in rural Portugal completed a 600 sq ft cob home for under $1,500"), an educational definition (the cob key principle), and a numerical comparison (embodied carbon: 80 vs 4–6 tonnes). Forcing all five into the same visual treatment loses scannability and confuses information hierarchy. **This is the single largest design opportunity in the system.**
 
 **Finding 3 — The content is visually rich, but no image components exist.**
-The content describes color, texture, sculptural form, "honey-colored walls," "geological striations," "organic curves," and "earth-colored forms rising from the desert like ancient ruins." The subject is *inherently visual*. Yet the source documents specify zero image slots, no gallery component, no hero illustration treatment, no project photo treatment for case studies, no diagrams for technical processes (the cob building steps would benefit enormously from a process illustration). This is a critical gap — for a niche where the dominant competing content is documentary video and Instagram-grade photography, an all-text site will underperform.
+The content describes color, texture, sculptural form, "honey-colored walls," "geological striations," "organic curves," and "earth-colored forms rising from the desert like ancient ruins." The subject is _inherently visual_. Yet the source documents specify zero image slots, no gallery component, no hero illustration treatment, no project photo treatment for case studies, no diagrams for technical processes (the cob building steps would benefit enormously from a process illustration). This is a critical gap — for a niche where the dominant competing content is documentary video and Instagram-grade photography, an all-text site will underperform.
 
 **Finding 4 — The linking strategy specifies behavior the UI must support, but the UI affordances haven't been defined.**
-The topical authority blueprint mandates 5–12 internal links per page, with rules about anchor text variation, "bridge links" between content clusters, satellite-to-pillar back-references, and avoidance of orphan pages. These rules describe *what* should link to *what*, but they don't define the **visual treatment** for each link type. A bridge link to a different cluster should not look identical to a satellite link within the same cluster — yet currently both would be plain inline anchors. The site needs at minimum three link variants (in-cluster, cross-cluster bridge, inline citation) plus a dedicated "Related in this cluster" sidebar/footer component.
+The topical authority blueprint mandates 5–12 internal links per page, with rules about anchor text variation, "bridge links" between content clusters, satellite-to-pillar back-references, and avoidance of orphan pages. These rules describe _what_ should link to _what_, but they don't define the **visual treatment** for each link type. A bridge link to a different cluster should not look identical to a satellite link within the same cluster — yet currently both would be plain inline anchors. The site needs at minimum three link variants (in-cluster, cross-cluster bridge, inline citation) plus a dedicated "Related in this cluster" sidebar/footer component.
 
 **Finding 5 — The Affordable Earthen Homes page is the conversion page and has no conversion UI.**
 The linking strategy identifies this page as the highest-intent entry point: "people who want to build but believe they cannot afford to." It also notes lead-magnet opportunity ("a free cost calculator or PDF checklist would work well here"). The content has the right argumentation but **no conversion affordance is specified anywhere** — no email capture component, no calculator widget, no PDF download CTA. This is a strategic gap, not just a design one.
@@ -46,79 +46,79 @@ The inventory below lists every distinct component required to present the suppl
 
 ### 2.1 Atoms (primitives)
 
-| ID | Name | Description | States & Variants | Source / Occurrence |
-|----|------|-------------|-------------------|---------------------|
-| A01 | Logo / Wordmark | "🏡 THE EARTHEN HOMES" brand mark at top of every page | Default, hover, mobile-compact (icon only) | All 6 pages, header band |
-| A02 | Page Title (H1) | Main page heading (e.g. "Welcome to The Earthen Homes") | Default only | All 6 pages |
-| A03 | Section Heading (H2) | Major section dividers ("What Are Earthen Homes?", "Cost Breakdown by Building Method") | Default, anchored (with `#hash` jump link) | 8–12 per pillar page |
-| A04 | Subsection Heading (H3) | Sub-topics within a section ("What Is Cob?", "Thermal Performance") | Default, anchored | 6–20 per pillar page |
-| A05 | Body Paragraph | Long-form prose, 16px serif recommended (warmth/tradition fit) | Default, lead paragraph (larger) | Every page, dominant content |
-| A06 | Inline Link | Text-embedded internal/external link with descriptive anchor | In-cluster (default), cross-cluster bridge (distinct), external, visited, focus | Required by linking strategy: 5–12 per page |
-| A07 | Bullet List Item | Unordered list element | Default, with bold lead-in (definition-list variant — see "What Earthen Homes Cannot Cut Costs On") | Most pages |
-| A08 | Numbered List Item | Ordered list element (the cob build process) | Default, completed (for interactive checklists later) | Earth Building Techniques |
-| A09 | Strong / Bold | In-prose emphasis | Default | Throughout |
-| A10 | Em-Dash Inline Phrase | Editorial parenthetical (used very heavily — three times in this sentence) | Default | Throughout — note typography implication |
-| A11 | Tag / Category Chip | Used in the Featured Articles table ("Beginner's Guide", "Most Popular", "Practical") | Default, hover, active filter | Homepage; will recur on satellite article cards |
-| A12 | Footer Tagline | Closing brand line ("Ancient material. Timeless wisdom. Modern living.") | Default | Homepage, Benefits page, site footer |
+| ID  | Name                    | Description                                                                             | States & Variants                                                                                   | Source / Occurrence                             |
+| --- | ----------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| A01 | Logo / Wordmark         | "🏡 THE EARTHEN HOMES" brand mark at top of every page                                  | Default, hover, mobile-compact (icon only)                                                          | All 6 pages, header band                        |
+| A02 | Page Title (H1)         | Main page heading (e.g. "Welcome to The Earthen Homes")                                 | Default only                                                                                        | All 6 pages                                     |
+| A03 | Section Heading (H2)    | Major section dividers ("What Are Earthen Homes?", "Cost Breakdown by Building Method") | Default, anchored (with `#hash` jump link)                                                          | 8–12 per pillar page                            |
+| A04 | Subsection Heading (H3) | Sub-topics within a section ("What Is Cob?", "Thermal Performance")                     | Default, anchored                                                                                   | 6–20 per pillar page                            |
+| A05 | Body Paragraph          | Long-form prose, 16px serif recommended (warmth/tradition fit)                          | Default, lead paragraph (larger)                                                                    | Every page, dominant content                    |
+| A06 | Inline Link             | Text-embedded internal/external link with descriptive anchor                            | In-cluster (default), cross-cluster bridge (distinct), external, visited, focus                     | Required by linking strategy: 5–12 per page     |
+| A07 | Bullet List Item        | Unordered list element                                                                  | Default, with bold lead-in (definition-list variant — see "What Earthen Homes Cannot Cut Costs On") | Most pages                                      |
+| A08 | Numbered List Item      | Ordered list element (the cob build process)                                            | Default, completed (for interactive checklists later)                                               | Earth Building Techniques                       |
+| A09 | Strong / Bold           | In-prose emphasis                                                                       | Default                                                                                             | Throughout                                      |
+| A10 | Em-Dash Inline Phrase   | Editorial parenthetical (used very heavily — three times in this sentence)              | Default                                                                                             | Throughout — note typography implication        |
+| A11 | Tag / Category Chip     | Used in the Featured Articles table ("Beginner's Guide", "Most Popular", "Practical")   | Default, hover, active filter                                                                       | Homepage; will recur on satellite article cards |
+| A12 | Footer Tagline          | Closing brand line ("Ancient material. Timeless wisdom. Modern living.")                | Default                                                                                             | Homepage, Benefits page, site footer            |
 
 ### 2.2 Molecules (small composites)
 
-| ID | Name | Description | States & Variants | Source / Occurrence |
-|----|------|-------------|-------------------|---------------------|
-| M01 | Featured Article Card | Category tag + article title, used in the homepage "Start Here" grid | Default, hover, with optional thumbnail | Homepage "Featured Articles to Start Your Journey" |
-| M02 | Pillar Nav Item | Label + 1-sentence description, used in "What You'll Find" list | Default, hover, current-section indicator | Homepage and footer sitemap |
-| M03 | Stat / Number Callout | Extracted figure with caption (e.g. "30%" + "of the world's population live in earthen homes") | Default; small/large; with source citation | Should be extracted from "Did You Know?" callouts |
-| M04 | Numbered Reason Card | Number + H3 + supporting prose (the "Six Compelling Reasons" pattern) | Default, with optional icon slot | Homepage, Benefits page |
-| M05 | Comparison Row | One row in a two-column comparison (e.g. Cob behaviour vs Adobe behaviour) | Default, alternating row shade | Earth Building Techniques "Cob vs Adobe" table |
-| M06 | Table Row | Generic data row for performance metric tables | Default, header row, footnote row | All pages with tables |
-| M07 | Breadcrumb Trail | Home › Cluster › Article | Default, current page (non-link last item) | Not in current content but required for 3-click depth rule |
+| ID  | Name                  | Description                                                                                    | States & Variants                          | Source / Occurrence                                        |
+| --- | --------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------- |
+| M01 | Featured Article Card | Category tag + article title, used in the homepage "Start Here" grid                           | Default, hover, with optional thumbnail    | Homepage "Featured Articles to Start Your Journey"         |
+| M02 | Pillar Nav Item       | Label + 1-sentence description, used in "What You'll Find" list                                | Default, hover, current-section indicator  | Homepage and footer sitemap                                |
+| M03 | Stat / Number Callout | Extracted figure with caption (e.g. "30%" + "of the world's population live in earthen homes") | Default; small/large; with source citation | Should be extracted from "Did You Know?" callouts          |
+| M04 | Numbered Reason Card  | Number + H3 + supporting prose (the "Six Compelling Reasons" pattern)                          | Default, with optional icon slot           | Homepage, Benefits page                                    |
+| M05 | Comparison Row        | One row in a two-column comparison (e.g. Cob behaviour vs Adobe behaviour)                     | Default, alternating row shade             | Earth Building Techniques "Cob vs Adobe" table             |
+| M06 | Table Row             | Generic data row for performance metric tables                                                 | Default, header row, footnote row          | All pages with tables                                      |
+| M07 | Breadcrumb Trail      | Home › Cluster › Article                                                                       | Default, current page (non-link last item) | Not in current content but required for 3-click depth rule |
 
 ### 2.3 Organisms (large composites)
 
-| ID | Name | Description | States & Variants | Source / Occurrence |
-|----|------|-------------|-------------------|---------------------|
-| O01 | Site Header / Top Nav | Logo + primary nav (5 pillars) + search + mobile menu trigger | Default, scrolled-compact, mobile drawer open | All pages |
-| O02 | Page Hero Block | Brand band ("🏡 THE EARTHEN HOMES") + H1 + subtitle/tagline | Default; with-image variant (recommended addition); homepage-large variant | All pages |
-| O03 | Callout Box — **Stat variant** | Single number + label + short context | Default, with citation footnote | "DID YOU KNOW?" (homepage); "THE NUMBERS: EMBODIED CARBON" (Benefits) |
-| O04 | Callout Box — **Principle variant** | Educational definition box ("KEY PRINCIPLE") | Default | Earth Building Techniques; many candidates throughout |
-| O05 | Callout Box — **Example variant** | Real-world case study mini-block ("REAL EXAMPLE: A $1,500 HOME") | Default; with photo slot (recommended) | Affordable Earthen Homes |
-| O06 | Callout Box — **Multi-Item variant** | Numbered list within callout treatment (the 6 Biotecture principles) | Default | Earthships page — but this is genuinely a different component, see Issue C1 |
-| O07 | Callout Box — **Audience variant** | "Who This Site Is For" persona/audience addressing block | Default | Homepage |
-| O08 | Comparison Table | Multi-column technique/option comparison ("Choosing Your Technique") | 2-col, 3-col, sortable variant for future | Earth Building Techniques, Affordable, Benefits |
-| O09 | Advantages / Disadvantages Table | Symmetric two-column pros/cons table with bullet content | Default | Earth Building Techniques (every technique uses this) |
-| O10 | Step-by-Step Process List | Ordered list of build steps with implied sequence ("The Cob Building Process") | Default; expanded with diagram slot (recommended) | Cob section, Earthship water cascade |
-| O11 | Case Study Block | Project name + location + narrative (e.g. "The Earth House by Peter Vetsch — Switzerland") | Default; with photo, with map, with cost-breakdown sub-component | Earth-Sheltered, Affordable, Earthships pages |
-| O12 | Numbered Reasons Section | Container holding 5–6 numbered reason cards (M04) | Default | Homepage "Six Compelling Reasons", Benefits page |
-| O13 | Featured Articles Grid | Container holding 4–8 featured article cards (M01) | Default; with category filter | Homepage "Featured Articles" |
-| O14 | Summary / Recap Table | Concluding "what we covered" table at end of page | Default | Benefits page final summary |
-| O15 | Site Footer | Tagline + sitemap + secondary nav + legal | Default | All pages (recommended) |
+| ID  | Name                                 | Description                                                                                | States & Variants                                                          | Source / Occurrence                                                         |
+| --- | ------------------------------------ | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| O01 | Site Header / Top Nav                | Logo + primary nav (5 pillars) + search + mobile menu trigger                              | Default, scrolled-compact, mobile drawer open                              | All pages                                                                   |
+| O02 | Page Hero Block                      | Brand band ("🏡 THE EARTHEN HOMES") + H1 + subtitle/tagline                                | Default; with-image variant (recommended addition); homepage-large variant | All pages                                                                   |
+| O03 | Callout Box — **Stat variant**       | Single number + label + short context                                                      | Default, with citation footnote                                            | "DID YOU KNOW?" (homepage); "THE NUMBERS: EMBODIED CARBON" (Benefits)       |
+| O04 | Callout Box — **Principle variant**  | Educational definition box ("KEY PRINCIPLE")                                               | Default                                                                    | Earth Building Techniques; many candidates throughout                       |
+| O05 | Callout Box — **Example variant**    | Real-world case study mini-block ("REAL EXAMPLE: A $1,500 HOME")                           | Default; with photo slot (recommended)                                     | Affordable Earthen Homes                                                    |
+| O06 | Callout Box — **Multi-Item variant** | Numbered list within callout treatment (the 6 Biotecture principles)                       | Default                                                                    | Earthships page — but this is genuinely a different component, see Issue C1 |
+| O07 | Callout Box — **Audience variant**   | "Who This Site Is For" persona/audience addressing block                                   | Default                                                                    | Homepage                                                                    |
+| O08 | Comparison Table                     | Multi-column technique/option comparison ("Choosing Your Technique")                       | 2-col, 3-col, sortable variant for future                                  | Earth Building Techniques, Affordable, Benefits                             |
+| O09 | Advantages / Disadvantages Table     | Symmetric two-column pros/cons table with bullet content                                   | Default                                                                    | Earth Building Techniques (every technique uses this)                       |
+| O10 | Step-by-Step Process List            | Ordered list of build steps with implied sequence ("The Cob Building Process")             | Default; expanded with diagram slot (recommended)                          | Cob section, Earthship water cascade                                        |
+| O11 | Case Study Block                     | Project name + location + narrative (e.g. "The Earth House by Peter Vetsch — Switzerland") | Default; with photo, with map, with cost-breakdown sub-component           | Earth-Sheltered, Affordable, Earthships pages                               |
+| O12 | Numbered Reasons Section             | Container holding 5–6 numbered reason cards (M04)                                          | Default                                                                    | Homepage "Six Compelling Reasons", Benefits page                            |
+| O13 | Featured Articles Grid               | Container holding 4–8 featured article cards (M01)                                         | Default; with category filter                                              | Homepage "Featured Articles"                                                |
+| O14 | Summary / Recap Table                | Concluding "what we covered" table at end of page                                          | Default                                                                    | Benefits page final summary                                                 |
+| O15 | Site Footer                          | Tagline + sitemap + secondary nav + legal                                                  | Default                                                                    | All pages (recommended)                                                     |
 
 ### 2.4 Templates (page-level)
 
-| ID | Name | Composition | Source |
-|----|------|-------------|--------|
-| T01 | Homepage Template | Header + Page Hero + Intro Prose + Stat Callout + Numbered Reasons Section + Pillar Nav List + Audience Callout + Featured Articles Grid + Closing Prose + Footer | Homepage content structure |
-| T02 | Pillar Page Template | Header + Breadcrumbs + Page Hero + Intro Prose + Principle Callout + (multiple Section blocks, each with H2 + prose + optional H3s + optional table or list + optional Case Study + optional Callout) + Closing Prose + Related-in-Cluster sidebar (recommended) + Footer | All 5 pillar pages share this skeleton |
-| T03 | Satellite Article Template | Header + Breadcrumbs + Page Hero (compact) + Intro Prose + Body Sections + Related-Cluster Footer + Footer | Implied by linking strategy; 37 satellites to be produced |
+| ID  | Name                       | Composition                                                                                                                                                                                                                                                               | Source                                                    |
+| --- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| T01 | Homepage Template          | Header + Page Hero + Intro Prose + Stat Callout + Numbered Reasons Section + Pillar Nav List + Audience Callout + Featured Articles Grid + Closing Prose + Footer                                                                                                         | Homepage content structure                                |
+| T02 | Pillar Page Template       | Header + Breadcrumbs + Page Hero + Intro Prose + Principle Callout + (multiple Section blocks, each with H2 + prose + optional H3s + optional table or list + optional Case Study + optional Callout) + Closing Prose + Related-in-Cluster sidebar (recommended) + Footer | All 5 pillar pages share this skeleton                    |
+| T03 | Satellite Article Template | Header + Breadcrumbs + Page Hero (compact) + Intro Prose + Body Sections + Related-Cluster Footer + Footer                                                                                                                                                                | Implied by linking strategy; 37 satellites to be produced |
 
 ### 2.5 Components NOT in current content but REQUIRED by strategy
 
 These are missing from the supplied materials but are explicitly demanded by the topical authority blueprint or by basic usability for a long-form content site.
 
-| ID | Name | Why required | Priority |
-|----|------|--------------|----------|
-| X01 | Image / Photo Slot | Subject is inherently visual; no image components currently exist | **Critical** |
-| X02 | Process Diagram Slot | Cob build steps, Earthship water cascade, anatomy diagrams all need visualization | **Critical** |
-| X03 | Newsletter / Email Capture | Strategy doc identifies lead-magnet opportunity on Affordable page | **High** |
-| X04 | Cost Calculator Widget | Strategy doc names this as desired tool; pages already contain the data | **High** |
-| X05 | Sticky Table of Contents | Pillar pages run 2,500+ words across 8–12 sections — TOC essential on mobile and desktop | **High** |
-| X06 | "Related in this Cluster" Sidebar/Footer | Hub-and-spoke architecture requires visible cluster navigation, not just inline links | **High** |
-| X07 | Bridge Link inline variant | Cross-cluster links need visual differentiation from same-cluster links | Medium |
-| X08 | Breadcrumb Component | Required for 3-click depth rule and SEO | **High** |
-| X09 | Search component | Content library will exceed 40+ pages; search is table stakes | Medium |
-| X10 | Author / Contributor Bio | Content claims to draw on "builder interviews" — needs attribution component | Medium |
-| X11 | Mobile Nav Drawer | Five pillars + search + sub-navigation does not fit a mobile hamburger | **High** |
-| X12 | Skip Link / Accessibility Affordances | Long pages with many headings require skip-to-content | **High** |
+| ID  | Name                                     | Why required                                                                             | Priority     |
+| --- | ---------------------------------------- | ---------------------------------------------------------------------------------------- | ------------ |
+| X01 | Image / Photo Slot                       | Subject is inherently visual; no image components currently exist                        | **Critical** |
+| X02 | Process Diagram Slot                     | Cob build steps, Earthship water cascade, anatomy diagrams all need visualization        | **Critical** |
+| X03 | Newsletter / Email Capture               | Strategy doc identifies lead-magnet opportunity on Affordable page                       | **High**     |
+| X04 | Cost Calculator Widget                   | Strategy doc names this as desired tool; pages already contain the data                  | **High**     |
+| X05 | Sticky Table of Contents                 | Pillar pages run 2,500+ words across 8–12 sections — TOC essential on mobile and desktop | **High**     |
+| X06 | "Related in this Cluster" Sidebar/Footer | Hub-and-spoke architecture requires visible cluster navigation, not just inline links    | **High**     |
+| X07 | Bridge Link inline variant               | Cross-cluster links need visual differentiation from same-cluster links                  | Medium       |
+| X08 | Breadcrumb Component                     | Required for 3-click depth rule and SEO                                                  | **High**     |
+| X09 | Search component                         | Content library will exceed 40+ pages; search is table stakes                            | Medium       |
+| X10 | Author / Contributor Bio                 | Content claims to draw on "builder interviews" — needs attribution component             | Medium       |
+| X11 | Mobile Nav Drawer                        | Five pillars + search + sub-navigation does not fit a mobile hamburger                   | **High**     |
+| X12 | Skip Link / Accessibility Affordances    | Long pages with many headings require skip-to-content                                    | **High**     |
 
 ---
 
@@ -126,7 +126,7 @@ These are missing from the supplied materials but are explicitly demanded by the
 
 ### 3.1 Patterns observed
 
-**Hub-and-spoke is honored at the content level but invisible at the UI level.** The topical authority blueprint specifies a strict bidirectional linking topology: every satellite links to its pillar; every pillar links to all its satellites; pillars cross-link via "bridge links" to thematically adjacent pillars. This architecture works for Google and for AI citation engines, but a reader currently has no UI affordance to *see* the cluster they're in. Reading the Cob section of Earth Building Techniques, there's no visible indication that "Cob House Cost Breakdown" or "How to Build a Cob House Step-by-Step" exist as satellite articles. The pattern needs a visible counterpart: either a "More in this cluster" sidebar, a hover-revealed cluster map, or a footer chip rail showing related articles.
+**Hub-and-spoke is honored at the content level but invisible at the UI level.** The topical authority blueprint specifies a strict bidirectional linking topology: every satellite links to its pillar; every pillar links to all its satellites; pillars cross-link via "bridge links" to thematically adjacent pillars. This architecture works for Google and for AI citation engines, but a reader currently has no UI affordance to _see_ the cluster they're in. Reading the Cob section of Earth Building Techniques, there's no visible indication that "Cob House Cost Breakdown" or "How to Build a Cob House Step-by-Step" exist as satellite articles. The pattern needs a visible counterpart: either a "More in this cluster" sidebar, a hover-revealed cluster map, or a footer chip rail showing related articles.
 
 **Editorial em-dash voice creates dense paragraphs.** The content style relies heavily on em-dashes for parenthetical insertions ("Earthen architecture offers something radically different — and radically better"). This is a deliberate editorial choice and reads well in prose, but it creates a typographic challenge: lines tend to run long, and visual breath inside paragraphs comes from punctuation rather than line-breaks or section dividers. The typography needs to compensate — generous line-height (1.6–1.75), max line-length capped around 65–75 characters, and slightly larger paragraph spacing than a standard prose page.
 
@@ -138,7 +138,7 @@ These are missing from the supplied materials but are explicitly demanded by the
 
 **The "Did You Know?" callout is overloaded** (largest issue). Same visual container, five distinct communication intents. Result: readers learn to treat all boxed content as decorative, and high-value information (the embodied carbon comparison, the six Biotecture principles) gets the same attention budget as a side-fact about Jericho.
 
-**Featured Articles encoded as a 2-column table.** The homepage uses a `<table>` with "category" in column 1 and "article title" in column 2. This forces equal column widths and prevents the natural card-grid layout this content wants (4–6 cards in a responsive grid, each with a category chip *above* the title rather than beside it). It also makes the content less scannable — readers parse two-column text horizontally, which slows discovery of which article they want next.
+**Featured Articles encoded as a 2-column table.** The homepage uses a `<table>` with "category" in column 1 and "article title" in column 2. This forces equal column widths and prevents the natural card-grid layout this content wants (4–6 cards in a responsive grid, each with a category chip _above_ the title rather than beside it). It also makes the content less scannable — readers parse two-column text horizontally, which slows discovery of which article they want next.
 
 **Advantages/Disadvantages tables have asymmetric row counts.** The Cob comparison table lists 7 advantages and 6 disadvantages with the seventh row blank in the disadvantages column. Visually this creates an unbalanced "hole" in the table. The pattern needs either equal-count constraint (rewrite the content) or an explicit two-column list component that doesn't require row-alignment.
 
@@ -146,7 +146,7 @@ These are missing from the supplied materials but are explicitly demanded by the
 
 ### 3.3 Accessibility red flags (predicted from content structure)
 
-Without actual designs to audit, the following are *risks* the design phase needs to deliberately mitigate. They are predictions, not findings.
+Without actual designs to audit, the following are _risks_ the design phase needs to deliberately mitigate. They are predictions, not findings.
 
 - **Color-only differentiation of bridge links** is a likely temptation. WCAG 2.1 SC 1.4.1 requires that color is not the sole differentiator. Bridge links must vary by underline pattern, icon, or weight — not just hue.
 - **Earth-tone color palettes** (which the brand voice suggests: clay, terracotta, sand, moss-green) often fail AA contrast when light terracotta sits on cream. Specify token-level contrast checks during palette definition.
@@ -171,92 +171,105 @@ Prioritized using the standard severity framework: **Critical** (blocks usabilit
 ### 4.1 Critical issues
 
 **C1 — Split the overloaded callout component into 5 distinct variants.**
-- *Problem:* One "Did You Know?" treatment doing five different jobs flattens information hierarchy.
-- *Fix:* Define five callout organisms with distinct visual treatments:
+
+- _Problem:_ One "Did You Know?" treatment doing five different jobs flattens information hierarchy.
+- _Fix:_ Define five callout organisms with distinct visual treatments:
   1. **Stat callout** — large numeral, short caption, optional citation. Treatment: minimal box, oversized figure.
   2. **Principle callout** — definition treatment. Treatment: serif italic body, left border accent, no box fill.
   3. **Example callout** — real-world case mini-card. Treatment: card with project name as header, narrative as body, optional photo slot.
   4. **Multi-item callout** — numbered or bulleted list-as-callout (the Biotecture six principles). Treatment: numbered chips down the left edge, items spaced.
   5. **Comparison callout** — two figures side-by-side with context. Treatment: split layout, both numbers equally weighted, label between.
-- *Effort:* 2–3 days of design + 2 days of build.
-- *Impact:* High. Affects 11+ instances across the site immediately, plus every future satellite article.
+- _Effort:_ 2–3 days of design + 2 days of build.
+- _Impact:_ High. Affects 11+ instances across the site immediately, plus every future satellite article.
 
 **C2 — Add image components and require them in page templates.**
-- *Problem:* No image, gallery, or diagram component exists. Subject is inherently visual.
-- *Fix:* Define at minimum: page hero image, inline figure with caption, gallery row (3–4 thumbnails), and a process-diagram slot. Mandate at least one hero image per pillar page and at least one figure per satellite article.
-- *Effort:* 3–4 days of design + photography/illustration commissioning lead time.
-- *Impact:* Critical. A text-only site for this subject loses to Instagram, YouTube, and Pinterest before SEO even matters.
+
+- _Problem:_ No image, gallery, or diagram component exists. Subject is inherently visual.
+- _Fix:_ Define at minimum: page hero image, inline figure with caption, gallery row (3–4 thumbnails), and a process-diagram slot. Mandate at least one hero image per pillar page and at least one figure per satellite article.
+- _Effort:_ 3–4 days of design + photography/illustration commissioning lead time.
+- _Impact:_ Critical. A text-only site for this subject loses to Instagram, YouTube, and Pinterest before SEO even matters.
 
 **C3 — Define link variants for the linking strategy.**
-- *Problem:* Linking strategy specifies three logical link types (in-cluster satellite, cross-cluster bridge, external citation) but no visual treatments exist.
-- *Fix:* Define inline link variants:
+
+- _Problem:_ Linking strategy specifies three logical link types (in-cluster satellite, cross-cluster bridge, external citation) but no visual treatments exist.
+- _Fix:_ Define inline link variants:
   - In-cluster: underline only, default color
   - Cross-cluster bridge: underline + small inline icon (e.g. arrow-right) or distinct hue
   - External: underline + external-link icon
-- *Effort:* Half day of design tokens.
-- *Impact:* High. Enables the entire linking strategy to function as designed.
+- _Effort:_ Half day of design tokens.
+- _Impact:_ High. Enables the entire linking strategy to function as designed.
 
 **C4 — Add a "Related in this cluster" sidebar/footer component.**
-- *Problem:* Hub-and-spoke linking is invisible to readers without a visible cluster navigation affordance.
-- *Fix:* Sidebar (desktop) or footer chip-rail (mobile) on every pillar and satellite page showing all other articles in the same cluster, with the current article indicated. Auto-generated from cluster taxonomy.
-- *Effort:* 2 days of design + 3 days of build (taxonomy-driven).
-- *Impact:* High. Directly supports the 3-click rule, reduces orphan-page risk, increases pages-per-session.
+
+- _Problem:_ Hub-and-spoke linking is invisible to readers without a visible cluster navigation affordance.
+- _Fix:_ Sidebar (desktop) or footer chip-rail (mobile) on every pillar and satellite page showing all other articles in the same cluster, with the current article indicated. Auto-generated from cluster taxonomy.
+- _Effort:_ 2 days of design + 3 days of build (taxonomy-driven).
+- _Impact:_ High. Directly supports the 3-click rule, reduces orphan-page risk, increases pages-per-session.
 
 **C5 — Add conversion UI to the Affordable Earthen Homes page.**
-- *Problem:* Identified as highest-intent page; has no conversion affordance.
-- *Fix:* Add at minimum (a) an inline email capture component below "The Owner-Builder Advantage" section, (b) a CTA card for "Free Cob House Cost Breakdown PDF" lead magnet, (c) a sticky CTA on scroll for the lead magnet. Build the cost calculator widget (X04) as a phase-2 enhancement.
-- *Effort:* 2 days for capture + CTA. Calculator is a 1–2 week project.
-- *Impact:* High strategic. This is where audience-building converts to list-building.
+
+- _Problem:_ Identified as highest-intent page; has no conversion affordance.
+- _Fix:_ Add at minimum (a) an inline email capture component below "The Owner-Builder Advantage" section, (b) a CTA card for "Free Cob House Cost Breakdown PDF" lead magnet, (c) a sticky CTA on scroll for the lead magnet. Build the cost calculator widget (X04) as a phase-2 enhancement.
+- _Effort:_ 2 days for capture + CTA. Calculator is a 1–2 week project.
+- _Impact:_ High strategic. This is where audience-building converts to list-building.
 
 **C6 — Define and enforce heading hierarchy in templates.**
-- *Problem:* No spec enforces correct heading nesting. Risk of screen-reader breakage as content scales.
-- *Fix:* Template spec must allow only valid H1→H2→H3 nesting. CMS or build-time linting recommended.
-- *Effort:* 1 day of spec + ongoing.
-- *Impact:* Critical for accessibility, important for SEO.
+
+- _Problem:_ No spec enforces correct heading nesting. Risk of screen-reader breakage as content scales.
+- _Fix:_ Template spec must allow only valid H1→H2→H3 nesting. CMS or build-time linting recommended.
+- _Effort:_ 1 day of spec + ongoing.
+- _Impact:_ Critical for accessibility, important for SEO.
 
 ### 4.2 Major issues
 
 **M1 — Convert "Featured Articles" from table to card grid.**
-- *Problem:* Encoded as 2-column table; should be a responsive card grid.
-- *Fix:* Build O13 (Featured Articles Grid) as a real grid; deprecate the table use here.
-- *Effort:* 1 day.
-- *Impact:* Better discoverability of homepage's most important links.
+
+- _Problem:_ Encoded as 2-column table; should be a responsive card grid.
+- _Fix:_ Build O13 (Featured Articles Grid) as a real grid; deprecate the table use here.
+- _Effort:_ 1 day.
+- _Impact:_ Better discoverability of homepage's most important links.
 
 **M2 — Build dedicated Case Study Block organism.**
-- *Problem:* Real-world examples ("Peter Vetsch", "$10,000 Cob Cottage", "Adobe Homestead") buried as H3 + prose.
-- *Fix:* O11 Case Study Block with: project name, location pin, year built (where known), cost (where known), key technique tags, narrative body, optional photo gallery.
-- *Effort:* 2 days design + 2 days build.
-- *Impact:* Case studies are the site's most shareable content; current treatment under-promotes them.
+
+- _Problem:_ Real-world examples ("Peter Vetsch", "$10,000 Cob Cottage", "Adobe Homestead") buried as H3 + prose.
+- _Fix:_ O11 Case Study Block with: project name, location pin, year built (where known), cost (where known), key technique tags, narrative body, optional photo gallery.
+- _Effort:_ 2 days design + 2 days build.
+- _Impact:_ Case studies are the site's most shareable content; current treatment under-promotes them.
 
 **M3 — Add a sticky Table of Contents on pillar pages.**
-- *Problem:* Pillar pages run 2,500+ words, 8–12 sections. No navigation aid.
-- *Fix:* Right-side sticky TOC on desktop, collapsible top-of-page TOC on mobile. Auto-generated from H2 headings.
-- *Effort:* 2 days.
-- *Impact:* Time-on-page, bounce rate, scroll-depth metrics all improve. AI citation engines also benefit from clear section structure.
+
+- _Problem:_ Pillar pages run 2,500+ words, 8–12 sections. No navigation aid.
+- _Fix:_ Right-side sticky TOC on desktop, collapsible top-of-page TOC on mobile. Auto-generated from H2 headings.
+- _Effort:_ 2 days.
+- _Impact:_ Time-on-page, bounce rate, scroll-depth metrics all improve. AI citation engines also benefit from clear section structure.
 
 **M4 — Replace the brand emoji with a custom SVG mark.**
-- *Problem:* 🏡 rendering varies by platform.
-- *Fix:* Commission a simple SVG house/earth mark; use across all surfaces.
-- *Effort:* 1–2 day design exercise.
-- *Impact:* Brand consistency; cleaner header at small sizes.
+
+- _Problem:_ 🏡 rendering varies by platform.
+- _Fix:_ Commission a simple SVG house/earth mark; use across all surfaces.
+- _Effort:_ 1–2 day design exercise.
+- _Impact:_ Brand consistency; cleaner header at small sizes.
 
 **M5 — Add Breadcrumb component to all non-homepage pages.**
-- *Problem:* Specified by 3-click depth rule, not present in current materials.
-- *Fix:* Standard breadcrumb molecule: Home › Pillar Cluster › Current Page.
-- *Effort:* Half a day.
-- *Impact:* Required for the architecture rule to function; helps SEO via structured data.
+
+- _Problem:_ Specified by 3-click depth rule, not present in current materials.
+- _Fix:_ Standard breadcrumb molecule: Home › Pillar Cluster › Current Page.
+- _Effort:_ Half a day.
+- _Impact:_ Required for the architecture rule to function; helps SEO via structured data.
 
 **M6 — Resolve asymmetric Advantages/Disadvantages tables.**
-- *Problem:* Equal-column tables with unequal row counts leave visual holes.
-- *Fix:* Two parallel bulleted lists side-by-side (O09 variant) rather than a forced-row table. Or, rewrite content to balance counts.
-- *Effort:* Half a day design; editorial pass on existing content.
-- *Impact:* Visual polish; better mobile collapse behavior (each list stacks cleanly).
+
+- _Problem:_ Equal-column tables with unequal row counts leave visual holes.
+- _Fix:_ Two parallel bulleted lists side-by-side (O09 variant) rather than a forced-row table. Or, rewrite content to balance counts.
+- _Effort:_ Half a day design; editorial pass on existing content.
+- _Impact:_ Visual polish; better mobile collapse behavior (each list stacks cleanly).
 
 **M7 — Define an Audience/Persona Callout (O07) as its own variant.**
-- *Problem:* "Who This Site Is For" uses the same table treatment as other callouts.
-- *Fix:* Distinct treatment — perhaps a left-aligned column with persona icons or a horizontal pill rail.
-- *Effort:* 1 day.
-- *Impact:* This block is the homepage's clearest signal of "is this site for me?" — it deserves dedicated treatment.
+
+- _Problem:_ "Who This Site Is For" uses the same table treatment as other callouts.
+- _Fix:_ Distinct treatment — perhaps a left-aligned column with persona icons or a horizontal pill rail.
+- _Effort:_ 1 day.
+- _Impact:_ This block is the homepage's clearest signal of "is this site for me?" — it deserves dedicated treatment.
 
 ### 4.3 Minor issues
 
@@ -272,11 +285,11 @@ Prioritized using the standard severity framework: **Critical** (blocks usabilit
 
 ### 4.4 Issues by severity — at a glance
 
-| Severity | Count | IDs |
-|----------|-------|-----|
-| Critical | 6 | C1, C2, C3, C4, C5, C6 |
-| Major | 7 | M1, M2, M3, M4, M5, M6, M7 |
-| Minor | 5 | N1, N2, N3, N4, N5 |
+| Severity | Count | IDs                        |
+| -------- | ----- | -------------------------- |
+| Critical | 6     | C1, C2, C3, C4, C5, C6     |
+| Major    | 7     | M1, M2, M3, M4, M5, M6, M7 |
+| Minor    | 5     | N1, N2, N3, N4, N5         |
 
 ---
 
@@ -284,27 +297,28 @@ Prioritized using the standard severity framework: **Critical** (blocks usabilit
 
 ### 5.1 Tokens to define before any component is built
 
-| Token category | Specific tokens needed | Notes |
-|----------------|------------------------|-------|
-| Color | 1 brand earth-tone palette (~6 shades), 1 neutral ramp (~9 stops), semantic colors for callout variants | Each callout variant should map to a token, not a hex |
-| Typography | 1 serif (body), 1 sans (UI), 1 mono (rare — for cost/measurement data) | 8-step scale, 1.25 ratio |
-| Spacing | 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96 px (consistent base of 4) | Generous spacing fits the "groundedness" brand voice |
-| Border radius | 0 (rare), 4 (cards), 8 (callouts), 999 (chips/pills) | Avoid extreme rounding — feels modern-tech, not earthen |
-| Elevation / shadow | **None.** Or one extremely subtle "raised" level. | Earthen homes are about groundedness; floating cards feel wrong |
-| Line lengths | Body max-width: ~720px (~65–75ch). Callout: ~560px. | Already discussed under em-dash voice |
+| Token category     | Specific tokens needed                                                                                  | Notes                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Color              | 1 brand earth-tone palette (~6 shades), 1 neutral ramp (~9 stops), semantic colors for callout variants | Each callout variant should map to a token, not a hex           |
+| Typography         | 1 serif (body), 1 sans (UI), 1 mono (rare — for cost/measurement data)                                  | 8-step scale, 1.25 ratio                                        |
+| Spacing            | 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 96 px (consistent base of 4)                                      | Generous spacing fits the "groundedness" brand voice            |
+| Border radius      | 0 (rare), 4 (cards), 8 (callouts), 999 (chips/pills)                                                    | Avoid extreme rounding — feels modern-tech, not earthen         |
+| Elevation / shadow | **None.** Or one extremely subtle "raised" level.                                                       | Earthen homes are about groundedness; floating cards feel wrong |
+| Line lengths       | Body max-width: ~720px (~65–75ch). Callout: ~560px.                                                     | Already discussed under em-dash voice                           |
 
 ### 5.2 Components to consolidate
 
-| Currently treated as | Should be consolidated into |
-|----------------------|------------------------------|
-| 11+ "Did You Know?" boxes | 5 distinct callout variants (C1) |
-| 7+ different table treatments | 3 table organisms: comparison, performance/data, and **deprecate** "table for cards" |
-| Case study H3+prose (5+ instances) | 1 Case Study Block organism (M2) |
-| Bulleted lists with bold lead-in vs without | 2 list variants: standard bullets, definition list |
+| Currently treated as                        | Should be consolidated into                                                          |
+| ------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 11+ "Did You Know?" boxes                   | 5 distinct callout variants (C1)                                                     |
+| 7+ different table treatments               | 3 table organisms: comparison, performance/data, and **deprecate** "table for cards" |
+| Case study H3+prose (5+ instances)          | 1 Case Study Block organism (M2)                                                     |
+| Bulleted lists with bold lead-in vs without | 2 list variants: standard bullets, definition list                                   |
 
 ### 5.3 Components to add (full list)
 
 From section 2.5, the missing component priorities for first build:
+
 1. Page hero image slot + inline figure (X01)
 2. Process diagram slot (X02)
 3. Newsletter capture + Cost calculator widget (X03, X04)
@@ -331,13 +345,13 @@ For a content site this size (6 pillars + 37 planned satellites + 90-day publish
 
 Aligned with the strategy doc's 90-day publishing roadmap:
 
-| Sprint | Components delivered | Pages enabled |
-|--------|----------------------|---------------|
-| Sprint 0 (foundation) | Tokens, Atoms, Site Header, Site Footer, Page Hero, Breadcrumb, basic Body & Section | Static landing only |
-| Sprint 1 | Callout variants (5), Comparison Table, Step List, basic image components, Case Study Block | Earth Building Techniques + Benefits (month 1 of strategy) |
-| Sprint 2 | Related-in-Cluster, TOC, Numbered Reasons, Featured Grid, Audience Callout, Pillar Nav | Homepage + Affordable Earthen Homes (month 1–2) |
-| Sprint 3 | Earth-Sheltered + Earthships templates (rely on existing organisms), Bridge link variant, Newsletter capture | Earth-Sheltered + Earthships pillars (month 2) |
-| Sprint 4 | Cost Calculator widget, Search, Author bio, Mobile nav polish, full accessibility audit | All satellites publishing begins (month 3+) |
+| Sprint                | Components delivered                                                                                         | Pages enabled                                              |
+| --------------------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| Sprint 0 (foundation) | Tokens, Atoms, Site Header, Site Footer, Page Hero, Breadcrumb, basic Body & Section                         | Static landing only                                        |
+| Sprint 1              | Callout variants (5), Comparison Table, Step List, basic image components, Case Study Block                  | Earth Building Techniques + Benefits (month 1 of strategy) |
+| Sprint 2              | Related-in-Cluster, TOC, Numbered Reasons, Featured Grid, Audience Callout, Pillar Nav                       | Homepage + Affordable Earthen Homes (month 1–2)            |
+| Sprint 3              | Earth-Sheltered + Earthships templates (rely on existing organisms), Bridge link variant, Newsletter capture | Earth-Sheltered + Earthships pillars (month 2)             |
+| Sprint 4              | Cost Calculator widget, Search, Author bio, Mobile nav polish, full accessibility audit                      | All satellites publishing begins (month 3+)                |
 
 ---
 
@@ -366,4 +380,4 @@ These should be answered before component design begins.
 
 ---
 
-*End of report.*
+_End of report._
