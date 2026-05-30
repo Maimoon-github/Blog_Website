@@ -28,17 +28,19 @@ export default function SiteLayout({
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50 text-stone-900 dark:bg-stone-950 dark:text-stone-100">
+    <div className="flex min-h-screen flex-col bg-[#131026] text-[#E0E0E0]">
       {/* Sticky Glassmorphism Header */}
       <header className="sticky top-0 z-50 glassmorphism shadow-sm transition-all duration-300">
         <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8" aria-label="Global">
           <div className="flex lg:flex-1">
             <Link href="/" className="-m-1.5 p-1.5 flex items-center gap-2 group">
-              <span className="h-8 w-8 rounded-lg bg-earth-forest flex items-center justify-center text-white font-serif font-bold text-lg shadow-md group-hover:scale-105 transition-transform">
-                E
+              {/* Lotus logo badge */}
+              <span className="h-8 w-8 rounded-lg bg-[#5F2DA6] flex items-center justify-center text-white font-bold text-lg shadow-md group-hover:scale-110 transition-transform"
+                style={{ boxShadow: "0 0 12px rgba(95,45,166,0.5)" }}>
+                🪷
               </span>
-              <span className="font-serif text-xl font-bold tracking-tight text-stone-900 dark:text-white">
-                Earth<span className="text-earth-gold font-sans font-medium">&amp;</span>Escape
+              <span className="font-sans text-xl font-bold tracking-tight text-[#E0E0E0]">
+                Earth<span className="text-[#8B65BF] font-medium">&</span>Escape
               </span>
             </Link>
           </div>
@@ -51,25 +53,27 @@ export default function SiteLayout({
                 href={item.href}
                 className={`text-sm font-semibold tracking-wide transition-colors duration-200 relative py-1 px-2 rounded-md ${
                   isActive(item.href)
-                    ? "text-earth-forest dark:text-earth-gold font-bold bg-stone-100/50 dark:bg-stone-900/50"
-                    : "text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white hover:bg-stone-100/30 dark:hover:bg-stone-900/30"
+                    ? "text-[#8B65BF] font-bold bg-[#4E3473]/30"
+                    : "text-[#E0E0E0]/70 hover:text-[#E0E0E0] hover:bg-[#4E3473]/20"
                 }`}
               >
                 {item.name}
                 {isActive(item.href) && (
-                  <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-earth-forest dark:bg-earth-gold rounded-full" />
+                  <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-[#5F2DA6] rounded-full"
+                    style={{ boxShadow: "0 0 6px rgba(95,45,166,0.8)" }} />
                 )}
               </Link>
             ))}
           </div>
 
-          {/* Call to Action Button */}
+          {/* CTA Button */}
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <Link
               href="/contact"
-              className="rounded-full bg-earth-forest px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-emerald-800 transition-colors hover:lift cursor-pointer"
+              className="rounded-full bg-[#5F2DA6] px-4 py-2 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:bg-[#7B3FCC] hover:scale-105 cursor-pointer"
+              style={{ boxShadow: "0 0 12px rgba(95,45,166,0.4)" }}
             >
-              Get in Touch
+              Get in Touch ✦
             </Link>
           </div>
 
@@ -77,7 +81,7 @@ export default function SiteLayout({
           <div className="flex lg:hidden">
             <button
               type="button"
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-stone-700 dark:text-stone-300"
+              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-[#8B65BF]"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               <span className="sr-only">Open main menu</span>
@@ -94,9 +98,9 @@ export default function SiteLayout({
           </div>
         </nav>
 
-        {/* Mobile menu, show/hide based on menu state */}
+        {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden border-t border-stone-200/50 bg-stone-50 dark:border-stone-850 dark:bg-stone-950 p-4 transition-all duration-200">
+          <div className="lg:hidden border-t border-[#4E3473]/50 bg-[#1F1A40]/95 backdrop-blur-md p-4 transition-all duration-200">
             <div className="space-y-1 pb-3 pt-2">
               {navigation.map((item) => (
                 <Link
@@ -105,21 +109,21 @@ export default function SiteLayout({
                   onClick={() => setMobileMenuOpen(false)}
                   className={`block rounded-lg px-3 py-2 text-base font-semibold transition-all ${
                     isActive(item.href)
-                      ? "bg-earth-forest/10 text-earth-forest dark:text-earth-gold"
-                      : "text-stone-700 hover:bg-stone-100 dark:text-stone-300 dark:hover:bg-stone-900"
+                      ? "bg-[#4E3473]/40 text-[#8B65BF]"
+                      : "text-[#E0E0E0]/80 hover:bg-[#4E3473]/20 hover:text-[#E0E0E0]"
                   }`}
                 >
                   {item.name}
                 </Link>
               ))}
             </div>
-            <div className="border-t border-stone-200/50 dark:border-stone-800 pb-3 pt-4">
+            <div className="border-t border-[#4E3473]/50 pb-3 pt-4">
               <Link
                 href="/contact"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block w-full text-center rounded-lg bg-earth-forest px-4 py-2.5 text-base font-semibold text-white shadow-md hover:bg-emerald-800 transition-colors"
+                className="block w-full text-center rounded-lg bg-[#5F2DA6] px-4 py-2.5 text-base font-semibold text-white shadow-md transition-colors hover:bg-[#7B3FCC]"
               >
-                Get in Touch
+                Get in Touch ✦
               </Link>
             </div>
           </div>
@@ -129,99 +133,68 @@ export default function SiteLayout({
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col">{children}</main>
 
-      {/* Detailed Premium Footer */}
-      <footer className="border-t border-stone-200/60 bg-stone-100 dark:border-stone-800/65 dark:bg-stone-900/50">
+      {/* Footer */}
+      <footer className="border-t border-[#4E3473]/60 bg-[#1F1A40]/80">
         <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
           <div className="xl:grid xl:grid-cols-3 xl:gap-8">
+            {/* Brand */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <span className="h-8 w-8 rounded-lg bg-earth-forest flex items-center justify-center text-white font-serif font-bold text-lg">
-                  E
+                <span className="h-8 w-8 rounded-lg bg-[#5F2DA6] flex items-center justify-center text-white font-bold text-lg"
+                  style={{ boxShadow: "0 0 10px rgba(95,45,166,0.5)" }}>
+                  🪷
                 </span>
-                <span className="font-serif text-xl font-bold tracking-tight text-stone-900 dark:text-white">
-                  Earth<span className="text-earth-gold font-sans font-medium">&amp;</span>Escape
+                <span className="font-sans text-xl font-bold tracking-tight text-[#E0E0E0]">
+                  Earth<span className="text-[#8B65BF] font-medium">&</span>Escape
                 </span>
               </div>
-              <p className="text-sm leading-relaxed text-stone-600 dark:text-stone-400 max-w-xs">
-                A luxury portal celebrating clean, sustainable architecture and inspiring romantic destinations with premium hot tubs.
+              <p className="text-sm leading-relaxed text-[#8B65BF]/80 max-w-xs">
+                A mystical portal celebrating sustainable architecture and romantic destinations, shrouded in an ethereal violet haze.
               </p>
               <div className="flex space-x-4">
-                {/* Social icons placeholders */}
-                <span className="text-xs text-stone-400 dark:text-stone-500">Instagram • Pinterest • Twitter</span>
+                <span className="text-xs text-[#4E3473]">✦ Instagram • Pinterest • Twitter ✦</span>
               </div>
             </div>
-            
+
             <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
               <div className="md:grid md:grid-cols-2 md:gap-8">
                 <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-950 dark:text-white">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-[#8B65BF]">
                     Explore
                   </h3>
                   <ul role="list" className="mt-4 space-y-3">
-                    <li>
-                      <Link href="/blog" className="text-sm text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white">
-                        All Articles
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/blog?category=earthen-architecture" className="text-sm text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white">
-                        Earthen Homes
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/blog?category=hot-tub-getaways" className="text-sm text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white">
-                        Hot Tub Escapes
-                      </Link>
-                    </li>
+                    <li><Link href="/blog" className="text-sm text-[#E0E0E0]/60 hover:text-[#8B65BF] transition-colors">All Articles</Link></li>
+                    <li><Link href="/blog?category=earthen-architecture" className="text-sm text-[#E0E0E0]/60 hover:text-[#8B65BF] transition-colors">Earthen Homes</Link></li>
+                    <li><Link href="/blog?category=hot-tub-getaways" className="text-sm text-[#E0E0E0]/60 hover:text-[#8B65BF] transition-colors">Hot Tub Escapes</Link></li>
                   </ul>
                 </div>
                 <div className="mt-10 md:mt-0">
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-950 dark:text-white">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-[#8B65BF]">
                     Information
                   </h3>
                   <ul role="list" className="mt-4 space-y-3">
-                    <li>
-                      <Link href="/about" className="text-sm text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white">
-                        About Us
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/services" className="text-sm text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white">
-                        Services
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/contact" className="text-sm text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white">
-                        Contact
-                      </Link>
-                    </li>
+                    <li><Link href="/about" className="text-sm text-[#E0E0E0]/60 hover:text-[#8B65BF] transition-colors">About Us</Link></li>
+                    <li><Link href="/services" className="text-sm text-[#E0E0E0]/60 hover:text-[#8B65BF] transition-colors">Services</Link></li>
+                    <li><Link href="/contact" className="text-sm text-[#E0E0E0]/60 hover:text-[#8B65BF] transition-colors">Contact</Link></li>
                   </ul>
                 </div>
               </div>
-              
+
               <div>
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-stone-950 dark:text-white">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-[#8B65BF]">
                   Legal
                 </h3>
                 <ul role="list" className="mt-4 space-y-3">
-                  <li>
-                    <Link href="/privacy-policy" className="text-sm text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white">
-                      Privacy Policy
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/terms" className="text-sm text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white">
-                      Terms of Service
-                    </Link>
-                  </li>
+                  <li><Link href="/privacy-policy" className="text-sm text-[#E0E0E0]/60 hover:text-[#8B65BF] transition-colors">Privacy Policy</Link></li>
+                  <li><Link href="/terms" className="text-sm text-[#E0E0E0]/60 hover:text-[#8B65BF] transition-colors">Terms of Service</Link></li>
                 </ul>
               </div>
             </div>
           </div>
-          
-          <div className="mt-12 border-t border-stone-200/50 pt-8 dark:border-stone-850">
-            <p className="text-xs text-stone-500 dark:text-stone-400 text-center">
-              &copy; {new Date().getFullYear()} Earth &amp; Escape Blog. All rights reserved. Built with Next.js &amp; TailwindCSS.
+
+          <div className="mt-12 border-t border-[#4E3473]/40 pt-8">
+            <p className="text-xs text-[#4E3473] text-center">
+              ✦ © {new Date().getFullYear()} Earth &amp; Escape Blog. All rights reserved. Built with Next.js &amp; TailwindCSS. ✦
             </p>
           </div>
         </div>
