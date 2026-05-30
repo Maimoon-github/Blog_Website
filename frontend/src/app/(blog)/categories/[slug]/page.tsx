@@ -3,8 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockCategories, mockPosts } from "../../../../lib/mockData";
 
-import { mockPosts } from "@/lib/mockData";
-
 export async function generateStaticParams() {
   // Get unique category slugs
   const uniqueCategories = Array.from(
