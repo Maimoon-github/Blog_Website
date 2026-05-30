@@ -3,6 +3,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockPosts, mockTags } from "../../../../lib/mockData";
 
+
+import { mockPosts } from "@/lib/mockData";
+
+export async function generateStaticParams() {
+  // Get unique tag slugs (flatten tags array from all posts)
+  const allTags = mockPosts.flatMap((post) => post.tags || []);
+  const uniqueTags = Array.from(new Set(allTags.map((tag) => tag.slug)));
+  return uniqueTags.map((slug) => ({ slug }));
+}
+
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
