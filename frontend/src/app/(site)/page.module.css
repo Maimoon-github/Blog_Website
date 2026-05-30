@@ -1,0 +1,138 @@
+/* Hero backgrounds */
+.heroRadialHaze {
+  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(95,45,166,0.35) 0%, transparent 70%);
+}
+
+.heroDeepGlow {
+  background: radial-gradient(ellipse 50% 40% at 80% 80%, rgba(78,52,115,0.2) 0%, transparent 70%);
+}
+
+/* Badge background */
+.badgeBg {
+  background: rgba(95,45,166,0.12);
+}
+
+/* CTA button */
+.ctaButton {
+  background: #5F2DA6;
+  box-shadow: 0 0 20px rgba(95,45,166,0.5);
+}
+
+/* Category section border & background */
+.categorySection {
+  border-color: rgba(78,52,115,0.4);
+  background: rgba(31,26,64,0.25);
+}
+
+/* Category card border */
+.categoryCard {
+  border: 1px solid rgba(78,52,115,0.5);
+}
+
+/* Dark violet overlay gradient */
+.categoryOverlay {
+  background: linear-gradient(to top, #131026 0%, rgba(31,26,64,0.5) 50%, transparent 100%);
+}
+
+/* Violet glow on hover */
+.categoryGlow {
+  background: radial-gradient(circle at 50% 100%, rgba(95,45,166,0.25), transparent 70%);
+}
+
+/* Featured post container */
+.featuredContainer {
+  background: #1F1A40;
+  border: 1px solid rgba(78,52,115,0.6);
+  box-shadow: 0 0 30px rgba(95,45,166,0.15);
+}
+
+/* Featured image gradient overlay */
+.featuredImageOverlay {
+  background: linear-gradient(to right, transparent 60%, #1F1A40 100%);
+}
+
+/* Featured author avatar border */
+.authorAvatarBorder {
+  border: 2px solid rgba(95,45,166,0.6);
+}
+
+/* Featured CTA button */
+.featuredCta {
+  background: #5F2DA6;
+  box-shadow: 0 0 16px rgba(95,45,166,0.4);
+}
+
+/* Stats section */
+.statsSection {
+  border-color: rgba(78,52,115,0.35);
+  background: rgba(31,26,64,0.2);
+}
+
+/* Stat card */
+.statCard {
+  background: #1F1A40;
+  border: 1px solid rgba(78,52,115,0.5);
+}
+
+/* Stat text gradient */
+.statGradient {
+  background: linear-gradient(135deg, #8B65BF 0%, #5F2DA6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Recent article card */
+.recentCard {
+  background: #1F1A40;
+  border: 1px solid rgba(78,52,115,0.5);
+}
+
+/* Recent image gradient overlay */
+.recentImageOverlay {
+  background: linear-gradient(to bottom, transparent 50%, #1F1A40 100%);
+}
+
+/* Recent avatar border */
+.recentAvatarBorder {
+  border: 2px solid rgba(95,45,166,0.5);
+}
+
+/* Newsletter section background */
+.newsletterSection {
+  background: rgba(19,16,38,0.95);
+}
+
+/* Newsletter container */
+.newsletterContainer {
+  background: rgba(95,45,166,0.08);
+  border: 1px solid rgba(78,52,115,0.6);
+  box-shadow: 0 0 60px rgba(95,45,166,0.12), inset 0 0 40px rgba(95,45,166,0.06);
+}
+
+/* Newsletter radial glow */
+.newsletterGlow {
+  background: radial-gradient(ellipse 60% 60% at center, rgba(95,45,166,0.15), transparent 70%);
+}
+
+/* Newsletter input */
+.newsletterInput {
+  background: rgba(78,52,115,0.2);
+  box-shadow: inset 0 0 0 1px rgba(78,52,115,0.6);
+}
+
+/* Newsletter button */
+.newsletterButton {
+  background: #5F2DA6;
+  box-shadow: 0 0 14px rgba(95,45,166,0.5);
+}
+
+/* Lotus decorative delay */
+.lotusDelay {
+  animation-delay: 1s;
+}
+
+/* Recent divider border color */
+.recentDivider {
+  border-color: rgba(78,52,115,0.4);
+}
