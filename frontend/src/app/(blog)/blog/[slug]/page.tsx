@@ -3,6 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockPosts } from "../../../../lib/mockData";
 
+// Static export generation
+export async function generateStaticParams() {
+  return mockPosts.map((post) => ({ slug: post.slug }));
+}
+
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
