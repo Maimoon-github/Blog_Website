@@ -1,63 +1,147 @@
 @import "tailwindcss";
 
+/* -----------------------------------------------
+   MYSTICAL BLACK LOTUS — Global Design Tokens
+   Chromatic Hierarchy (3X Reasoning):
+     The Abyss    → backgrounds
+     The Petals   → surfaces, borders, accents
+     The Core     → CTAs, focus, primary glows
+----------------------------------------------- */
 :root {
-  --background: #fdfbf7; /* Warm soft cream background */
-  --foreground: #1c1917; /* Deep stone/charcoal text */
-  --accent-earth: #8b5a2b; /* Warm clay brown */
-  --accent-green: #2d6a4f; /* Forest green */
-  --accent-gold: #cca43b; /* Premium copper/gold */
+  /* === Palette Hex Values === */
+  --lotus-void:        #131026; /* Deepest background */
+  --lotus-shadow:      #1F1A40; /* Card / surface layer */
+  --lotus-petal-dark:  #4E3473; /* Borders, dividers */
+  --lotus-core:        #5F2DA6; /* CTAs, focus rings, primary */
+  --lotus-petal-light: #8B65BF; /* Icons, secondary accents */
+
+  /* === Semantic Roles === */
+  --background:  var(--lotus-void);
+  --foreground:  #E0E0E0;
+  --text-muted:  rgba(139, 101, 191, 0.7);
+
+  /* === Glow Shadows === */
+  --glow-sm:  0 0 8px  rgba(95, 45, 166, 0.4);
+  --glow-md:  0 0 20px rgba(95, 45, 166, 0.5);
+  --glow-lg:  0 0 35px rgba(95, 45, 166, 0.6);
+
+  /* === Transitions === */
+  --transition-smooth: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
 }
 
+/* === Tailwind v4 Token Registration === */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-earth-clay: var(--accent-earth);
-  --color-earth-forest: var(--accent-green);
-  --color-earth-gold: var(--accent-gold);
+  /* Lotus palette → Tailwind color utilities */
+  --color-lotus-void:       var(--lotus-void);
+  --color-lotus-shadow:     var(--lotus-shadow);
+  --color-lotus-petal-dark: var(--lotus-petal-dark);
+  --color-lotus-core:       var(--lotus-core);
+  --color-lotus-light:      var(--lotus-petal-light);
+  --color-lotus-text:       var(--foreground);
+  --color-lotus-muted:      var(--text-muted);
+
+  /* Background / foreground semantic aliases */
+  --color-background:  var(--background);
+  --color-foreground:  var(--foreground);
+
+  /* Fonts (unchanged) */
   --font-sans: var(--font-geist-sans), sans-serif;
   --font-mono: var(--font-geist-mono), monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0c0b0a; /* Sophisticated near-black stone background */
-    --foreground: #f4f3ef; /* Off-white text */
-  }
-}
-
+/* -----------------------------------------------
+   BASE STYLES
+----------------------------------------------- */
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  background-color: var(--background);
+  background-color: var(--lotus-void);
   color: var(--foreground);
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Micro-animations and utility effects */
+/* -----------------------------------------------
+   UTILITY CLASSES
+----------------------------------------------- */
+
+/* Hover lift with mystical glow */
 .hover-lift {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s ease,
+              border-color 0.25s ease;
 }
 
 .hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  transform: translateY(-6px);
+  box-shadow: var(--glow-md);
 }
 
+/* Glassmorphism — dark lotus tinted surface */
 .glassmorphism {
-  background: rgba(253, 251, 247, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(28, 25, 22, 0.05);
+  background: rgba(31, 26, 64, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(78, 52, 115, 0.5);
 }
 
-.dark .glassmorphism {
-  background: rgba(12, 11, 10, 0.7);
-  border: 1px solid rgba(244, 243, 239, 0.05);
-}
-
+/* Gradient text — white to luminous violet */
 .gradient-text {
-  background: linear-gradient(135deg, #8b5a2b 0%, #cca43b 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #8B65BF 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Accent gradient text — core violet */
+.gradient-text-violet {
+  background: linear-gradient(135deg, #8B65BF 0%, #5F2DA6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Section title ornament */
+.section-ornament::before {
+  content: "✦";
+  color: var(--lotus-core);
+  margin-right: 0.5rem;
+  filter: drop-shadow(0 0 4px var(--lotus-core));
+}
+
+/* -----------------------------------------------
+   ANIMATIONS
+----------------------------------------------- */
+
+/* Floating glow — lotus badge / icons */
+@keyframes floatGlow {
+  0%   { text-shadow: 0 0 0px var(--lotus-core);  transform: translateY(0px);  }
+  100% { text-shadow: 0 0 14px var(--lotus-core); transform: translateY(-5px); }
+}
+
+.lotus-badge {
+  animation: floatGlow 2.2s ease-in-out infinite alternate;
+  display: inline-block;
+}
+
+/* Pulse glow on active cards */
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 8px  rgba(95, 45, 166, 0.3); }
+  50%       { box-shadow: 0 0 22px rgba(95, 45, 166, 0.6); }
+}
+
+.pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Subtle shimmer for hero radial haze */
+@keyframes hazeShift {
+  0%   { opacity: 0.35; }
+  50%  { opacity: 0.55; }
+  100% { opacity: 0.35; }
+}
+
+.haze-animate {
+  animation: hazeShift 6s ease-in-out infinite;
 }
