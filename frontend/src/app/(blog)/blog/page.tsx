@@ -9,19 +9,15 @@ function BlogContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const categoryQuery = searchParams.get("category") || "all";
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredPosts, setFilteredPosts] = useState<Post[]>(mockPosts);
 
   useEffect(() => {
     let result = mockPosts;
-
-    // 1. Filter by category
     if (categoryQuery !== "all") {
       result = result.filter((post) => post.category.slug === categoryQuery);
     }
-
-    // 2. Filter by search query
     if (searchQuery.trim() !== "") {
       const query = searchQuery.toLowerCase();
       result = result.filter(
@@ -31,7 +27,6 @@ function BlogContent() {
           post.tags.some((tag) => tag.name.toLowerCase().includes(query))
       );
     }
-
     setFilteredPosts(result);
   }, [categoryQuery, searchQuery]);
 
@@ -44,34 +39,48 @@ function BlogContent() {
   };
 
   return (
-    <div className="flex-1 bg-stone-50 dark:bg-stone-950 py-16 sm:py-24">
+    <div className="flex-1 bg-[#131026] py-16 sm:py-24">
+      {/* Ambient radial glow */}
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 45% at 50% 0%, rgba(95,45,166,0.2) 0%, transparent 65%)",
+        }}
+      />
+
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        
-        {/* Header Title */}
+        {/* Header */}
         <div className="mx-auto max-w-2xl text-center mb-12">
-          <span className="text-sm font-semibold tracking-wider uppercase text-earth-gold">
-            The Journal
+          <span className="text-sm font-semibold tracking-wider uppercase text-[#8B65BF]">
+            ✦ The Journal
           </span>
-          <h1 className="font-serif text-4xl font-extrabold tracking-tight text-stone-900 dark:text-white sm:text-5xl mt-2">
-            Architectural Design &amp; Romantic Escapes
+          <h1 className="font-sans text-4xl font-extrabold tracking-tight text-[#E0E0E0] sm:text-5xl mt-2">
+            Architectural Design &amp;{" "}
+            <span className="gradient-text">Romantic Escapes</span>
           </h1>
-          <p className="mt-4 text-stone-600 dark:text-stone-400">
+          <p className="mt-4 text-[#8B65BF]/80">
             Read our latest guides, builder interviews, and hotel recommendations.
           </p>
         </div>
 
-        {/* Search and Filter Area */}
+        {/* Search & Filter */}
         <div className="max-w-4xl mx-auto mb-12 space-y-6">
           {/* Search bar */}
           <div className="relative">
             <input
               type="text"
-              placeholder="Search articles by title, tags, or content..."
+              placeholder="Search articles by title, tags, or content…"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-2xl border border-stone-200 bg-white px-5 py-4 pl-12 text-sm text-stone-900 shadow-sm focus:border-earth-forest focus:ring-1 focus:ring-earth-forest dark:border-stone-800 dark:bg-stone-900 dark:text-white"
+              className="w-full rounded-2xl px-5 py-4 pl-12 text-sm text-[#E0E0E0] outline-none transition-all duration-200 placeholder:text-[#4E3473]"
+              style={{
+                background: "#1F1A40",
+                border: "1px solid rgba(78,52,115,0.6)",
+                boxShadow: "inset 0 1px 3px rgba(0,0,0,0.3)",
+              }}
             />
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-stone-400">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-[#4E3473]">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
               </svg>
@@ -79,7 +88,7 @@ function BlogContent() {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute inset-y-0 right-4 flex items-center text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
+                className="absolute inset-y-0 right-4 flex items-center text-xs text-[#8B65BF]/60 hover:text-[#8B65BF] transition-colors"
               >
                 Clear
               </button>
@@ -90,11 +99,12 @@ function BlogContent() {
           <div className="flex flex-wrap gap-2 justify-center">
             <button
               onClick={() => handleCategorySelect("all")}
-              className={`rounded-full px-5 py-2 text-xs font-semibold tracking-wider transition ${
+              className="rounded-full px-5 py-2 text-xs font-semibold tracking-wider transition-all duration-200"
+              style={
                 categoryQuery === "all"
-                  ? "bg-earth-forest text-white shadow-md"
-                  : "bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-850 dark:text-stone-300 dark:hover:bg-stone-800"
-              }`}
+                  ? { background: "#5F2DA6", color: "#fff", boxShadow: "0 0 14px rgba(95,45,166,0.5)" }
+                  : { background: "rgba(31,26,64,0.8)", color: "rgba(224,224,224,0.7)", border: "1px solid rgba(78,52,115,0.5)" }
+              }
             >
               All Articles
             </button>
@@ -102,11 +112,12 @@ function BlogContent() {
               <button
                 key={cat.slug}
                 onClick={() => handleCategorySelect(cat.slug)}
-                className={`rounded-full px-5 py-2 text-xs font-semibold tracking-wider transition ${
+                className="rounded-full px-5 py-2 text-xs font-semibold tracking-wider transition-all duration-200"
+                style={
                   categoryQuery === cat.slug
-                    ? "bg-earth-forest text-white shadow-md"
-                    : "bg-white border border-stone-200 text-stone-700 hover:bg-stone-100 dark:bg-stone-900 dark:border-stone-850 dark:text-stone-300 dark:hover:bg-stone-800"
-                }`}
+                    ? { background: "#5F2DA6", color: "#fff", boxShadow: "0 0 14px rgba(95,45,166,0.5)" }
+                    : { background: "rgba(31,26,64,0.8)", color: "rgba(224,224,224,0.7)", border: "1px solid rgba(78,52,115,0.5)" }
+                }
               >
                 {cat.name}
               </button>
@@ -116,13 +127,14 @@ function BlogContent() {
 
         {/* Posts Grid */}
         {filteredPosts.length === 0 ? (
-          <div className="text-center py-24 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 shadow-sm max-w-xl mx-auto">
-            <svg xmlns="http://www.w3.org/2500/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-12 h-12 text-stone-300 dark:text-stone-700 mx-auto mb-4">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-            </svg>
-            <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-white">No articles found</h3>
-            <p className="text-sm text-stone-500 dark:text-stone-400 mt-2 px-6">
-              We couldn&apos;t find any posts matching your search criteria. Try adjusting your search query or choosing a different category.
+          <div
+            className="text-center py-24 rounded-3xl max-w-xl mx-auto"
+            style={{ background: "#1F1A40", border: "1px solid rgba(78,52,115,0.5)" }}
+          >
+            <div className="text-5xl mb-4 opacity-40">🪷</div>
+            <h3 className="font-sans text-lg font-bold text-[#E0E0E0]">No articles found</h3>
+            <p className="text-sm text-[#8B65BF]/70 mt-2 px-6">
+              We couldn&apos;t find any posts matching your search. Try adjusting your query or choosing a different category.
             </p>
           </div>
         ) : (
@@ -130,38 +142,48 @@ function BlogContent() {
             {filteredPosts.map((post) => (
               <article
                 key={post.id}
-                className="flex flex-col items-start justify-between bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/50 dark:border-stone-850 hover-lift shadow-sm"
+                className="flex flex-col items-start justify-between overflow-hidden rounded-2xl hover-lift transition-all duration-300"
+                style={{
+                  background: "#1F1A40",
+                  border: "1px solid rgba(78,52,115,0.5)",
+                }}
               >
-                <div className="relative w-full h-48">
+                <div className="relative w-full h-48 overflow-hidden">
                   <img
                     src={post.image}
                     alt={post.title}
-                    className="absolute inset-0 h-full w-full object-cover"
+                    className="absolute inset-0 h-full w-full object-cover opacity-80 hover:scale-105 transition-transform duration-500"
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: "linear-gradient(to bottom, transparent 50%, #1F1A40 100%)" }}
                   />
                 </div>
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
-                    <span className="text-xs font-semibold text-earth-forest dark:text-earth-gold tracking-widest uppercase">
+                    <span className="text-xs font-semibold text-[#8B65BF] tracking-widest uppercase">
                       {post.category.name}
                     </span>
-                    <h3 className="mt-2 font-serif text-lg font-bold leading-snug text-stone-900 dark:text-white hover:text-earth-forest dark:hover:text-earth-gold transition-colors">
+                    <h3 className="mt-2 font-sans text-lg font-bold leading-snug text-[#E0E0E0] hover:text-[#8B65BF] transition-colors">
                       <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                     </h3>
-                    <p className="mt-3 text-sm text-stone-600 dark:text-stone-400 line-clamp-3 leading-relaxed">
+                    <p className="mt-3 text-sm text-[#8B65BF]/70 line-clamp-3 leading-relaxed">
                       {post.excerpt}
                     </p>
                   </div>
-                  <div className="mt-6 flex items-center gap-x-3 border-t border-stone-100 dark:border-stone-800 pt-4">
+                  <div
+                    className="mt-6 flex items-center gap-x-3 border-t pt-4"
+                    style={{ borderColor: "rgba(78,52,115,0.4)" }}
+                  >
                     <img
                       src={post.author.avatar}
                       alt={post.author.name}
                       className="h-8 w-8 rounded-full object-cover"
+                      style={{ border: "2px solid rgba(95,45,166,0.5)" }}
                     />
                     <div className="text-xs">
-                      <p className="font-semibold text-stone-900 dark:text-white">
-                        {post.author.name}
-                      </p>
-                      <p className="text-stone-500">{post.publishDate} • {post.readTime}</p>
+                      <p className="font-semibold text-[#E0E0E0]">{post.author.name}</p>
+                      <p className="text-[#8B65BF]/60">{post.publishDate} • {post.readTime}</p>
                     </div>
                   </div>
                 </div>
@@ -176,11 +198,20 @@ function BlogContent() {
 
 export default function BlogPage() {
   return (
-    <Suspense fallback={
-      <div className="flex min-h-screen flex-col items-center justify-center bg-stone-50/50 dark:bg-stone-950/50">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-stone-200 border-t-earth-gold dark:border-stone-850 dark:border-t-earth-gold"></div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen flex-col items-center justify-center bg-[#131026]">
+          <div
+            className="h-12 w-12 animate-spin rounded-full"
+            style={{
+              border: "3px solid rgba(78,52,115,0.4)",
+              borderTopColor: "#5F2DA6",
+              boxShadow: "0 0 16px rgba(95,45,166,0.3)",
+            }}
+          />
+        </div>
+      }
+    >
       <BlogContent />
     </Suspense>
   );
