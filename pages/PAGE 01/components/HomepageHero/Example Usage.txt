@@ -1,0 +1,26 @@
+import { HomepageHero } from '@/components/HomepageHero';
+
+const heroContent = {
+  brandAlt: 'The Earthen Homes',
+  headline: 'Welcome to The Earthen Homes',
+  subtitle: 'Your Complete Guide to Natural, Sustainable Earth-Based Living',
+  ctaLabel: 'Learn More',
+  ctaHref: '#featured-section',
+  backgroundImage: '/images/hero-earth-sheltered-home.jpg',
+  statCallout: {
+    figure: '30%',
+    caption: "of the world's population — roughly 2.4 billion people — currently live in homes built with earth.",
+    source: 'UN-Habitat Global Housing Report',
+  },
+};
+
+export default function HomePage() {
+  return (
+    <main>
+      <HomepageHero content={heroContent} />
+      <section id="featured-section" className="py-24">
+        {/* Featured articles grid follows */}
+      </section>
+    </main>
+  );
+}

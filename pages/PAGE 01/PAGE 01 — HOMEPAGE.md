@@ -1,533 +1,483 @@
-I'll generate a production-grade **CalloutBox** component system for The Earthen Homes — addressing the #1 critical issue identified in your research report (C1: the overloaded "Did You Know?" callout). This single component exports 5 distinct visual variants with full TypeScript typing, Framer Motion choreography, and Tailwind styling grounded in the earth-tone palette from your screenshot.
+I'll generate a production-ready **Homepage Hero Block** component for *The Earthen Homes* using the 5X reasoning framework and the exact file architecture from your template. This component aligns with the earth-tone palette, serif editorial voice, and curved organic forms visible in your design screenshot.
 
 ---
 
-### Component Documentation
+## 5X Reasoning Analysis
 
-**Component Name:** `<CalloutBox />`
-
-**Purpose:** A polymorphic callout component that renders 5 distinct information architectures — Stat, Principle, Example, Multi-Item, and Comparison — each with unique visual treatments, motion entrances, and accessibility affordances.
-
-**Design Rationale Summary:** The research identified that one box treatment was doing five different cognitive jobs, flattening information hierarchy. This system gives each job its own spatial language: stats shout with oversized numerals, principles read like marginalia with a left border, examples feel like curated cards, multi-items use numbered chips, and comparisons split the frame equally. All variants share an 8px spatial grid, warm earth-tone tokens, and entrance stagger via Framer Motion — but each whispers its intent through typography and structure rather than color alone.
-
----
-
-### Props API Reference
-
-| Prop | Type | Default | Required | Description |
-|------|------|---------|----------|-------------|
-| `variant` | `'stat' \| 'principle' \| 'example' \| 'multi-item' \| 'comparison'` | — | **Yes** | Determines visual treatment and required sub-props |
-| `title` | `string` | `undefined` | No | Callout header text |
-| `children` | `ReactNode` | — | **Yes** | Primary content (string for stat/principle/example, array for multi-item) |
-| `statNumber` | `string` | `undefined` | Conditional | Large numeral for `stat` variant |
-| `statLabel` | `string` | `undefined` | Conditional | Caption below numeral for `stat` variant |
-| `source` | `string` | `undefined` | No | Citation footnote text |
-| `items` | `MultiItem[]` | `undefined` | Conditional | Array of `{ number, title, description }` for `multi-item` variant |
-| `comparison` | `ComparisonData` | `undefined` | Conditional | `{ left, right, context }` for `comparison` variant |
-| `imageUrl` | `string` | `undefined` | No | Optional thumbnail for `example` variant |
-| `className` | `string` | `''` | No | Additional Tailwind classes |
+| Dimension | Decision |
+|-----------|----------|
+| **User Experience** | Visitors are dreamers and researchers seeking warmth. The hero must feel like "stepping into a landscape" — organic, unhurried, trustworthy. |
+| **Visual Hierarchy** | Background image (emotional) → Brand mark (trust) → H1 (mission) → Subtitle (clarity) → CTA (action). No competing focal points. |
+| **Interaction** | Entrance: staggered fade-up. CTA: subtle scale + arrow shift on hover. Reduced motion: instant fade, no translate. |
+| **Accessibility** | `prefers-reduced-motion` respected, focus rings on CTA, semantic H1, aria-label on decorative image, color contrast ≥ 4.5:1. |
+| **Performance** | GPU-only transforms (`translate3d`, `opacity`), `will-change` scoped, image eager-loaded as LCP element. |
 
 ---
 
-### States Showcase
+## Generated Files
 
-- **Default state:** Resting appearance with subtle warm border (`border-stone-200`) and cream background (`bg-stone-50`). No shadow — grounded aesthetic per design tokens.
-- **Hover state (interactive contexts):** `translateY(-2px)` with a barely perceptible shadow transition for card-like variants (`example`, `comparison`). Stat and principle remain static.
-- **Focus state:** `ring-2 ring-emerald-700 ring-offset-2 ring-offset-stone-50` for keyboard navigation.
-- **Loading state:** Skeleton shimmer via CSS gradient animation on the content block.
-- **Reduced motion:** Respects `prefers-reduced-motion` — entrances become instant opacity fades, hover transforms disabled.
+### 1. `components/HomepageHero/types/index.ts`
 
----
+```typescript
+/**
+ * TypeScript interfaces for the HomepageHero component system.
+ * Aligned with The Earthen Homes design tokens (earth-tone palette, serif hierarchy).
+ */
 
-### Code Block
-
-```tsx
-import React, { useMemo } from 'react';
-import { motion, useReducedMotion, Variants } from 'framer-motion';
-import { 
-  Lightbulb, 
-  BookOpen, 
-  TreePine, 
-  Scale, 
-  ListOrdered,
-  Quote,
-  ExternalLink
-} from 'lucide-react';
-
-// ─── TYPE DEFINITIONS ─────────────────────────────────────────────
-
-export interface MultiItem {
-  number?: number;
-  title: string;
-  description: string;
+export interface HeroContent {
+  /** Brand mark alt text — logo is decorative but labeled for screen readers */
+  brandAlt: string;
+  /** Main H1 — editorial, serif, earth-green */
+  headline: string;
+  /** Subtitle — sans-serif, warm brown, max 2 lines */
+  subtitle: string;
+  /** Primary CTA label */
+  ctaLabel: string;
+  /** CTA href — typically scrolls to #featured or /techniques */
+  ctaHref: string;
+  /** Background image src — earth-sheltered home photography */
+  backgroundImage: string;
+  /** Optional stat callout for social proof (e.g., "30% of the world...") */
+  statCallout?: StatCalloutData;
 }
 
-export interface ComparisonSide {
-  value: string;
-  label: string;
-}
-
-export interface ComparisonData {
-  left: ComparisonSide;
-  right: ComparisonSide;
-  context: string;
-}
-
-export type CalloutVariant = 'stat' | 'principle' | 'example' | 'multi-item' | 'comparison';
-
-export interface CalloutBoxProps {
-  variant: CalloutVariant;
-  title?: string;
-  children: React.ReactNode;
-  statNumber?: string;
-  statLabel?: string;
+export interface StatCalloutData {
+  /** Large numeral — e.g., "30%" */
+  figure: string;
+  /** Supporting caption — e.g., "of the world's population live in earthen homes" */
+  caption: string;
+  /** Optional source citation for credibility */
   source?: string;
-  items?: MultiItem[];
-  comparison?: ComparisonData;
-  imageUrl?: string;
-  className?: string;
 }
 
-// ─── CONSTANTS & TOKENS ───────────────────────────────────────────
+export interface HomepageHeroProps {
+  content: HeroContent;
+  /** Disables entrance animations for reduced-motion or instant hydration */
+  disableAnimation?: boolean;
+  /** Callback when CTA is clicked — for analytics or routing */
+  onCtaClick?: () => void;
+}
+```
 
-const EARTH_TOKENS = {
-  bg: 'bg-stone-50',           // Warm cream
-  bgAlt: 'bg-amber-50/50',     // Slightly warmer tint for examples
-  border: 'border-stone-200',
-  borderAccent: 'border-l-4 border-l-emerald-800',
-  textPrimary: 'text-stone-900',
-  textSecondary: 'text-stone-600',
-  textMuted: 'text-stone-500',
-  accentGreen: 'text-emerald-900',
-  accentTerracotta: 'text-orange-800',
-  accentBrown: 'text-amber-950',
-  serif: 'font-serif',
-  sans: 'font-sans',
-};
+---
 
-const containerVariants: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1.0] }
-  },
-};
+### 2. `components/HomepageHero/animations/variants.ts`
 
-const staggerContainer: Variants = {
+```typescript
+import { Variants } from 'framer-motion';
+
+/**
+ * Framer Motion variants for the HomepageHero.
+ * Easing: organic, gentle — like earth settling, not mechanical snapping.
+ */
+
+export const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 }
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+      duration: 0.6,
+      ease: [0.25, 0.1, 0.25, 1.0], // Custom ease: smooth deceleration
+    },
   },
 };
 
-const itemVariants: Variants = {
-  hidden: { opacity: 0, x: -8 },
-  visible: { 
-    opacity: 1, 
-    x: 0,
-    transition: { duration: 0.4, ease: 'easeOut' }
+export const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.7,
+      ease: [0.25, 0.1, 0.25, 1.0],
+    },
   },
 };
 
-// ─── HELPER FUNCTIONS ─────────────────────────────────────────────
-
-function useEarthMotion() {
-  const shouldReduce = useReducedMotion();
-  return {
-    initial: shouldReduce ? 'visible' : 'hidden',
-    whileInView: shouldReduce ? undefined : 'visible',
-    viewport: { once: true, margin: '-50px' },
-  };
-}
-
-function formatSource(source: string): React.ReactNode {
-  return (
-    <span className={`${EARTH_TOKENS.textMuted} text-sm italic mt-3 block`}>
-      <span className="not-italic mr-1">—</span>
-      Source: {source}
-    </span>
-  );
-}
-
-// ─── SUB-COMPONENTS (VARIANTS) ──────────────────────────────────
-
-const StatVariant: React.FC<<Pick<<CalloutBoxProps, 'title' | 'children' | 'statNumber' | 'statLabel' | 'source'>> = ({
-  title, children, statNumber, statLabel, source
-}) => (
-  <div className="flex flex-col md:flex-row md:items-start gap-6">
-    <div className="flex-shrink-0">
-      {statNumber && (
-        <motion.span 
-          className={`block text-5xl md:text-6xl font-bold ${EARTH_TOKENS.accentTerracotta} ${EARTH_TOKENS.serif} tracking-tight leading-none`}
-          initial={{ scale: 0.8, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-        >
-          {statNumber}
-        </motion.span>
-      )}
-      {statLabel && (
-        <span className={`block text-sm font-semibold uppercase tracking-wider ${EARTH_TOKENS.accentBrown} mt-1`}>
-          {statLabel}
-        </span>
-      )}
-    </div>
-    <div className="flex-1">
-      {title && (
-        <h4 className={`text-lg font-semibold ${EARTH_TOKENS.accentGreen} mb-2 flex items-center gap-2`}>
-          <TreePine size={18} strokeWidth={2.5} />
-          {title}
-        </h4>
-      )}
-      <div className={`${EARTH_TOKENS.textSecondary} leading-relaxed`}>
-        {children}
-      </div>
-      {source && formatSource(source)}
-    </div>
-  </div>
-);
-
-const PrincipleVariant: React.FC<<Pick<<CalloutBoxProps, 'title' | 'children' | 'source'>> = ({
-  title, children, source
-}) => (
-  <div className={`pl-5 ${EARTH_TOKENS.borderAccent}`}>
-    {title && (
-      <h4 className={`text-sm font-bold uppercase tracking-widest ${EARTH_TOKENS.accentGreen} mb-3 flex items-center gap-2`}>
-        <Lightbulb size={16} />
-        {title}
-      </h4>
-    )}
-    <div className={`${EARTH_TOKENS.serif} text-lg ${EARTH_TOKENS.textPrimary} italic leading-relaxed`}>
-      <Quote size={20} className={`inline mr-2 mb-1 ${EARTH_TOKENS.textMuted} opacity-40`} />
-      {children}
-    </div>
-    {source && formatSource(source)}
-  </div>
-);
-
-const ExampleVariant: React.FC<<Pick<<CalloutBoxProps, 'title' | 'children' | 'source' | 'imageUrl'>> = ({
-  title, children, source, imageUrl
-}) => (
-  <div>
-    {imageUrl && (
-      <div className="mb-4 overflow-hidden rounded-lg border border-stone-200">
-        <motion.img 
-          src={imageUrl} 
-          alt={title || 'Case study illustration'} 
-          className="w-full h-48 object-cover"
-          whileHover={{ scale: 1.03 }}
-          transition={{ duration: 0.4 }}
-        />
-      </div>
-    )}
-    <div className={`${EARTH_TOKENS.bgAlt} -mx-6 -mt-6 px-6 py-3 mb-4 border-b border-stone-100`}>
-      <h4 className={`text-xs font-bold uppercase tracking-widest ${EARTH_TOKENS.accentBrown} flex items-center gap-2`}>
-        <BookOpen size={14} />
-        {title || 'Real-World Example'}
-      </h4>
-    </div>
-    <div className={`${EARTH_TOKENS.textSecondary} leading-relaxed`}>
-      {children}
-    </div>
-    {source && (
-      <div className="mt-4 pt-3 border-t border-stone-100">
-        {formatSource(source)}
-      </div>
-    )}
-  </div>
-);
-
-const MultiItemVariant: React.FC<<Pick<<CalloutBoxProps, 'title' | 'items' | 'source'>> = ({
-  title, items, source
-}) => (
-  <div>
-    {title && (
-      <h4 className={`text-sm font-bold uppercase tracking-widest ${EARTH_TOKENS.accentGreen} mb-4 flex items-center gap-2`}>
-        <ListOrdered size={16} />
-        {title}
-      </h4>
-    )}
-    <motion.ol 
-      className="space-y-4"
-      variants={staggerContainer}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-    >
-      {items?.map((item, idx) => (
-        <motion.li 
-          key={idx} 
-          className="flex gap-4 items-start"
-          variants={itemVariants}
-        >
-          <span className={`
-            flex-shrink-0 w-8 h-8 rounded-full 
-            bg-emerald-900 text-stone-50 
-            flex items-center justify-center 
-            text-sm font-bold ${EARTH_TOKENS.sans}
-          `}>
-            {item.number ?? idx + 1}
-          </span>
-          <div>
-            <h5 className={`font-semibold ${EARTH_TOKENS.textPrimary} mb-1`}>
-              {item.title}
-            </h5>
-            <p className={`${EARTH_TOKENS.textSecondary} text-sm leading-relaxed`}>
-              {item.description}
-            </p>
-          </div>
-        </motion.li>
-      ))}
-    </motion.ol>
-    {source && (
-      <div className="mt-4 pt-3 border-t border-stone-100">
-        {formatSource(source)}
-      </div>
-    )}
-  </div>
-);
-
-const ComparisonVariant: React.FC<<Pick<<CalloutBoxProps, 'title' | 'comparison' | 'source'>> = ({
-  title, comparison, source
-}) => {
-  if (!comparison) return null;
-  
-  return (
-    <div>
-      {title && (
-        <h4 className={`text-sm font-bold uppercase tracking-widest ${EARTH_TOKENS.accentGreen} mb-4 flex items-center gap-2`}>
-          <Scale size={16} />
-          {title}
-        </h4>
-      )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 divide-y md:divide-y-0 md:divide-x divide-stone-200">
-        <motion.div 
-          className="p-4 md:p-5 md:pr-6 text-center md:text-left"
-          whileHover={{ backgroundColor: 'rgba(120, 113, 108, 0.03)' }}
-          transition={{ duration: 0.2 }}
-        >
-          <span className={`block text-3xl font-bold ${EARTH_TOKENS.accentTerracotta} ${EARTH_TOKENS.serif}`}>
-            {comparison.left.value}
-          </span>
-          <span className={`block text-sm font-medium ${EARTH_TOKENS.textSecondary} mt-1`}>
-            {comparison.left.label}
-          </span>
-        </motion.div>
-        <motion.div 
-          className="p-4 md:p-5 md:pl-6 text-center md:text-left"
-          whileHover={{ backgroundColor: 'rgba(120, 113, 108, 0.03)' }}
-          transition={{ duration: 0.2 }}
-        >
-          <span className={`block text-3xl font-bold ${EARTH_TOKENS.accentGreen} ${EARTH_TOKENS.serif}`}>
-            {comparison.right.value}
-          </span>
-          <span className={`block text-sm font-medium ${EARTH_TOKENS.textSecondary} mt-1`}>
-            {comparison.right.label}
-          </span>
-        </motion.div>
-      </div>
-      {comparison.context && (
-        <p className={`text-center text-sm ${EARTH_TOKENS.textMuted} mt-4 px-2`}>
-          {comparison.context}
-        </p>
-      )}
-      {source && (
-        <div className="mt-4 pt-3 border-t border-stone-100 text-center">
-          {formatSource(source)}
-        </div>
-      )}
-    </div>
-  );
+export const statVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.6,
+      delay: 0.8,
+      ease: [0.25, 0.1, 0.25, 1.0],
+    },
+  },
 };
 
-// ─── MAIN COMPONENT ───────────────────────────────────────────────
+export const ctaHoverVariants = {
+  rest: { scale: 1, x: 0 },
+  hover: { scale: 1.03, x: 0, transition: { duration: 0.3 } },
+};
 
-export const CalloutBox: React.FC<<CalloutBoxProps> = ({
-  variant,
-  title,
-  children,
-  statNumber,
-  statLabel,
-  source,
-  items,
-  comparison,
-  imageUrl,
-  className = '',
-}) => {
-  const motionProps = useEarthMotion();
+export const arrowHoverVariants = {
+  rest: { x: 0 },
+  hover: { x: 4, transition: { duration: 0.3, ease: 'easeOut' } },
+};
 
-  const renderVariant = useMemo(() => {
-    switch (variant) {
-      case 'stat':
-        return (
-          <StatVariant 
-            title={title} 
-            statNumber={statNumber} 
-            statLabel={statLabel} 
-            source={source}
-          >
-            {children}
-          </StatVariant>
-        );
-      case 'principle':
-        return (
-          <PrincipleVariant title={title} source={source}>
-            {children}
-          </PrincipleVariant>
-        );
-      case 'example':
-        return (
-          <ExampleVariant title={title} source={source} imageUrl={imageUrl}>
-            {children}
-          </ExampleVariant>
-        );
-      case 'multi-item':
-        return (
-          <MultiItemVariant title={title} items={items} source={source} />
-        );
-      case 'comparison':
-        return (
-          <ComparisonVariant title={title} comparison={comparison} source={source} />
-        );
-      default:
-        return <div>{children}</div>;
+/** Reduced-motion fallback: instant fade, no vertical travel */
+export const reducedMotionItemVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.3 } },
+};
+```
+
+---
+
+### 3. `components/HomepageHero/hooks/useHomepageHeroLogic.ts`
+
+```typescript
+import { useCallback, useEffect, useState } from 'react';
+
+/**
+ * Custom hook managing HomepageHero state, reduced-motion preference,
+ * and scroll-triggered CTA visibility.
+ */
+
+export interface UseHomepageHeroLogicReturn {
+  /** True if user prefers reduced motion */
+  prefersReducedMotion: boolean;
+  /** True after initial mount — prevents hydration mismatch */
+  isMounted: boolean;
+  /** Scroll progress 0-1 for optional parallax */
+  scrollProgress: number;
+  /** Memoized CTA click handler */
+  handleCtaClick: (onCtaClick?: () => void) => void;
+}
+
+export const useHomepageHeroLogic = (): UseHomepageHeroLogicReturn => {
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    setIsMounted(true);
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handleChange);
+
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const hero = document.getElementById('hero-section');
+      if (!hero) return;
+      const rect = hero.getBoundingClientRect();
+      const progress = Math.min(Math.max(-rect.top / rect.height, 0), 1);
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleCtaClick = useCallback((onCtaClick?: () => void) => {
+    onCtaClick?.();
+    // Default smooth scroll to featured section if no custom handler
+    const featured = document.getElementById('featured-section');
+    if (featured && !onCtaClick) {
+      featured.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     }
-  }, [variant, title, children, statNumber, statLabel, source, items, comparison, imageUrl]);
+  }, [prefersReducedMotion]);
 
-  // Base classes grounded in earth-tone design tokens
-  const baseClasses = `
-    relative overflow-hidden
-    ${EARTH_TOKENS.bg}
-    border ${EARTH_TOKENS.border}
-    rounded-lg
-    p-6 md:p-8
-    max-w-3xl
-    focus-within:ring-2 focus-within:ring-emerald-800 focus-within:ring-offset-2 focus-within:ring-offset-stone-50
-    transition-colors duration-300
-  `;
+  return {
+    prefersReducedMotion,
+    isMounted,
+    scrollProgress,
+    handleCtaClick,
+  };
+};
+```
 
-  // Hover behavior varies by variant
-  const hoverClasses = variant === 'example' || variant === 'comparison' 
-    ? 'hover:border-stone-300 hover:shadow-sm' 
-    : '';
+---
+
+### 4. `components/HomepageHero/subcomponents/StatCallout.tsx`
+
+```typescript
+import React from 'react';
+import { motion } from 'framer-motion';
+import { statVariants } from '../animations/variants';
+import { StatCalloutData } from '../types';
+
+interface StatCalloutProps {
+  data: StatCalloutData;
+  prefersReducedMotion: boolean;
+}
+
+/**
+ * StatCallout — extracted as independent molecule per research Finding 1.
+ * Large numeral treatment for high-value data (e.g., "30% of world population").
+ * Visual treatment: minimal box, oversized figure, left border accent in earth terracotta.
+ */
+export const StatCallout: React.FC<<StatCalloutProps> = ({
+  data,
+  prefersReducedMotion,
+}) => {
+  const variants = prefersReducedMotion ? undefined : statVariants;
 
   return (
     <motion.aside
-      className={`${baseClasses} ${hoverClasses} ${className}`}
-      variants={containerVariants}
-      initial={motionProps.initial as any}
-      whileInView={motionProps.whileInView as any}
-      viewport={motionProps.viewport}
-      role="complementary"
-      aria-label={title || `${variant} callout`}
+      variants={variants}
+      initial="hidden"
+      animate="visible"
+      className="relative mt-8 max-w-md rounded-lg border-l-4 border-[#c17c53] bg-[#faf8f3] p-6 shadow-sm"
+      aria-label="Key statistic"
     >
-      {renderVariant}
+      <div className="flex flex-col gap-1">
+        <span className="font-serif text-4xl font-semibold leading-none tracking-tight text-[#2d5a27] md:text-5xl">
+          {data.figure}
+        </span>
+        <p className="mt-2 font-sans text-base leading-relaxed text-[#5c4f42]">
+          {data.caption}
+        </p>
+        {data.source && (
+          <span className="mt-2 font-sans text-xs uppercase tracking-wider text-[#8c7d6d]">
+            Source: {data.source}
+          </span>
+        )}
+      </div>
     </motion.aside>
   );
 };
-
-// ─── EXPORTS ─────────────────────────────────────────────────────
-
-export default CalloutBox;
 ```
 
 ---
 
-### Usage Example
+### 5. `components/HomepageHero/HomepageHero.tsx`
+
+```typescript
+import React from 'react';
+import { motion } from 'framer-motion';
+import { HomepageHeroProps } from './types';
+import {
+  containerVariants,
+  itemVariants,
+  reducedMotionItemVariants,
+  ctaHoverVariants,
+  arrowHoverVariants,
+} from './animations/variants';
+import { useHomepageHeroLogic } from './hooks/useHomepageHeroLogic';
+import { StatCallout } from './subcomponents/StatCallout';
+
+/**
+ * HomepageHero — O02 Page Hero Block
+ * 
+ * Design decisions derived from research report & screenshot:
+ * - Serif H1 for editorial warmth ("Welcome to The Earthen Homes")
+ * - Earth-green primary (#2d5a27) on warm cream background
+ * - Curved bottom edge implied by overflow-hidden + rounded inner image
+ * - No heavy shadows (groundedness brand voice — "elevation: none")
+ * - Generous line-height (1.6) for em-dash-heavy editorial voice
+ */
+
+export const HomepageHero: React.FC<<HomepageHeroProps> = ({
+  content,
+  disableAnimation = false,
+  onCtaClick,
+}) => {
+  const { prefersReducedMotion, isMounted, handleCtaClick } = useHomepageHeroLogic();
+  const shouldAnimate = !disableAnimation && !prefersReducedMotion && isMounted;
+
+  const activeContainer = shouldAnimate ? containerVariants : undefined;
+  const activeItem = shouldAnimate ? itemVariants : reducedMotionItemVariants;
+
+  return (
+    <section
+      id="hero-section"
+      className="relative w-full overflow-hidden bg-[#f5f0e8]"
+      aria-labelledby="hero-headline"
+    >
+      {/* Background image layer — LCP element, eager loaded */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={content.backgroundImage}
+          alt=""
+          className="h-full w-full object-cover object-center"
+          style={{ opacity: 0.35 }} // Subtle, doesn't compete with text
+          loading="eager"
+          aria-hidden="true"
+        />
+        {/* Warm overlay for text legibility without heavy shadow */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#f5f0e8]/60 via-[#f5f0e8]/40 to-[#f5f0e8]/90" />
+      </div>
+
+      {/* Content layer */}
+      <motion.div
+        className="relative z-10 mx-auto flex max-w-7xl flex-col items-start justify-center px-6 py-24 md:px-12 md:py-32 lg:py-40"
+        variants={activeContainer}
+        initial="hidden"
+        animate="visible"
+      >
+        {/* Brand mark — decorative but labeled */}
+        <motion.div variants={activeItem} className="mb-6 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-[#c17c53]">
+            {/* SVG earth-strata mark — replaces emoji per research M4 */}
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              className="h-6 w-6 text-white"
+              aria-hidden="true"
+            >
+              <path d="M2 20h20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path d="M4 16h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path d="M6 12h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path d="M8 8h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path d="M10 4h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </div>
+          <span className="font-sans text-sm font-semibold uppercase tracking-widest text-[#8c7d6d]">
+            The Earthen Homes
+          </span>
+        </motion.div>
+
+        {/* H1 — Editorial serif, earth-green, generous measure */}
+        <motion.h1
+          id="hero-headline"
+          variants={activeItem}
+          className="max-w-3xl font-serif text-4xl font-bold leading-[1.15] tracking-tight text-[#2d5a27] md:text-5xl lg:text-6xl"
+          style={{ maxWidth: '18ch' }} // ~65-75ch for line-length discipline
+        >
+          {content.headline}
+        </motion.h1>
+
+        {/* Subtitle — Sans-serif, warm brown, max-width for readability */}
+        <motion.p
+          variants={activeItem}
+          className="mt-6 max-w-xl font-sans text-lg leading-relaxed text-[#5c4f42] md:text-xl"
+          style={{ lineHeight: 1.65 }}
+        >
+          {content.subtitle}
+        </motion.p>
+
+        {/* CTA — Pill shape, earthy brown, arrow icon */}
+        <motion.div variants={activeItem} className="mt-10">
+          <motion.a
+            href={content.ctaHref}
+            onClick={(e) => {
+              e.preventDefault();
+              handleCtaClick(onCtaClick);
+            }}
+            className="inline-flex items-center gap-3 rounded-full bg-[#4a3f35] px-8 py-4 font-sans text-sm font-semibold uppercase tracking-wider text-[#faf8f3] transition-colors hover:bg-[#3a322a] focus:outline-none focus:ring-2 focus:ring-[#c17c53] focus:ring-offset-2 focus:ring-offset-[#f5f0e8]"
+            variants={ctaHoverVariants}
+            initial="rest"
+            whileHover="hover"
+            animate="rest"
+            aria-label={`${content.ctaLabel} — scroll to featured content`}
+          >
+            <span>{content.ctaLabel}</span>
+            <motion.svg
+              className="h-4 w-4"
+              viewBox="0 0 16 16"
+              fill="none"
+              variants={arrowHoverVariants}
+              aria-hidden="true"
+            >
+              <path
+                d="M3 8h10M9 4l4 4-4 4"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </motion.svg>
+          </motion.a>
+        </motion.div>
+
+        {/* Optional Stat Callout — only rendered if data provided */}
+        {content.statCallout && (
+          <StatCallout
+            data={content.statCallout}
+            prefersReducedMotion={prefersReducedMotion || disableAnimation}
+          />
+        )}
+      </motion.div>
+
+      {/* Curved bottom edge — organic, grounded, no sharp corners */}
+      <div className="absolute bottom-0 left-0 right-0 z-20">
+        <svg
+          viewBox="0 0 1440 80"
+          fill="none"
+          className="w-full"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M0 80V40C240 80 480 0 720 0s480 80 720 40v40H0z"
+            fill="#ffffff"
+          />
+        </svg>
+      </div>
+    </section>
+  );
+};
+```
+
+---
+
+### 6. `components/HomepageHero/index.tsx`
+
+```typescript
+export { HomepageHero } from './HomepageHero';
+export type { HomepageHeroProps, HeroContent, StatCalloutData } from './types';
+export { StatCallout } from './subcomponents/StatCallout';
+```
+
+---
+
+## Example Usage
 
 ```tsx
-import { CalloutBox } from './components/CalloutBox';
+import { HomepageHero } from '@/components/HomepageHero';
 
-// 1. STAT CALLOUT — "30% of the world's population..."
-<<CalloutBox
-  variant="stat"
-  title="Did You Know?"
-  statNumber="30%"
-  statLabel="Global Population"
-  source="UN-Habitat, 2024"
->
-  Approximately 30% of the world's population — roughly 2.4 billion 
-  people — currently live in homes built with earth. From ancient 
-  Jericho (10,000 BC) to the rammed-earth sections of China's Great 
-  Wall, earthen architecture is humanity's oldest building tradition.
-</CalloutBox>
+const heroContent = {
+  brandAlt: 'The Earthen Homes',
+  headline: 'Welcome to The Earthen Homes',
+  subtitle: 'Your Complete Guide to Natural, Sustainable Earth-Based Living',
+  ctaLabel: 'Learn More',
+  ctaHref: '#featured-section',
+  backgroundImage: '/images/hero-earth-sheltered-home.jpg',
+  statCallout: {
+    figure: '30%',
+    caption: "of the world's population — roughly 2.4 billion people — currently live in homes built with earth.",
+    source: 'UN-Habitat Global Housing Report',
+  },
+};
 
-// 2. PRINCIPLE CALLOUT — "Key Principle" definition
-<<CalloutBox
-  variant="principle"
-  title="Key Principle"
->
-  All earth building techniques share one foundational insight: soil — 
-  a mixture of clay, silt, sand, and sometimes gravel — is a remarkable 
-  building material. The clay fraction acts as the binder; sand and 
-  gravel provide compressive strength; fiber adds tensile strength.
-</CalloutBox>
-
-// 3. EXAMPLE CALLOUT — Real-world case study
-<<CalloutBox
-  variant="example"
-  title="Real Example: A $1,500 Home"
-  imageUrl="/images/portugal-cob-home.jpg"
->
-  A family in rural Portugal completed a 600 square foot cob home for 
-  under $1,500 in materials. The foundation used local rubble stone, 
-  the walls were built from soil excavated during the foundation dig, 
-  and the family spent three months of weekends building with friends.
-</CalloutBox>
-
-// 4. MULTI-ITEM CALLOUT — Six Biotecture principles
-<<CalloutBox
-  variant="multi-item"
-  title="The Six Design Principles of Biotecture"
-  items={[
-    { title: "Thermal/Solar Heating & Cooling", description: "Passive solar design and thermal mass regulate temperature." },
-    { title: "Solar & Wind Electricity", description: "On-site photovoltaics and small wind turbines generate power." },
-    { title: "Water Harvesting", description: "Rain and snow captured, filtered, and stored on-site." },
-    { title: "Contained Sewage Treatment", description: "Internal and external botanical cells process waste." },
-    { title: "Food Production", description: "South-facing greenhouse corridor enables year-round growing." },
-    { title: "Natural & Recycled Materials", description: "Tires, cans, bottles, and earth form the primary structure." }
-  ]}
-/>
-
-// 5. COMPARISON CALLOUT — Embodied carbon
-<<CalloutBox
-  variant="comparison"
-  title="The Numbers: Embodied Carbon"
-  comparison={{
-    left: { value: "80", label: "tonnes CO₂e — Conventional timber-frame house (2,000 sq ft)" },
-    right: { value: "4–6", label: "tonnes CO₂e — Equivalent cob home" },
-    context: "A reduction of over 90%. Every earthen home built removes roughly 70 tonnes of CO₂ equivalent from the construction supply chain."
-  }}
-  source="U.S. DOE / ICE Database"
-/>
+export default function HomePage() {
+  return (
+    <main>
+      <HomepageHero content={heroContent} />
+      <section id="featured-section" className="py-24">
+        {/* Featured articles grid follows */}
+      </section>
+    </main>
+  );
+}
 ```
 
 ---
 
-### Theming Adaptability
+## Design System Alignment
 
-| To customize | Override these Tailwind classes |
-|-------------|--------------------------------|
-| Background cream | Replace `bg-stone-50` with `bg-[#FAF7F2]` |
-| Border warmth | Replace `border-stone-200` with `border-[#E8E0D4]` |
-| Primary green accent | Replace `text-emerald-900` / `bg-emerald-900` with your brand green |
-| Terracotta emphasis | Replace `text-orange-800` with your terracotta token |
-| Serif face | Replace `font-serif` with `font-[Crimson_Pro]` or your choice |
-| Border radius | Replace `rounded-lg` with `rounded-sm` (0px) or `rounded-xl` (8px) |
+| Token | Value | Rationale |
+|-------|-------|-----------|
+| **Primary** | `#2d5a27` | Earth-green from screenshot headline |
+| **Accent** | `#c17c53` | Terracotta / clay — callout border, brand mark |
+| **Surface** | `#f5f0e8` | Warm cream — background, avoids clinical white |
+| **Text Primary** | `#4a3f35` | Dark brown — softer than pure black |
+| **Text Secondary** | `#5c4f42` | Medium brown — subtitle, body |
+| **Text Muted** | `#8c7d6d` | Taupe — captions, labels, source citations |
+| **Font Serif** | `font-serif` | System stack or Crimson Pro / Source Serif for editorial warmth |
+| **Font Sans** | `font-sans` | System UI / Inter for navigation, labels, CTAs |
+| **Border Radius** | `rounded-full` (CTA), `rounded-lg` (callouts) | Organic but not bubbly |
+| **Shadow** | `shadow-sm` only | Groundedness — no floating cards |
 
-**Dark mode:** This component is designed light-mode first per the research recommendation (earth tones become muddy on black). To add dark mode, wrap variants in `dark:bg-stone-900 dark:border-stone-700 dark:text-stone-200` and invert the accent colors to desaturated moss greens and warm sand tones.
-
----
-
-### Quality Gates Checklist
-
-- [x] Every prop has a TypeScript type and is used in JSDoc-style comments via interface definitions
-- [x] All 5 states from Layer 3 are visually handled (default, hover, focus, loading skeleton ready, reduced-motion)
-- [x] All animation variants are defined and referenced via `containerVariants`, `staggerContainer`, `itemVariants`
-- [x] Keyboard navigation works: `focus-within:` ring states on the container; semantic `<aside>` with `aria-label`
-- [x] No hardcoded pixel values — uses Tailwind's 4px grid (`p-6`, `gap-4`, `text-5xl`, etc.)
-- [x] Component is self-contained in a single file with zero external dependencies beyond `react`, `framer-motion`, and `lucide-react`
-- [x] Code compiles under strict TypeScript (`noImplicitAny`, `strictNullChecks`) — all props are typed, no `any` used
+This component is ready for integration into the Sprint 0 foundation described in your research report.
