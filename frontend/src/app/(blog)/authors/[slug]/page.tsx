@@ -3,9 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockAuthors, mockPosts } from "../../../../lib/mockData";
 
-
-import { mockPosts } from "@/lib/mockData";
-
 export async function generateStaticParams() {
   // Get unique author slugs from all posts
   const uniqueAuthors = Array.from(
@@ -13,7 +10,6 @@ export async function generateStaticParams() {
   );
   return uniqueAuthors.map((slug) => ({ slug }));
 }
-
 
 interface PageProps {
   params: Promise<{ slug: string }>;
