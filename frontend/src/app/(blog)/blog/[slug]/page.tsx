@@ -3,9 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockPosts } from "../../../../lib/mockData";
 
-// Static export generation
 export async function generateStaticParams() {
-  return mockPosts.map((post) => ({ slug: post.slug }));
+  return mockPosts.map((post) => ({
+    slug: post.slug,
+  }));
 }
 
 interface PageProps {
@@ -28,7 +29,6 @@ export default async function BlogPostPage({ params }: PageProps) {
   return (
     <div className="flex-1 bg-stone-50 dark:bg-stone-950 py-12 sm:py-16">
       <div className="mx-auto max-w-4xl px-6 lg:px-8">
-        
         {/* Back Link */}
         <div className="mb-8">
           <Link
@@ -96,7 +96,6 @@ export default async function BlogPostPage({ params }: PageProps) {
                   );
                 }
                 if (paragraph.startsWith("* **")) {
-                  // Handle bullet lists quickly
                   const items = paragraph.split("\n");
                   return (
                     <ul key={index} className="list-disc pl-6 space-y-2 my-4">
