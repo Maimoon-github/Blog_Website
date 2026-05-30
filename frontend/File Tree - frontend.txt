@@ -14,41 +14,26 @@ Root path: /home/maimoon-ai-system/Antigravity code/Blog_Website/frontend
 │   │   ├── 📁 (blog)/
 │   │   │   ├── 📁 authors/
 │   │   │   │   ├── 📁 [slug]/
-│   │   │   │   │   ├── 📄 loading.tsx
 │   │   │   │   │   └── 📄 page.tsx
-│   │   │   │   ├── 📄 loading.tsx
 │   │   │   │   └── 📄 page.tsx
 │   │   │   ├── 📁 blog/
 │   │   │   │   ├── 📁 [slug]/
-│   │   │   │   │   ├── 📄 error.tsx
-│   │   │   │   │   ├── 📄 loading.tsx
-│   │   │   │   │   ├── 📄 opengraph-image.tsx
 │   │   │   │   │   └── 📄 page.tsx
-│   │   │   │   ├── 📄 error.tsx
-│   │   │   │   ├── 📄 loading.tsx
-│   │   │   │   ├── 📄 opengraph-image.tsx
 │   │   │   │   └── 📄 page.tsx
 │   │   │   ├── 📁 categories/
 │   │   │   │   ├── 📁 [slug]/
-│   │   │   │   │   ├── 📄 loading.tsx
 │   │   │   │   │   └── 📄 page.tsx
-│   │   │   │   ├── 📄 loading.tsx
 │   │   │   │   └── 📄 page.tsx
 │   │   │   ├── 📁 search/
-│   │   │   │   ├── 📄 loading.tsx
 │   │   │   │   └── 📄 page.tsx
 │   │   │   ├── 📁 tags/
-│   │   │   │   ├── 📁 [slug]/
-│   │   │   │   │   ├── 📄 loading.tsx
-│   │   │   │   │   └── 📄 page.tsx
-│   │   │   │   ├── 📄 loading.tsx
-│   │   │   │   └── 📄 page.tsx
+│   │   │   │   └── 📁 [slug]/
+│   │   │   │       └── 📄 page.tsx
 │   │   │   └── 📄 layout.tsx
 │   │   ├── 📁 (site)/
 │   │   │   ├── 📁 about/
 │   │   │   │   └── 📄 page.tsx
 │   │   │   ├── 📁 contact/
-│   │   │   │   ├── 📄 loading.tsx
 │   │   │   │   └── 📄 page.tsx
 │   │   │   ├── 📁 privacy-policy/
 │   │   │   │   └── 📄 page.tsx
@@ -57,14 +42,8 @@ Root path: /home/maimoon-ai-system/Antigravity code/Blog_Website/frontend
 │   │   │   ├── 📁 terms/
 │   │   │   │   └── 📄 page.tsx
 │   │   │   ├── 📄 layout.tsx
+│   │   │   ├── 🎨 page.module.css
 │   │   │   └── 📄 page.tsx
-│   │   ├── 📁 api/
-│   │   │   ├── 📁 feed/
-│   │   │   │   └── 📄 route.ts
-│   │   │   ├── 📁 revalidate/
-│   │   │   │   └── 📄 route.ts
-│   │   │   └── 📁 search/
-│   │   │       └── 📄 route.ts
 │   │   ├── 📄 error.tsx
 │   │   ├── 📄 favicon.ico
 │   │   ├── 🎨 globals.css
@@ -72,12 +51,12 @@ Root path: /home/maimoon-ai-system/Antigravity code/Blog_Website/frontend
 │   │   ├── 📄 loading.tsx
 │   │   ├── 📄 manifest.ts
 │   │   ├── 📄 not-found.tsx
-│   │   ├── 📄 opengraph-image.tsx
 │   │   ├── 📄 robots.ts
 │   │   └── 📄 sitemap.ts
 │   ├── 📁 lib/
 │   │   ├── 📄 api.ts
 │   │   ├── 📄 constants.ts
+│   │   ├── 📄 mockData.ts
 │   │   ├── 📄 seo.ts
 │   │   └── 📄 wagtail.ts
 │   └── 📁 types/
@@ -87,9 +66,11 @@ Root path: /home/maimoon-ai-system/Antigravity code/Blog_Website/frontend
 ├── ⚙️ .gitignore
 ├── 📝 AGENTS.md
 ├── 📝 CLAUDE.md
+├── 📄 File Tree - frontend.txt
 ├── 📝 README.md
 ├── 📄 eslint.config.mjs
 ├── 📄 next.config.ts
+├── ⚙️ package-lock.json
 ├── ⚙️ package.json
 ├── 📄 postcss.config.mjs
 └── ⚙️ tsconfig.json
