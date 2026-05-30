@@ -5,7 +5,7 @@ import { StatCallout } from './subcomponents/StatCallout';
 import { PrincipleCallout } from './subcomponents/PrincipleCallout';
 import { ExampleCallout } from './subcomponents/ExampleCallout';
 import { MultiItemCallout } from './subcomponents/MultiItemCallout';
-import { ComparisonCallout } from './subcomponents/ComparisonCallout';
+import { ComparisonCallout } from './subcomponents/CategoryChip';
 
 /**
  * CalloutSystem — unified dispatcher for five distinct callout variants.

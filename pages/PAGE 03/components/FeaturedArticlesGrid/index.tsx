@@ -12,4 +12,4 @@ export { StatCallout } from './subcomponents/StatCallout';
 export { PrincipleCallout } from './subcomponents/PrincipleCallout';
 export { ExampleCallout } from './subcomponents/ExampleCallout';
 export { MultiItemCallout } from './subcomponents/MultiItemCallout';
-export { ComparisonCallout } from './subcomponents/ComparisonCallout';
+export { ComparisonCallout } from './subcomponents/CategoryChip';
