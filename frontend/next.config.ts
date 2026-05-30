@@ -1,7 +1,6 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
-  /* config options here */
+const nextConfig = {
+  output: 'export',
+  images: { unoptimized: true },
+  // If you use trailing slashes, set: trailingSlash: true,
 };
-
-export default nextConfig;
+module.exports = nextConfig;
