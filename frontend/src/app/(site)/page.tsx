@@ -1,6 +1,8 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { mockPosts, mockCategories } from "../../lib/mockData";
+import styles from "./page.module.css";
 
 export default function HomePage() {
   const featuredPost = mockPosts.find((p) => p.featured) || mockPosts[0];
@@ -8,37 +10,19 @@ export default function HomePage() {
 
   return (
     <div className="flex-1 bg-[#131026]">
-
-      {/* ═══════════════════════════════════════
-          1. HERO SECTION
-      ═══════════════════════════════════════ */}
+      {/* 1. HERO SECTION */}
       <section className="relative overflow-hidden py-24 sm:py-36">
-        {/* Radial haze background */}
-        <div
-          className="absolute inset-0 -z-10 haze-animate"
-          style={{
-            background: "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(95,45,166,0.35) 0%, transparent 70%)",
-          }}
-        />
-        {/* Secondary deep glow */}
-        <div
-          className="absolute inset-0 -z-10"
-          style={{
-            background: "radial-gradient(ellipse 50% 40% at 80% 80%, rgba(78,52,115,0.2) 0%, transparent 70%)",
-          }}
-        />
+        <div className={`absolute inset-0 -z-10 haze-animate ${styles.heroRadialHaze}`} />
+        <div className={`absolute inset-0 -z-10 ${styles.heroDeepGlow}`} />
 
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
-            {/* Badge */}
             <span
-              className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold text-[#8B65BF] mb-8 ring-1 ring-inset ring-[#4E3473]"
-              style={{ background: "rgba(95,45,166,0.12)" }}
+              className={`inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold text-[#8B65BF] mb-8 ring-1 ring-inset ring-[#4E3473] ${styles.badgeBg}`}
             >
               ✦ Welcome to the Future of Sustainable Living &amp; Travel
             </span>
 
-            {/* Headline */}
             <h1 className="font-sans text-4xl font-extrabold tracking-tight text-[#E0E0E0] sm:text-6xl leading-tight">
               Where Sustainable Design Meets{" "}
               <span className="gradient-text">Absolute Sanctuary</span>
@@ -48,15 +32,10 @@ export default function HomePage() {
               Discover beautiful, low-impact cob and rammed-earth architectures alongside the world&apos;s most romantic hotel suites featuring private in-room hot tubs.
             </p>
 
-            {/* CTAs */}
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
                 href="/blog"
-                className="rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 hover-lift cursor-pointer"
-                style={{
-                  background: "#5F2DA6",
-                  boxShadow: "0 0 20px rgba(95,45,166,0.5)",
-                }}
+                className={`rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 hover-lift cursor-pointer ${styles.ctaButton}`}
               >
                 Explore the Blog
               </Link>
@@ -70,23 +49,18 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Decorative floating lotus */}
         <div className="absolute top-8 right-8 text-4xl opacity-20 lotus-badge pointer-events-none hidden lg:block">
           🪷
         </div>
-        <div className="absolute bottom-12 left-10 text-2xl opacity-10 lotus-badge pointer-events-none hidden lg:block"
-          style={{ animationDelay: "1s" }}>
+        <div
+          className={`absolute bottom-12 left-10 text-2xl opacity-10 lotus-badge pointer-events-none hidden lg:block ${styles.lotusDelay}`}
+        >
           ✦
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          2. CATEGORY SHOWCASE
-      ═══════════════════════════════════════ */}
-      <section
-        className="py-16 sm:py-24 border-y"
-        style={{ borderColor: "rgba(78,52,115,0.4)", background: "rgba(31,26,64,0.25)" }}
-      >
+      {/* 2. CATEGORY SHOWCASE */}
+      <section className={`py-16 sm:py-24 border-y ${styles.categorySection}`}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-16">
             <h2 className="font-sans text-3xl font-bold tracking-tight text-[#E0E0E0] sm:text-4xl">
@@ -102,25 +76,17 @@ export default function HomePage() {
               <Link
                 key={cat.slug}
                 href={`/blog?category=${cat.slug}`}
-                className="group relative flex flex-col justify-end overflow-hidden rounded-2xl px-8 pb-8 pt-40 hover-lift shadow-md transition-all duration-300"
-                style={{ border: "1px solid rgba(78,52,115,0.5)" }}
+                className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl px-8 pb-8 pt-40 hover-lift shadow-md transition-all duration-300 ${styles.categoryCard}`}
               >
-                <img
+                <Image
                   src={cat.image}
                   alt={cat.name}
-                  className="absolute inset-0 h-full w-full object-cover opacity-50 group-hover:opacity-40 group-hover:scale-105 transition-all duration-500"
+                  fill
+                  className="object-cover opacity-50 group-hover:opacity-40 group-hover:scale-105 transition-all duration-500"
                 />
-                {/* Dark violet overlay */}
+                <div className={`absolute inset-0 ${styles.categoryOverlay}`} />
                 <div
-                  className="absolute inset-0"
-                  style={{
-                    background: "linear-gradient(to top, #131026 0%, rgba(31,26,64,0.5) 50%, transparent 100%)",
-                  }}
-                />
-                {/* Violet glow on hover */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none"
-                  style={{ background: "radial-gradient(circle at 50% 100%, rgba(95,45,166,0.25), transparent 70%)" }}
+                  className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none ${styles.categoryGlow}`}
                 />
                 <div className="relative z-10">
                   <h3 className="font-sans text-xl font-bold text-[#E0E0E0] group-hover:text-[#8B65BF] transition-colors">
@@ -136,9 +102,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          3. FEATURED POST
-      ═══════════════════════════════════════ */}
+      {/* 3. FEATURED POST */}
       {featuredPost && (
         <section className="py-20 sm:py-28">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -153,27 +117,18 @@ export default function HomePage() {
               </div>
 
               <div
-                className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-center overflow-hidden rounded-3xl hover-lift transition-all duration-300"
-                style={{
-                  background: "#1F1A40",
-                  border: "1px solid rgba(78,52,115,0.6)",
-                  boxShadow: "0 0 30px rgba(95,45,166,0.15)",
-                }}
+                className={`grid grid-cols-1 lg:grid-cols-2 gap-0 items-center overflow-hidden rounded-3xl hover-lift transition-all duration-300 ${styles.featuredContainer}`}
               >
-                {/* Image */}
                 <div className="relative h-96 lg:h-full w-full min-h-[400px]">
-                  <img
+                  <Image
                     src={featuredPost.image}
                     alt={featuredPost.title}
-                    className="absolute inset-0 h-full w-full object-cover opacity-80"
+                    fill
+                    className="object-cover opacity-80"
                   />
-                  <div
-                    className="absolute inset-0"
-                    style={{ background: "linear-gradient(to right, transparent 60%, #1F1A40 100%)" }}
-                  />
+                  <div className={`absolute inset-0 ${styles.featuredImageOverlay}`} />
                 </div>
 
-                {/* Content */}
                 <div className="p-8 lg:p-12 flex flex-col justify-center">
                   <span className="text-xs font-semibold text-[#8B65BF] tracking-widest uppercase">
                     {featuredPost.category.name}
@@ -185,12 +140,14 @@ export default function HomePage() {
                     {featuredPost.excerpt}
                   </p>
                   <div className="mt-6 flex items-center gap-x-4">
-                    <img
-                      src={featuredPost.author.avatar}
-                      alt={featuredPost.author.name}
-                      className="h-10 w-10 rounded-full object-cover"
-                      style={{ border: "2px solid rgba(95,45,166,0.6)" }}
-                    />
+                    <div className="relative h-10 w-10">
+                      <Image
+                        src={featuredPost.author.avatar}
+                        alt={featuredPost.author.name}
+                        fill
+                        className={`rounded-full object-cover ${styles.authorAvatarBorder}`}
+                      />
+                    </div>
                     <div className="text-sm">
                       <p className="font-semibold text-[#E0E0E0]">{featuredPost.author.name}</p>
                       <p className="text-[#8B65BF]/60 text-xs">{featuredPost.publishDate} • {featuredPost.readTime}</p>
@@ -199,11 +156,7 @@ export default function HomePage() {
                   <div className="mt-8">
                     <Link
                       href={`/blog/${featuredPost.slug}`}
-                      className="inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 cursor-pointer"
-                      style={{
-                        background: "#5F2DA6",
-                        boxShadow: "0 0 16px rgba(95,45,166,0.4)",
-                      }}
+                      className={`inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 cursor-pointer ${styles.featuredCta}`}
                     >
                       Read Full Article →
                     </Link>
@@ -215,16 +168,8 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* ═══════════════════════════════════════
-          4. STAT CALLOUTS
-      ═══════════════════════════════════════ */}
-      <section
-        className="py-20 border-y"
-        style={{
-          borderColor: "rgba(78,52,115,0.35)",
-          background: "rgba(31,26,64,0.2)",
-        }}
-      >
+      {/* 4. STAT CALLOUTS */}
+      <section className={`py-20 border-y ${styles.statsSection}`}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 text-center items-center">
             {[
@@ -246,21 +191,9 @@ export default function HomePage() {
             ].map((item) => (
               <div
                 key={item.title}
-                className="p-6 rounded-2xl hover-lift transition-all duration-300 cursor-default"
-                style={{
-                  background: "#1F1A40",
-                  border: "1px solid rgba(78,52,115,0.5)",
-                }}
+                className={`p-6 rounded-2xl hover-lift transition-all duration-300 cursor-default ${styles.statCard}`}
               >
-                <span
-                  className="text-5xl font-extrabold font-sans"
-                  style={{
-                    background: "linear-gradient(135deg, #8B65BF 0%, #5F2DA6 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
+                <span className={`text-5xl font-extrabold font-sans ${styles.statGradient}`}>
                   {item.stat}
                 </span>
                 <h3 className="mt-3 text-sm font-semibold uppercase tracking-wider text-[#E0E0E0]">{item.title}</h3>
@@ -271,9 +204,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          5. RECENT ARTICLES GRID
-      ═══════════════════════════════════════ */}
+      {/* 5. RECENT ARTICLES GRID */}
       <section className="py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-16">
@@ -289,26 +220,18 @@ export default function HomePage() {
             {recentPosts.map((post) => (
               <article
                 key={post.id}
-                className="flex flex-col items-start justify-between overflow-hidden rounded-2xl hover-lift transition-all duration-300"
-                style={{
-                  background: "#1F1A40",
-                  border: "1px solid rgba(78,52,115,0.5)",
-                }}
+                className={`flex flex-col items-start justify-between overflow-hidden rounded-2xl hover-lift transition-all duration-300 ${styles.recentCard}`}
               >
-                {/* Thumbnail */}
                 <div className="relative w-full h-48 overflow-hidden">
-                  <img
+                  <Image
                     src={post.image}
                     alt={post.title}
-                    className="absolute inset-0 h-full w-full object-cover opacity-80 hover:scale-105 transition-transform duration-500"
+                    fill
+                    className="object-cover opacity-80 hover:scale-105 transition-transform duration-500"
                   />
-                  <div
-                    className="absolute inset-0"
-                    style={{ background: "linear-gradient(to bottom, transparent 50%, #1F1A40 100%)" }}
-                  />
+                  <div className={`absolute inset-0 ${styles.recentImageOverlay}`} />
                 </div>
 
-                {/* Card body */}
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
                     <span className="text-xs font-semibold text-[#8B65BF] tracking-widest uppercase">
@@ -321,16 +244,15 @@ export default function HomePage() {
                       {post.excerpt}
                     </p>
                   </div>
-                  <div
-                    className="mt-6 flex items-center gap-x-3 border-t pt-4"
-                    style={{ borderColor: "rgba(78,52,115,0.4)" }}
-                  >
-                    <img
-                      src={post.author.avatar}
-                      alt={post.author.name}
-                      className="h-8 w-8 rounded-full object-cover"
-                      style={{ border: "2px solid rgba(95,45,166,0.5)" }}
-                    />
+                  <div className={`mt-6 flex items-center gap-x-3 border-t pt-4 ${styles.recentDivider}`}>
+                    <div className="relative h-8 w-8">
+                      <Image
+                        src={post.author.avatar}
+                        alt={post.author.name}
+                        fill
+                        className={`rounded-full object-cover ${styles.recentAvatarBorder}`}
+                      />
+                    </div>
                     <div className="text-xs">
                       <p className="font-semibold text-[#E0E0E0]">{post.author.name}</p>
                       <p className="text-[#8B65BF]/60">{post.publishDate} • {post.readTime}</p>
@@ -343,29 +265,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════
-          6. NEWSLETTER
-      ═══════════════════════════════════════ */}
-      <section
-        className="py-16 sm:py-24"
-        style={{ background: "rgba(19,16,38,0.95)" }}
-      >
+      {/* 6. NEWSLETTER */}
+      <section className={`py-16 sm:py-24 ${styles.newsletterSection}`}>
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div
-            className="relative overflow-hidden rounded-3xl px-6 py-20 sm:px-24 sm:py-32 lg:flex lg:items-center lg:px-32 lg:py-24"
-            style={{
-              background: "rgba(95,45,166,0.08)",
-              border: "1px solid rgba(78,52,115,0.6)",
-              boxShadow: "0 0 60px rgba(95,45,166,0.12), inset 0 0 40px rgba(95,45,166,0.06)",
-            }}
-          >
-            {/* Background radial glow */}
-            <div
-              className="absolute inset-0 -z-10 haze-animate pointer-events-none"
-              style={{
-                background: "radial-gradient(ellipse 60% 60% at center, rgba(95,45,166,0.15), transparent 70%)",
-              }}
-            />
+          <div className={`relative overflow-hidden rounded-3xl px-6 py-20 sm:px-24 sm:py-32 lg:flex lg:items-center lg:px-32 lg:py-24 ${styles.newsletterContainer}`}>
+            <div className={`absolute inset-0 -z-10 haze-animate pointer-events-none ${styles.newsletterGlow}`} />
 
             <div className="mx-auto max-w-2xl lg:max-w-none lg:flex-auto">
               <div className="text-4xl mb-4 lotus-badge">🪷</div>
@@ -383,21 +287,12 @@ export default function HomePage() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="w-full min-w-0 rounded-full border-0 px-4 py-2 text-[#E0E0E0] shadow-sm sm:text-sm sm:leading-6 outline-none focus:ring-2"
-                  style={{
-                    background: "rgba(78,52,115,0.2)",
-                    ring: "1px solid rgba(78,52,115,0.6)",
-                    boxShadow: "inset 0 0 0 1px rgba(78,52,115,0.6)",
-                  }}
+                  className={`w-full min-w-0 rounded-full border-0 px-4 py-2 text-[#E0E0E0] shadow-sm sm:text-sm sm:leading-6 outline-none focus:ring-2 ${styles.newsletterInput}`}
                   placeholder="Enter your email"
                 />
                 <button
                   type="submit"
-                  className="mt-3 sm:mt-0 w-full sm:w-auto rounded-full px-6 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:scale-105 cursor-pointer"
-                  style={{
-                    background: "#5F2DA6",
-                    boxShadow: "0 0 14px rgba(95,45,166,0.5)",
-                  }}
+                  className={`mt-3 sm:mt-0 w-full sm:w-auto rounded-full px-6 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:scale-105 cursor-pointer ${styles.newsletterButton}`}
                 >
                   Subscribe ✦
                 </button>
@@ -406,7 +301,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
     </div>
   );
 }
