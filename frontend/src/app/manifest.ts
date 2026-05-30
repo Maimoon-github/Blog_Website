@@ -1,9 +1,11 @@
 import { MetadataRoute } from "next";
 
+export const dynamic = 'force-static';   // Required for static export with output: 'export'
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Earth & Escape Blog",
-    short_name: "EarthEscape",
+    name: "MaimoonAmin | PorPolio",
+    short_name: "PorPolio",
     description: "A premium lifestyle portal about organic architecture and hot tub hotel getaways.",
     start_url: "/",
     display: "standalone",
@@ -14,7 +16,7 @@ export default function manifest(): MetadataRoute.Manifest {
         src: "/favicon.ico",
         sizes: "any",
         type: "image/x-icon",
-      },
+      },    
     ],
   };
 }
