@@ -1,5 +1,5 @@
-File Tree - frontend
-Root path: /home/maimoon-ai-system/Antigravity code/Blog_Website/frontend
+File Tree: frontend
+Root path: /home/maimoon-nixos/Antigravity code/Blog_Website/frontend
 
 ────────────────────────────────────────────────────────────────────────────────
 
@@ -41,8 +41,6 @@ Root path: /home/maimoon-ai-system/Antigravity code/Blog_Website/frontend
 │   │   │   │   └── 📄 page.tsx
 │   │   │   ├── 📁 terms/
 │   │   │   │   └── 📄 page.tsx
-│   │   │   ├── 📄 layout.tsx
-│   │   │   ├── 🎨 page.module.css
 │   │   │   └── 📄 page.tsx
 │   │   ├── 📄 error.tsx
 │   │   ├── 📄 favicon.ico
@@ -51,8 +49,12 @@ Root path: /home/maimoon-ai-system/Antigravity code/Blog_Website/frontend
 │   │   ├── 📄 loading.tsx
 │   │   ├── 📄 manifest.ts
 │   │   ├── 📄 not-found.tsx
+│   │   ├── 🎨 page.module.css
 │   │   ├── 📄 robots.ts
 │   │   └── 📄 sitemap.ts
+│   ├── 📁 components/
+│   │   ├── 📄 Footer.tsx
+│   │   └── 📄 Header.tsx
 │   ├── 📁 lib/
 │   │   ├── 📄 api.ts
 │   │   ├── 📄 constants.ts
