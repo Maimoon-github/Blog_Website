@@ -15,33 +15,46 @@ const Footer = () => {
     { href: '/terms', label: 'Terms of Service' },
   ];
 
+  const socialLinks = [
+    { href: '#', label: 'Twitter', icon: '🐦' },
+    { href: '#', label: 'Instagram', icon: '📷' },
+    { href: '#', label: 'GitHub', icon: '💻' },
+  ];
+
   return (
     <footer className="bg-lotus-shadow/50 border-t border-lotus-petal-dark/50 mt-auto">
-      <div className="container mx-auto px-4 py-12 lg:py-16">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
+        {/* Main footer grid – stacks on mobile, 2 cols on tablet, 4 on desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           {/* Brand Column */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold gradient-text">Earthen Escapes</h3>
-            <p className="text-sm text-foreground/70">
+          <div className="space-y-3 sm:space-y-4 text-center sm:text-left">
+            <h3 className="text-xl sm:text-2xl font-bold gradient-text">Earthen Escapes</h3>
+            <p className="text-sm text-foreground/70 leading-relaxed max-w-xs mx-auto sm:mx-0">
               Organic architecture, eco‑living & romantic hot tub getaways.
             </p>
-            <div className="flex space-x-4 text-lotus-light">
-              {/* Social Icons (replace with actual links) */}
-              <a href="#" aria-label="Twitter" className="hover:text-white transition">🐦</a>
-              <a href="#" aria-label="Instagram" className="hover:text-white transition">📷</a>
-              <a href="#" aria-label="GitHub" className="hover:text-white transition">💻</a>
+            <div className="flex justify-center sm:justify-start space-x-4 text-lotus-light">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  aria-label={social.label}
+                  className="text-xl hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-lotus-core rounded-lg p-1"
+                >
+                  {social.icon}
+                </a>
+              ))}
             </div>
           </div>
 
           {/* Quick Links */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4 text-lotus-light">Quick Links</h4>
+          <div className="text-center sm:text-left">
+            <h4 className="text-base sm:text-lg font-semibold mb-4 text-lotus-light">Quick Links</h4>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-foreground/70 hover:text-lotus-light transition text-sm"
+                    className="text-sm text-foreground/70 hover:text-lotus-light transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-lotus-core rounded inline-block px-1"
                   >
                     {link.label}
                   </Link>
@@ -50,15 +63,15 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Legal */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4 text-lotus-light">Legal</h4>
+          {/* Legal Links */}
+          <div className="text-center sm:text-left">
+            <h4 className="text-base sm:text-lg font-semibold mb-4 text-lotus-light">Legal</h4>
             <ul className="space-y-2">
               {legalLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-foreground/70 hover:text-lotus-light transition text-sm"
+                    className="text-sm text-foreground/70 hover:text-lotus-light transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-lotus-core rounded inline-block px-1"
                   >
                     {link.label}
                   </Link>
@@ -67,21 +80,25 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Newsletter (optional) */}
-          <div>
-            <h4 className="text-lg font-semibold mb-4 text-lotus-light">Stay Updated</h4>
+          {/* Newsletter Column */}
+          <div className="text-center sm:text-left">
+            <h4 className="text-base sm:text-lg font-semibold mb-4 text-lotus-light">Stay Updated</h4>
             <p className="text-sm text-foreground/70 mb-3">
               Get the latest articles and offers.
             </p>
-            <form className="flex flex-col sm:flex-row gap-2">
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="flex flex-col sm:flex-row gap-2"
+            >
               <input
                 type="email"
                 placeholder="Your email"
-                className="px-4 py-2 rounded-lg bg-lotus-void/60 border border-lotus-petal-dark/50 text-sm focus:outline-none focus:ring-2 focus:ring-lotus-core"
+                className="flex-1 rounded-full bg-lotus-void/80 border border-lotus-petal-dark px-4 py-2 text-sm text-foreground placeholder:text-foreground/40 focus:outline-none focus:ring-2 focus:ring-lotus-core"
+                required
               />
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-lotus-core hover:bg-lotus-core/80 text-white text-sm font-medium transition"
+                className="rounded-full bg-lotus-core hover:bg-lotus-core/80 px-4 py-2 text-sm font-semibold text-white transition-colors focus:outline-none focus:ring-2 focus:ring-lotus-core"
               >
                 Subscribe
               </button>
@@ -89,7 +106,8 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-lotus-petal-dark/30 text-center text-sm text-foreground/50">
+        {/* Bottom Copyright Bar – responsive padding */}
+        <div className="mt-10 sm:mt-12 pt-6 border-t border-lotus-petal-dark/30 text-center text-xs sm:text-sm text-foreground/50">
           &copy; {new Date().getFullYear()} Earthen Escapes. All rights reserved.
         </div>
       </div>
