@@ -1,0 +1,14 @@
+-r base.txt
+
+# ─── Dev / Debug ─────────────────────────────────────────────────────────────
+django-debug-toolbar>=4.2
+django-extensions>=3.2
+ipython>=8.0
+Werkzeug>=3.0                # for runserver_plus (SSL support during dev)
+factory-boy>=3.3             # test data factories
+pytest-django>=4.7
+pytest-cov>=4.1
+coverage>=7.3
+black>=23.0
+flake8>=6.1
+isort>=5.12

@@ -1,0 +1,13 @@
+-r base.txt
+
+# ─── Production server ───────────────────────────────────────────────────────
+gunicorn>=21.0
+uvicorn[standard]>=0.24      # ASGI support
+
+# ─── Monitoring / Logging ────────────────────────────────────────────────────
+sentry-sdk[django]>=1.38
+django-structlog>=6.0        # structured JSON logging
+
+# ─── Storage ─────────────────────────────────────────────────────────────────
+django-storages[s3]>=1.14    # S3 / Cloudflare R2 media storage
+boto3>=1.33
