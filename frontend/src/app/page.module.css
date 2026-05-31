@@ -1,183 +1,148 @@
-/* src/app/page.module.css */
-
 /* ============================================
-   Hero & Ambient Effects – Responsive
+   RESPONSIVE UTILITIES – Fluid Typography & Spacing
    ============================================ */
 
-.heroRadialHaze {
-  background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(95,45,166,0.35) 0%, transparent 70%);
+/* -----------------------------------------------
+   FLUID TYPOGRAPHY (clamp-based, no breakpoint gaps)
+   Usage: class="text-fluid-sm" or combine with Tailwind
+----------------------------------------------- */
+.text-fluid-xs {
+  font-size: clamp(0.75rem, 2.5vw, 0.875rem);   /* 12px → 14px */
+}
+.text-fluid-sm {
+  font-size: clamp(0.875rem, 3vw, 1rem);        /* 14px → 16px */
+}
+.text-fluid-base {
+  font-size: clamp(1rem, 3.5vw, 1.125rem);      /* 16px → 18px */
+}
+.text-fluid-md {
+  font-size: clamp(1.125rem, 4vw, 1.25rem);     /* 18px → 20px */
+}
+.text-fluid-lg {
+  font-size: clamp(1.25rem, 5vw, 1.5rem);       /* 20px → 24px */
+}
+.text-fluid-xl {
+  font-size: clamp(1.5rem, 6vw, 1.875rem);      /* 24px → 30px */
+}
+.text-fluid-2xl {
+  font-size: clamp(1.875rem, 7vw, 2.25rem);     /* 30px → 36px */
+}
+.text-fluid-3xl {
+  font-size: clamp(2.25rem, 8vw, 3rem);         /* 36px → 48px */
+}
+.text-fluid-4xl {
+  font-size: clamp(3rem, 10vw, 4rem);           /* 48px → 64px */
 }
 
-/* Smaller gradient on mobile to reduce visual weight */
-@media (max-width: 640px) {
-  .heroRadialHaze {
-    background: radial-gradient(ellipse 70% 50% at 50% -5%, rgba(95,45,166,0.2) 0%, transparent 60%);
-  }
+/* Fluid headings – preserve gradient-text */
+h1, .h1-fluid {
+  font-size: clamp(2rem, 8vw, 3.75rem);
+  line-height: 1.2;
+}
+h2, .h2-fluid {
+  font-size: clamp(1.5rem, 6vw, 2.25rem);
+  line-height: 1.3;
+}
+h3, .h3-fluid {
+  font-size: clamp(1.25rem, 5vw, 1.875rem);
+  line-height: 1.4;
 }
 
-.heroDeepGlow {
-  background: radial-gradient(ellipse 50% 40% at 80% 80%, rgba(78,52,115,0.2) 0%, transparent 70%);
+/* -----------------------------------------------
+   RESPONSIVE SPACING UTILITIES
+   (dynamic padding/margin based on viewport)
+----------------------------------------------- */
+.p-responsive {
+  padding: clamp(1rem, 4vw, 2rem);
+}
+.px-responsive {
+  padding-left: clamp(1rem, 4vw, 2rem);
+  padding-right: clamp(1rem, 4vw, 2rem);
+}
+.py-responsive {
+  padding-top: clamp(1rem, 4vw, 2rem);
+  padding-bottom: clamp(1rem, 4vw, 2rem);
+}
+.m-responsive {
+  margin: clamp(1rem, 4vw, 2rem);
+}
+.mx-responsive {
+  margin-left: clamp(1rem, 4vw, 2rem);
+  margin-right: clamp(1rem, 4vw, 2rem);
+}
+.my-responsive {
+  margin-top: clamp(1rem, 4vw, 2rem);
+  margin-bottom: clamp(1rem, 4vw, 2rem);
 }
 
-@media (max-width: 640px) {
-  .heroDeepGlow {
-    background: radial-gradient(ellipse 40% 30% at 80% 80%, rgba(78,52,115,0.1) 0%, transparent 60%);
-  }
+/* Responsive gap for flex/grid */
+.gap-responsive {
+  gap: clamp(0.75rem, 2vw, 1.5rem);
 }
 
-/* Badge background */
-.badgeBg {
-  background: rgba(95,45,166,0.12);
+/* Responsive container max-width with inner padding */
+.container-fluid {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1rem, 5vw, 2rem);
+  padding-right: clamp(1rem, 5vw, 2rem);
 }
 
-/* CTA button – base */
-.ctaButton {
-  background: #5F2DA6;
-  box-shadow: 0 0 20px rgba(95,45,166,0.5);
-  transition: all 0.3s ease;
+/* -----------------------------------------------
+   RESPONSIVE STACKING (vertical rhythm)
+----------------------------------------------- */
+.stack-sm > * + * {
+  margin-top: clamp(0.5rem, 1.5vw, 0.75rem);
+}
+.stack-md > * + * {
+  margin-top: clamp(1rem, 2vw, 1.5rem);
+}
+.stack-lg > * + * {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
 }
 
-/* Category section */
-.categorySection {
-  border-color: rgba(78,52,115,0.4);
-  background: rgba(31,26,64,0.25);
+/* -----------------------------------------------
+   TOUCH-FRIENDLY TARGETS (min 44px)
+----------------------------------------------- */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.categoryCard {
-  border: 1px solid rgba(78,52,115,0.5);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+/* -----------------------------------------------
+   RESPONSIVE IMAGES (already covered by Tailwind, but safe)
+----------------------------------------------- */
+.responsive-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
-.categoryOverlay {
-  background: linear-gradient(to top, #131026 0%, rgba(31,26,64,0.5) 50%, transparent 100%);
+/* -----------------------------------------------
+   SAFE AREA INSETS (for notched phones)
+----------------------------------------------- */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
-.categoryGlow {
-  background: radial-gradient(circle at 50% 100%, rgba(95,45,166,0.25), transparent 70%);
-}
-
-/* Featured post container – responsive padding */
-.featuredContainer {
-  background: #1F1A40;
-  border: 1px solid rgba(78,52,115,0.6);
-  box-shadow: 0 0 30px rgba(95,45,166,0.15);
-}
-
-.featuredImageOverlay {
-  background: linear-gradient(to right, transparent 60%, #1F1A40 100%);
-}
-
-@media (max-width: 768px) {
-  .featuredImageOverlay {
-    background: linear-gradient(to bottom, transparent 50%, #1F1A40 100%);
-  }
-}
-
-.authorAvatarBorder {
-  border: 2px solid rgba(95,45,166,0.6);
-}
-
-.featuredCta {
-  background: #5F2DA6;
-  box-shadow: 0 0 16px rgba(95,45,166,0.4);
-}
-
-/* Stats section */
-.statsSection {
-  border-color: rgba(78,52,115,0.35);
-  background: rgba(31,26,64,0.2);
-}
-
-.statCard {
-  background: #1F1A40;
-  border: 1px solid rgba(78,52,115,0.5);
-}
-
-.statGradient {
-  background: linear-gradient(135deg, #8B65BF 0%, #5F2DA6 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Recent article card */
-.recentCard {
-  background: #1F1A40;
-  border: 1px solid rgba(78,52,115,0.5);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.recentImageOverlay {
-  background: linear-gradient(to bottom, transparent 50%, #1F1A40 100%);
-}
-
-.recentAvatarBorder {
-  border: 2px solid rgba(95,45,166,0.5);
-}
-
-/* Newsletter section – fully responsive */
-.newsletterSection {
-  background: rgba(19,16,38,0.95);
-}
-
-.newsletterContainer {
-  background: rgba(95,45,166,0.08);
-  border: 1px solid rgba(78,52,115,0.6);
-  box-shadow: 0 0 60px rgba(95,45,166,0.12), inset 0 0 40px rgba(95,45,166,0.06);
-}
-
-.newsletterGlow {
-  background: radial-gradient(ellipse 60% 60% at center, rgba(95,45,166,0.15), transparent 70%);
-}
-
-.newsletterInput {
-  background: rgba(78,52,115,0.2);
-  box-shadow: inset 0 0 0 1px rgba(78,52,115,0.6);
-}
-
-.newsletterButton {
-  background: #5F2DA6;
-  box-shadow: 0 0 14px rgba(95,45,166,0.5);
-}
-
-/* Lotus decorative delay – mobile friendly */
-.lotusDelay {
-  animation-delay: 1s;
-}
-
-/* Responsive divider */
-.recentDivider {
-  border-color: rgba(78,52,115,0.4);
-}
-
-/* ============================================
-   Additional Responsive Utilities
-   ============================================ */
-
-/* Ensure gradients don’t overflow on mobile */
-@media (max-width: 640px) {
-  .featuredContainer,
-  .statCard,
-  .recentCard {
-    box-shadow: 0 0 15px rgba(95,45,166,0.1);
-  }
-}
-
-/* Improve tap targets on touch devices */
-@media (hover: none) and (pointer: coarse) {
-  .ctaButton,
-  .featuredCta,
-  .newsletterButton {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-  }
-}
-
-/* Smooth hover only on devices that support hover */
-@media (hover: hover) {
-  .categoryCard:hover,
-  .recentCard:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 0 20px rgba(95,45,166,0.5);
+/* -----------------------------------------------
+   REDUCED MOTION (accessibility)
+----------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
