@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockPosts } from "../../../../lib/mockData";
@@ -46,9 +47,11 @@ export default async function BlogPostPage({ params }: PageProps) {
         <article className="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 overflow-hidden shadow-sm">
           {/* Main Hero Image */}
           <div className="relative h-72 sm:h-96 md:h-[450px] w-full">
-            <img
+            <Image
               src={post.image}
               alt={post.title}
+              fill
+              unoptimized
               className="absolute inset-0 h-full w-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 to-transparent" />
@@ -66,9 +69,12 @@ export default async function BlogPostPage({ params }: PageProps) {
             {/* Author info header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-8 border-b border-stone-100 dark:border-stone-800 gap-4 mb-10">
               <div className="flex items-center gap-3">
-                <img
+                <Image
                   src={post.author.avatar}
                   alt={post.author.name}
+                  width={40}
+                  height={40}
+                  unoptimized
                   className="h-10 w-10 rounded-full object-cover"
                 />
                 <div>
@@ -137,11 +143,14 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Author Bio Box */}
         <div className="mt-8 p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 flex flex-col sm:flex-row gap-6 shadow-sm items-center">
-          <img
-            src={post.author.avatar}
-            alt={post.author.name}
-            className="h-16 w-16 rounded-2xl object-cover shadow-sm flex-shrink-0"
-          />
+                  <Image
+                    src={post.author.avatar}
+                    alt={post.author.name}
+                    width={64}
+                    height={64}
+                    unoptimized
+                    className="h-16 w-16 rounded-2xl object-cover shadow-sm flex-shrink-0"
+                  />
           <div className="text-center sm:text-left">
             <h4 className="font-serif text-lg font-bold text-stone-900 dark:text-white">
               About {post.author.name}
@@ -169,9 +178,11 @@ export default async function BlogPostPage({ params }: PageProps) {
                   className="flex flex-col bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/50 dark:border-stone-850 hover-lift shadow-sm group"
                 >
                   <div className="h-40 w-full relative">
-                    <img
+                    <Image
                       src={related.image}
                       alt={related.title}
+                      fill
+                      unoptimized
                       className="absolute inset-0 h-full w-full object-cover"
                     />
                   </div>

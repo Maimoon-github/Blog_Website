@@ -5,7 +5,7 @@
  * Handles Open Graph, Twitter Cards, structured data, and canonical URLs
  */
 
-import { Metadata, ResolvingMetadata } from 'next';
+import { Metadata } from 'next';
 import { SITE_CONFIG } from './navigation';
 
 export interface PageMetadataProps {

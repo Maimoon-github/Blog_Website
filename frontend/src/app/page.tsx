@@ -1,5 +1,6 @@
 // src/app/(site)/page.tsx
 import Link from "next/link";
+import Image from "next/image";
 import { mockPosts, mockCategories } from "@/lib/mockData";
 
 export default function HomePage() {
@@ -68,10 +69,12 @@ export default function HomePage() {
               href={`/blog/${post.slug}`}
               className="group rounded-2xl bg-lotus-shadow border border-lotus-petal-dark/50 overflow-hidden hover-lift transition-all duration-300"
             >
-              <div className="aspect-video w-full overflow-hidden bg-lotus-void">
-                <img
-                    src={post.image}
+              <div className="aspect-video w-full overflow-hidden bg-lotus-void relative">
+                <Image
+                  src={post.image}
                   alt={post.title}
+                  fill
+                  unoptimized
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 />
               </div>
@@ -187,10 +190,12 @@ export default function HomePage() {
               href={`/blog/${post.slug}`}
               className="group flex flex-col rounded-2xl bg-lotus-shadow border border-lotus-petal-dark/50 overflow-hidden hover-lift"
             >
-              <div className="aspect-video w-full overflow-hidden">
-                <img
-                    src={post.image}
+              <div className="aspect-video w-full overflow-hidden relative">
+                <Image
+                  src={post.image}
                   alt={post.title}
+                  fill
+                  unoptimized
                   className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                 />
               </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { mockAuthors } from "../../../lib/mockData";
 
@@ -66,9 +67,11 @@ export default function AboutPage() {
               boxShadow: "0 0 40px rgba(95,45,166,0.2)",
             }}
           >
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&auto=format&fit=crop&q=80"
               alt="Natural landscape"
+              fill
+              unoptimized
               className="absolute inset-0 h-full w-full object-cover opacity-75"
             />
             <div
@@ -138,9 +141,12 @@ export default function AboutPage() {
               >
                 {/* Avatar – centered on mobile, left on desktop */}
                 <div className="relative flex-shrink-0 mx-auto sm:mx-0">
-                  <img
+                  <Image
                     src={author.avatar}
                     alt={author.name}
+                    width={96}
+                    height={96}
+                    unoptimized
                     className="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl object-cover shadow-md"
                     style={{
                       border: "2px solid rgba(95,45,166,0.6)",

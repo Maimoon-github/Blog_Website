@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockPosts, mockTags } from "../../../../lib/mockData";
@@ -81,9 +82,11 @@ export default async function TagDetailPage({ params }: PageProps) {
                   className="flex flex-col items-start justify-between bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/50 dark:border-stone-850 hover-lift shadow-sm"
                 >
                   <div className="relative w-full h-48">
-                    <img
+                    <Image
                       src={post.image}
                       alt={post.title}
+                      fill
+                      unoptimized
                       className="absolute inset-0 h-full w-full object-cover"
                     />
                   </div>
@@ -100,9 +103,12 @@ export default async function TagDetailPage({ params }: PageProps) {
                       </p>
                     </div>
                     <div className="mt-6 flex items-center gap-x-3 border-t border-stone-100 dark:border-stone-800 pt-4">
-                      <img
+                      <Image
                         src={post.author.avatar}
                         alt={post.author.name}
+                        width={32}
+                        height={32}
+                        unoptimized
                         className="h-8 w-8 rounded-full object-cover"
                       />
                       <div className="text-xs">

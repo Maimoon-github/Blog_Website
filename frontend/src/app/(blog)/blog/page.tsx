@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, Suspense } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { mockPosts, mockCategories, Post } from "../../../lib/mockData";
@@ -148,9 +149,11 @@ function BlogContent() {
                 }}
               >
                 <div className="relative w-full h-48 overflow-hidden">
-                  <img
+                  <Image
                     src={post.image}
                     alt={post.title}
+                    fill
+                    unoptimized
                     className="absolute inset-0 h-full w-full object-cover opacity-80 hover:scale-105 transition-transform duration-500"
                   />
                   <div
@@ -174,9 +177,12 @@ function BlogContent() {
                     className="mt-6 flex items-center gap-x-3 border-t pt-4"
                     style={{ borderColor: "rgba(78,52,115,0.4)" }}
                   >
-                    <img
+                    <Image
                       src={post.author.avatar}
                       alt={post.author.name}
+                      width={32}
+                      height={32}
+                      unoptimized
                       className="h-8 w-8 rounded-full object-cover"
                       style={{ border: "2px solid rgba(95,45,166,0.5)" }}
                     />

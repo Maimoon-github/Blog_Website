@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockAuthors, mockPosts } from "../../../../lib/mockData";
@@ -45,9 +46,12 @@ export default async function AuthorProfilePage({ params }: PageProps) {
 
         {/* Author Header Profile */}
         <div className="max-w-3xl mx-auto bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 p-8 sm:p-12 shadow-sm text-center sm:text-left flex flex-col sm:flex-row gap-8 items-center mb-16">
-          <img
+          <Image
             src={author.avatar}
             alt={author.name}
+            width={112}
+            height={112}
+            unoptimized
             className="h-28 w-28 rounded-3xl object-cover shadow-md flex-shrink-0"
           />
           <div>
@@ -82,9 +86,11 @@ export default async function AuthorProfilePage({ params }: PageProps) {
                   className="flex flex-col items-start justify-between bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/50 dark:border-stone-850 hover-lift shadow-sm"
                 >
                   <div className="relative w-full h-48">
-                    <img
+                    <Image
                       src={post.image}
                       alt={post.title}
+                      fill
+                      unoptimized
                       className="absolute inset-0 h-full w-full object-cover"
                     />
                   </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo, Suspense } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { mockPosts, Post } from "../../../lib/mockData";
@@ -82,9 +83,12 @@ function SearchContent() {
                   key={post.id}
                   className="bg-white dark:bg-stone-900 rounded-2xl border border-stone-200/50 dark:border-stone-850 p-6 flex flex-col sm:flex-row gap-6 hover-lift shadow-sm"
                 >
-                  <img
+                  <Image
                     src={post.image}
                     alt={post.title}
+                    width={192}
+                    height={128}
+                    unoptimized
                     className="h-32 w-full sm:w-48 rounded-xl object-cover flex-shrink-0"
                   />
                   <div className="flex flex-col justify-between">
