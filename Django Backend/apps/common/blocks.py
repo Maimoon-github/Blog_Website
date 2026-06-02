@@ -1,3 +1,4 @@
+# apps/common/blocks.py
 """
 All reusable StreamField blocks for the blog CMS.
 
@@ -30,7 +31,7 @@ class HeadingBlock(blocks.StructBlock):
     class Meta:
         icon = "title"
         label = "Heading"
-        template = None  # headless – no template needed
+        template = None
 
 
 class ParagraphBlock(blocks.StructBlock):
