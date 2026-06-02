@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useMemo, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { mockPosts, mockCategories, Post } from "../../../lib/mockData";
@@ -11,9 +11,8 @@ function BlogContent() {
   const categoryQuery = searchParams.get("category") || "all";
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredPosts, setFilteredPosts] = useState<Post[]>(mockPosts);
 
-  useEffect(() => {
+  const filteredPosts = useMemo(() => {
     let result = mockPosts;
     if (categoryQuery !== "all") {
       result = result.filter((post) => post.category.slug === categoryQuery);
@@ -27,7 +26,7 @@ function BlogContent() {
           post.tags.some((tag) => tag.name.toLowerCase().includes(query))
       );
     }
-    setFilteredPosts(result);
+    return result;
   }, [categoryQuery, searchQuery]);
 
   const handleCategorySelect = (slug: string) => {
