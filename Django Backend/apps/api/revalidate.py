@@ -1,3 +1,4 @@
+# apps/api/revalidate.py
 """
 Next.js ISR revalidation endpoint.
 
@@ -28,7 +29,7 @@ class RevalidateView(APIView):
     """
 
     permission_classes = [IsRevalidationToken]
-    authentication_classes = []  # Token-based, no session needed
+    authentication_classes = []
 
     def post(self, request, *args, **kwargs):
         data = request.data

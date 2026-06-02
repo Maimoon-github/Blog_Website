@@ -1,235 +1,265 @@
-# Technical Research & Architecture Report: `apps.taxonomy`
-
-This report provides a comprehensive architectural analysis of the `apps.taxonomy` Django application. Designed as a core module for a decoupled, headless content management system, this application bridges **Wagtail CMS** administrative capabilities with **Django REST Framework (DRF)** to serve structured taxonomy data to a modern frontend ecosystem (such as Next.js).
-
----
+# Technical Research Report: `apps.api` Django Application
 
 ## 1. Executive Summary
 
-The `apps.taxonomy` application manages organized content classification through two decoupled entities: **Categories** and **Tags**. By leveraging Wagtail's Snippet framework, it provides non-technical content editors with an intuitive admin interface while exposing a highly optimized, read-only REST API for client-side applications.
+The `apps.api` application serves as a high-performance, headless REST API interface designed to bridge a Django-backed Wagtail Content Management System (CMS) with an asynchronous Next.js frontend application. It handles all content requests from the frontend, manages complex multi-tiered caching strategies to optimize response latencies, and exposes comprehensive querying mechanisms across sites, blog architectures, metadata profiles, and taxonomy categories.
 
-### Key Capabilities
-
-* **Wagtail Snippet Integration:** Registers standard Django models into the Wagtail admin panel without requiring full page-tree overhead.
-* **Dual-Layer Serialization:** Implements both verbose and lightweight (minimal) serializers to optimize payload delivery based on the client context.
-* **Dynamic Media Renditions:** Generates targeted image dimensions (`fill-800x400`) at the database/CMS layer, offloading image processing from the frontend.
-* **Decoupled Performance Strategy:** Explicitly prepares slug-based routing variables to facilitate seamless Static Site Generation (SSG) and Incremental Static Regeneration (ISR) on modern frontend frameworks.
+Beyond data fetching, `apps.api` implements a robust infrastructure for data synchronization, using Celery background tasks and Webhook layers to push immediate Incremental Static Regeneration (ISR) signals directly to Next.js whenever administrators update content. It also acts as an automated multi-format feed generation node, broadcasting real-time syndication feeds (RSS, Atom, and JSON Feed) to external consumers.
 
 ---
 
-## 2. Architecture & Component Hierarchy
+## 2. Directory Structure and Architectural Mapping
 
-The application follows a clean, decoupled design separating data definition, administrative layout, and API representation:
+The application is structured into modular specialized modules, partitioning concerns across routing, view controllers, filtering engines, syndication channels, and background execution lines:
+
+```text
+apps/api/
+├── __init__.py
+├── apps.py           # Core application metadata configuration
+├── feed.py           # RSS, Atom, and JSON Feed 1.1 generation views
+├── filters.py        # Django-Filter rule configurations for viewsets
+├── pagination.py     # Custom pagination classes conforming to Next.js models
+├── permissions.py    # Multi-layered authentication and token validation predicates
+├── revalidate.py     # Inbound ISR webhook routing logic to Next.js
+├── tasks.py          # Celery background tasks for non-blocking operations
+├── urls.py           # Centralized API routing layout and endpoint definitions
+└── views.py          # ViewSet controllers handling core content serialization
 
 ```
-apps.taxonomy/
-│
-├── apps.py                 # Application configuration & registry namespace
-├── models.py               # Database schemas, Wagtail panels, and query properties
-├── serializers.py          # DRF serialization layer (Full vs. Minimal footprints)
-│
-▼ [Supplementary Additions Required for Full Routing]
-├── views.py                # REST ViewSets with optimized slug-lookups
-└── urls.py                 # API endpoint routing patterns
 
-```
+### Application Config (`apps.py`)
+
+The application defines its metadata state via `ApiConfig` which extends Django’s core `AppConfig` class. It sets the database auto-increment column behavior to `BigAutoField` and mounts the application name under the fully-qualified Python path namespace `apps.api`.
 
 ---
 
-## 3. Data Models Analysis (`models.py`)
+## 3. Routing & Endpoint Architecture (`urls.py`)
 
-The application defines two independent models registered via `@register_snippet`. Both implement automated slugification upon saving if a slug is not explicitly provided.
+All endpoints are bound under the internal application namespace `v1` and use a Django Rest Framework (DRF) `DefaultRouter` initialized with explicit trailing slashes. The endpoints are split into dynamic ViewSets and stateful Singleton views:
 
-### A. The `Category` Model
-
-Represents a formal, structured hierarchy typically used for primary content buckets. It supports rich metadata including structural ordering, custom color accents, and dedicated banner assets.
-
-| Field Name | Type | Key Features / Constraints | Purpose |
+| Endpoint Pattern | Handler Component | Request Type | Target Data / Resource |
 | --- | --- | --- | --- |
-| `name` | `CharField` | Unique, Max: 100 | Display title in admin and frontend. |
-| `slug` | `SlugField` | Unique, Max: 120, Blank Allowed, `db_index=True` | URL identifier for clean routing. |
-| `description` | `TextField` | Blank Allowed | Meta-text or category introduction block. |
-| `cover_image` | `ForeignKey` | Null/Blank Allowed, `on_delete=SET_NULL`, links to `wagtailimages.Image` | Relational asset for visual category banners. |
-| `color` | `CharField` | Max: 7, Blank Allowed | Hex color representation for matching frontend UI themes. |
-| `order` | `PositiveIntegerField` | Default: 0, `db_index=True` | Controls explicit, explicit sorting in lists. |
-| `seo_title` | `CharField` | Max: 255, Blank Allowed | Overrides default title for HTML header tags. |
-| `seo_description` | `TextField` | Blank Allowed | Meta description for search engines. |
-
-#### Key Business Logic & Properties:
-
-* **Automated Slugification:** The overridden `save()` method ensures that if `slug` is left empty by an editor, it automatically generates a URL-safe string from the `name` field using Django’s `slugify`.
-* **Dynamic Image Renditions (`cover_image_url`):** ```python
-return self.cover_image.get_rendition("fill-800x400").url
-```
-This property automatically crops and resizes the associated Wagtail image asset on demand, abstracting asset generation away from the frontend application.
-
-```
-
-
-* **Post Count Evaluation (`post_count`):** Computes the size of related live blog posts using the backward relation `self.blog_posts.filter(live=True).count()`.
-
-### B. The `Tag` Model
-
-Represents a flatter, more informal classification layer. While the platform utilizes `django-taggit` internally for rapid page tagging, this standalone model grants tags structural fields such as distinct descriptions and unique SEO parameters.
-
-* **Performance Characteristic:** The `post_count` calculation is isolated by dynamically importing the target `BlogPage` model inside the property method:
-```python
-from apps.blog.models import BlogPage
-return BlogPage.objects.live().filter(tags__name=self.name).count()
-
-```
-
-
-This design prevents circular import dependencies during Django runtime initialization.
+| `/api/v1/pages/` | `PagesViewSet` | `GET` | List available core site page slugs |
+| `/api/v1/pages/<slug>/` | `PagesViewSet` | `GET` | Retrieve specific cached page configurations |
+| `/api/v1/blog/` | `BlogViewSet` | `GET` | Fetch paginated, ordered, and filtered blog post records |
+| `/api/v1/blog/<slug>/` | `BlogViewSet` | `GET` | Retrieve a detailed single blog post |
+| `/api/v1/blog/featured/` | `BlogViewSet` | `GET` | Retrieve a filtered array of up to 6 highlighted posts |
+| `/api/v1/blog/slugs/` | `BlogViewSet` | `GET` | Streamlined object array of all live post slugs |
+| `/api/v1/authors/` | `AuthorsViewSet` | `GET` | Fetch paginated profiles of authors |
+| `/api/v1/authors/<slug>/` | `AuthorsViewSet` | `GET` | Retrieve single author profiles with detailed objects |
+| `/api/v1/authors/slugs/` | `AuthorsViewSet` | `GET` | Streamlined layout of all live author slugs |
+| `/api/v1/categories/` | `CategoriesViewSet` | `GET` | Paginated listing of taxonomy categories |
+| `/api/v1/categories/<slug>/` | `CategoriesViewSet` | `GET` | Retrieve category details |
+| `/api/v1/categories/<slug>/posts/` | `CategoriesViewSet` | `GET` | Paginated blog posts filtered by the specific category |
+| `/api/v1/tags/` | `TagsViewSet` | `GET` | Paginated tag instances |
+| `/api/v1/tags/<slug>/posts/` | `TagsViewSet` | `GET` | Paginated blog posts associated with the specified tag |
+| `/api/v1/settings/` | `SiteSettingsView` | `GET` | Retrieve global identity attributes and tracking IDs |
+| `/api/v1/navigation/` | `NavigationView` | `GET` | Fetch multi-section header, footer, and social menus |
+| `/api/v1/contact-info/` | `ContactInfoView` | `GET` | Fetch structural email, phone, and address blocks |
+| `/api/v1/feed/` | `FeedView` | `GET` | Expose RSS, Atom, or JSON Feed representations |
+| `/api/v1/revalidate/` | `RevalidateView` | `POST` | Process incoming/outbound ISR cache clearing commands |
 
 ---
 
-## 4. Serialization Layer (`serializers.py`)
+## 4. Deep-Dive Endpoint & View Implementations (`views.py`)
 
-The serialization layer leverages a **split-footprint strategy** to maintain low-latency network transfers.
+### Core Content Caching Lifecycle
 
-```
-                  ┌───────────────────────┐
-                  │   Taxonomy Database   │
-                  └───────────┬───────────┘
-                              │
-              ┌───────────────┴───────────────┐
-              ▼                               ▼
-   [ Index / Detail Views ]         [ Nested in Blog Posts ]
-   ┌──────────────────────┐         ┌──────────────────────┐
-   │  Verbose Serializer  │         │  Minimal Serializer  │
-   │  • Includes Content  │         │  • Primary Keys Only │
-   │  • SEO Metadata      │         │  • UI Colors/Slugs   │
-   │  • Computed Fields   │         │  • Zero SQL Joins    │
-   └──────────────────────┘         └──────────────────────┘
+To guarantee extreme speed for the frontend server, `views.py` sets up three granular caching thresholds leveraging Django's underlying cache storage engine:
 
-```
+* `CACHE_SHORT` (5 minutes): Applied to dynamic data vectors subject to high volatility, such as single blog post item retrievals.
+* `CACHE_MEDIUM` (15 minutes): Applied to structured system configurations, such as the core descriptive layout pages mapped inside the system.
+* `CACHE_LONG` (1 hour): Applied to operational static structures such as main navigation links, overall site settings, and physical contact maps.
 
-### Full vs. Minimal Serializer Specs
+### The Core ViewSet Architectures
 
-1. **`CategorySerializer` vs `CategoryMinimalSerializer**`
-* *Full Version:* Exposes complete audit fields, SEO entries, and calculated fields (`cover_image_url`, `post_count`).
-* *Minimal Version:* Drops overhead fields, returning only `id`, `name`, `slug`, and `color`. This prevents excessive data bloat when categories are embedded side-by-side inside extensive blog list feeds.
-
-
-2. **`TagSerializer` vs `TagMinimalSerializer**`
-* *Full Version:* Provides the complete descriptive text block, `post_count`, and search engine optimization fields.
-* *Minimal Version:* Condenses payload strictly to `id`, `name`, and `slug`.
-
-
-
-> ### ⚠️ High-Priority Architectural Warning: The $N+1$ Query Problem
-> 
-> 
-> Both full serializers implement `post_count` as a `serializers.ReadOnlyField()`, which calls the underlying model properties. When fetching a list of categories or tags via standard querysets, **this setup triggers an individual database count query for every single record in the list**.
-> To maintain system performance under production loads, you must override your ViewSet's `get_queryset` method to pre-annotate these counts using database-level aggregations instead of lazy python properties.
+1. **`PagesViewSet` (Custom `ViewSet` Architecture)**:
+Avoids typical model query lookups by utilizing an immutable dictionary map named `_PAGE_MAP`. It maps string identifiers (`home`, `about`, `contact`, `services`, `privacy-policy`, `terms`) directly to their specific Wagtail page classes (`HomePage`, `AboutPage`, etc.) and corresponding custom Serializer layers. Individual item retrievals verify whether a cached string exists at key `page:<slug>`; if missing, it queries the target model's database configuration using `.live().first()`, updates the cache layer for 15 minutes, and responds back.
+2. **`BlogViewSet` (`ReadOnlyModelViewSet` Base)**:
+Returns public records matching `BlogPage.objects.live().public()`. It optimizes performance through database jointures via `.select_related("author", "cover_image", "featured_image")` and eager prefetching via `.prefetch_related("categories", "tags")`. It changes serializers contextually, responding with `BlogPostDetailSerializer` during single item retrievals and `BlogPostMinimalSerializer` for grid lists to conserve packet bandwidth. The endpoint handles default sorting rules by enforcing descending order on the `published_date` field (`-published_date`).
+3. **`AuthorsViewSet` (`ReadOnlyModelViewSet` Base)**:
+Manages the serialization profiles of authors by capturing `AuthorPage` instances. It enforces automatic pre-selection of image items via `.select_related("photo")` and uses the standard `StandardResultsPagination` schema. It exposes a specific route layout via `/api/v1/authors/slugs/` to feed the static compilation layer of the Next.js application framework.
+4. **`CategoriesViewSet` & `TagsViewSet` (Taxonomy Control Layers)**:
+Handle sorting criteria for indexing blog components across topics. `CategoriesViewSet` enforces alphabetical lookups sorted by custom explicit ordering fields (`order`, `name`). Both views provide a nested sub-action endpoint (`/posts/`) that acts as a relational reverse-query filter. For example, when invoking the category posts action, it extracts the target category instance, scans the live `BlogPage` queryset, filters results using `filter(categories=category)`, applies full list pre-fetches, and responds with a paginated payload.
 
 ---
 
-## 5. Supplementary Implementation Files
+## 5. Filtering and Pagination Infrastructure
 
-To complete the application structure according to the constraints defined in your codebase documentation (*"The frontend exposes /categories, /categories/[slug], /tags, /tags/[slug]"*), you must introduce a controller and routing layer.
+### Advanced Data Filtering Layer (`filters.py`)
 
-Below are the production-grade implementations of `views.py` and `urls.py` designed to fix the performance bottlenecks mentioned above.
+The application implements highly granular querying mechanisms driven by the `django-filter` engine to narrow down blog queries. `BlogPostFilter` maps explicit URL search terms to database properties:
 
-### File: `apps/taxonomy/views.py`
+* `category`: Maps directly onto `categories__slug` using an exact match expression.
+* `tag`: Maps onto the tag taxonomy text array via case-insensitive `tags__name` filtering (`iexact`).
+* `author`: Resolves authorship through an exact slug check against `author__slug`.
+* `featured`: Accepts a boolean token (`True`/`False`) matching against `is_featured`.
+* `published_before` / `published_after`: Accepts standard ISO datetime strings to bounds-test post objects using `lte` (less than or equal) and `gte` (greater than or equal) parameters against the model's `published_date`.
+
+### Custom Pagination Engines (`pagination.py`)
+
+To prevent breaking changes during compilation pipelines inside Next.js data hooks (such as `getStaticProps` or `generateStaticParams`), pagination objects must be completely uniform. `apps.api` creates two distinct structures subclassed from DRF's `PageNumberPagination`:
 
 ```python
-from django.db.models import Count, Q
-from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
-
-from .models import Category, Tag
-from .serializers import CategorySerializer, TagSerializer
-
-
-class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    API endpoint that allows categories to be viewed.
-    Uses 'slug' as the lookup field instead of 'id'.
-    """
-    serializer_class = CategorySerializer
-    lookup_field = "slug"
-    permission_classes = [AllowAny]
-
-    def get_queryset(self):
-        # Solves the N+1 problem by annotating the count directly in the SQL statement
-        return Category.objects.select_related("cover_image").annotate(
-            _annotated_post_count=Count("blog_posts", filter=Q(blog_posts__live=True))
-        ).order_by("order", "name")
-
-
-class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    API endpoint that allows tags to be viewed.
-    Uses 'slug' as the lookup field instead of 'id'.
-    """
-    serializer_class = TagSerializer
-    lookup_field = "slug"
-    permission_classes = [AllowAny]
-
-    def get_queryset(self):
-        # Optimizes Tag fetching by leveraging conditional database aggregation
-        return Tag.objects.annotate(
-            _annotated_post_count=Count(
-                "blogpage_remote_relation", # Replace with actual reverse relation name if defined in your blog app
-                filter=Q(blogpage_remote_relation__live=True)
-            )
-        ).order_by("name")
+class StandardResultsPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = "page_size"
+    max_page_size = 100
+    page_query_param = "page"
 
 ```
 
-*Note: If your database schema uses an alternate reverse-relation flag for tags, update the `TagViewSet` aggregation logic accordingly, or fallback safely to a structured caching layout.*
+It re-shapes the root JSON envelope to separate structural index statistics into a dedicated metadata property block called `pagination`:
 
-### File: `apps/taxonomy/urls.py`
+```json
+{
+  "pagination": {
+    "count": 142,
+    "total_pages": 15,
+    "current_page": 1,
+    "page_size": 10,
+    "next": "http://localhost:8000/api/v1/blog/?page=2",
+    "previous": null,
+    "has_next": true,
+    "has_previous": false
+  },
+  "results": [ ... ]
+}
+
+```
+
+* **`LargeResultsPagination`**: Tailored for lightweight data elements like categories or tags, it shifts default volume targets upwards to `50` elements per page, allowing client overwrites up to a strict `200` item limit.
+
+---
+
+## 6. Syndication and Feed Generation Layer (`feed.py`)
+
+The syndication module processes external consumer polling requests through `FeedView(APIView)`. It supports three formats handled selectively through the use of a `?format=` parameter query string:
+
+1. **RSS 2.0 (`?format=rss`)**: Default output channel parsing information fields into a valid `application/rss+xml` content-type output string.
+2. **Atom (`?format=atom`)**: Generates structured XML schemas rendered as `application/atom+xml` with strict timestamp compliance.
+3. **JSON Feed 1.1 (`?format=json`)**: Formats post objects into standard compliance JSON structures outputted as `application/feed+json`.
+
+### Internal Feed Resolution Pipeline
+
+When a request hits `FeedView`, an internal pipeline function named `_build_generator(request)` runs:
+
+* Resolves the current base domain by searching for a configured `NEXTJS_SERVER_URL` inside core settings or fallbacks onto the active request header absolute URI.
+* Queries the database for the top `50` most recent live, public blog posts.
+* Loops over the entries, converting post details into standard structures: excerpt summaries populate item text blocks, categories populate term definitions, author models add signature markers, and absolute media references append an `enclosure` block matching `image/jpeg` MIME signatures.
+
+---
+
+## 7. Frontend Synchronization & ISR Webhook Layer
+
+### Security Profiles (`permissions.py`)
+
+Data integrity controls restrict operations to specific contexts:
+
+* **`IsAdminOrReadOnly`**: Enforces strict read-only states (`GET`, `HEAD`, `OPTIONS`) across all public requests while rejecting unsafe state mutations unless the authentication context can prove the operator is a Wagtail Administrator staff user (`request.user.is_staff`).
+* **`IsRevalidationToken`**: Dedicated token matching filter used exclusively to secure the revalidation channels. It intercepts headers for a token signature labeled `X-Revalidation-Secret`, checks query arguments for `?secret=`, or inspects raw POST payloads for a matching key string. It cross-checks the extracted token string against the backend's hidden configuration attribute `settings.REVALIDATION_SECRET`.
+
+### Incremental Static Regeneration Engine (`revalidate.py`)
+
+When a change occurs inside the Wagtail admin interface, the application must immediately flush out outdated static cache buckets compiled across edge distribution rings. `RevalidateView(APIView)` acts as an entry point webhook processor:
+
+* It parses incoming JSON structures to determine the revalidation strategy, handling them either by explicit **URL paths** (e.g., `{"paths": ["/blog/post-slug"], "type": "path"}`) or by logical **cache tag arrays** (e.g., `{"tag": "blog-posts", "type": "tag"}`).
+* It builds a request payload containing the required cryptographic validation string, loops through the paths array, and executes outbound synchronous REST HTTP requests hitting the Next.js server location pattern under `{nextjs_url}/api/revalidate`.
+
+### Async Celery Worker Dispatcher (`tasks.py`)
+
+To prevent blocking the Django web request-response cycle when an author saves complex page arrays inside the Wagtail admin interface, `revalidate_nextjs_page` offloads outbound webhook delivery to a Celery worker pool.
+
+The application contains an updated, resilient definition of this background worker:
+
+* **Robust Failover Execution**: Implements automatic exception catching bound to network anomalies via `autoretry_for=(requests.RequestException,)`.
+* **Exponential Backoff Schedule**: Rather than hammering the frontend node during a brief network interruption, it uses `retry_backoff=True` to scale delay spacing across a maximum constraint window of `max_retries=5`.
+* **Authorization Headers**: Passes the validation verification keys inside an HTTP header string (`Authorization: Bearer <secret>`), giving the target Next.js endpoint immediate validation confirmation.
+
+---
+
+## 8. Supplementary Design Materials (Technical Blueprint Examples)
+
+As part of the technical requirements, the following implementation blueprints demonstrate how to configure, extend, or consume the `apps.api` application layer.
+
+### Supplementary File A: Next.js API Integration Client (`api.ts`)
+
+This client file demonstrates how the frontend application handles communication with the endpoints exposed by `apps.api`.
+
+```typescript
+// src/lib/api.ts
+import { BlogPost, PaginationWrapper } from '../types/blog';
+
+const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:8000/api/v1';
+
+export async function fetchBlogPosts(page = 1, pageSize = 10, filters: Record<string, string> = {}): Promise<PaginationWrapper<BlogPost>> {
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    page_size: pageSize.toString(),
+    ...filters
+  });
+
+  const response = await fetch(`${BACKEND_API_URL}/blog/?${queryParams.toString()}`, {
+    next: { tags: ['blog-posts'] }, // Next.js Cache Tag tagging mechanics
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Backend fetch failed with status: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function fetchSinglePost(slug: string): Promise<BlogPost> {
+  const response = await fetch(`${BACKEND_API_URL}/blog/${slug}/`, {
+    next: { revalidate: 900 } // ISR Fallback timeout config
+  });
+  
+  if (!response.ok) {
+    if (response.status === 404) throw new Error('Not Found');
+    throw new Error('Failed to fetch post detail data.');
+  }
+  return response.json();
+}
+
+```
+
+### Supplementary File B: Django Settings Configuration Template (`api_settings.py`)
+
+This configuration template outlines the required setup inside `config/settings/base.py` to support the operational demands of the `apps.api` module.
 
 ```python
-from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+# config/settings/base.py
+import os
+from cvdata import env
 
-from .views import CategoryViewSet, TagViewSet
-
-router = DefaultRouter(trailing_slash=False)
-router.register(r"categories", CategoryViewSet, basename="category")
-router.register(r"tags", TagViewSet, basename="tag")
-
-app_name = "taxonomy"
-
-urlpatterns = [
-    path("", include(router.urls)),
+# Core Application Registry Definition
+INSTALLED_APPS = [
+    # Core Django & Wagtail dependencies here...
+    "rest_framework",
+    "django_filters",
+    "apps.api.apps.ApiConfig", # Custom API configuration module mounting
 ]
 
-```
+# Next.js Federation Configuration Attributes
+NEXTJS_SERVER_URL = env("NEXTJS_SERVER_URL", default="http://localhost:3000")
+NEXTJS_FRONTEND_URL = env("NEXTJS_FRONTEND_URL", default="http://localhost:3000")
+REVALIDATION_SECRET = env("REVALIDATION_SECRET", default="crypto-secure-token-string")
+NEXTJS_REVALIDATION_SECRET = env("NEXTJS_REVALIDATION_SECRET", default="crypto-secure-token-string")
 
-This configuration establishes the clean URL paths required by the frontend application structure:
-
-* `GET /categories` - Lists all categories ordered by sequence hierarchy.
-* `GET /categories/<slug>` - Fetches a specific category detailing SEO configs.
-* `GET /tags` - Lists all active tags alphabetically.
-* `GET /tags/<slug>` - Fetches a single tag metadata block.
-
----
-
-## 6. Frontend Integration Blueprint (Headless Framework Pattern)
-
-Because the API endpoints use `lookup_field = 'slug'`, they interface perfectly with client-side applications configured for static and dynamic paths.
-
-### Headless Framework Routing Structure
-
-To mirror the architecture designed in the backend, structure your decoupled client application directory exactly like this:
-
-```
-frontend/
-├── app/
-│   ├── categories/
-│   │   ├── page.tsx          # Maps to GET /categories (Lists all Category Cards)
-│   │   └── [slug]/
-│   │       └── page.tsx      # Maps to GET /categories/[slug] (Category Detail Feed)
-│   └── tags/
-│       ├── page.tsx          # Maps to GET /tags (Displays Tag Cloud UI)
-│       └── [slug]/
-│           └── page.tsx      # Maps to GET /tags/[slug] (Filtered Tag Feed)
+# REST Framework Global Policy Specifications
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend",
+        "rest_framework.filters.SearchFilter",
+        "rest_framework.filters.OrderingFilter",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [], # Completely headless token validation
+}
 
 ```
-
-Would you like to write the optimized database migration files next, or should we focus on implementing the reverse relationships inside your `apps.blog.models` file to link everything together smoothly?

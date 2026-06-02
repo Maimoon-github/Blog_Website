@@ -1,3 +1,4 @@
+# apps/api/views.py
 """
 All custom DRF API views.
 
@@ -58,14 +59,10 @@ from .pagination import LargeResultsPagination, StandardResultsPagination
 
 logger = logging.getLogger(__name__)
 
-CACHE_SHORT = 60 * 5      # 5 minutes
-CACHE_MEDIUM = 60 * 15    # 15 minutes
-CACHE_LONG = 60 * 60      # 1 hour
+CACHE_SHORT = 60 * 5
+CACHE_MEDIUM = 60 * 15
+CACHE_LONG = 60 * 60
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Pages ViewSet
-# ─────────────────────────────────────────────────────────────────────────────
 
 class PagesViewSet(ViewSet):
     """
@@ -114,10 +111,6 @@ class PagesViewSet(ViewSet):
         cache.set(cache_key, data, CACHE_MEDIUM)
         return Response(data)
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Blog ViewSet
-# ─────────────────────────────────────────────────────────────────────────────
 
 class BlogViewSet(ReadOnlyModelViewSet):
     """
@@ -181,10 +174,6 @@ class BlogViewSet(ReadOnlyModelViewSet):
         return Response([{"slug": s} for s in slugs])
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Authors ViewSet
-# ─────────────────────────────────────────────────────────────────────────────
-
 class AuthorsViewSet(ReadOnlyModelViewSet):
     """
     GET /api/v1/authors/          → paginated author listing
@@ -217,10 +206,6 @@ class AuthorsViewSet(ReadOnlyModelViewSet):
         slugs = AuthorPage.objects.live().public().values_list("slug", flat=True)
         return Response([{"slug": s} for s in slugs])
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Categories ViewSet
-# ─────────────────────────────────────────────────────────────────────────────
 
 class CategoriesViewSet(ReadOnlyModelViewSet):
     """
@@ -265,10 +250,6 @@ class CategoriesViewSet(ReadOnlyModelViewSet):
         return Response([{"slug": s} for s in slugs])
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Tags ViewSet
-# ─────────────────────────────────────────────────────────────────────────────
-
 class TagsViewSet(ReadOnlyModelViewSet):
     """
     GET /api/v1/tags/           → all tags
@@ -312,10 +293,6 @@ class TagsViewSet(ReadOnlyModelViewSet):
         return Response([{"slug": s} for s in slugs])
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Settings & Navigation views
-# ─────────────────────────────────────────────────────────────────────────────
-
 class SiteSettingsView(APIView):
     """GET /api/v1/settings/ – global site settings."""
 
@@ -333,7 +310,6 @@ class SiteSettingsView(APIView):
         site = request.site if hasattr(request, "site") else None
         settings_obj = SiteSettings.for_site(site) if site else None
         if not settings_obj:
-            # Fallback: return minimal defaults
             return Response({
                 "site_name": "Blog",
                 "site_description": "",

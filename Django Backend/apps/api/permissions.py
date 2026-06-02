@@ -1,3 +1,4 @@
+# apps/api/permissions.py
 """
 Custom DRF permission classes.
 """

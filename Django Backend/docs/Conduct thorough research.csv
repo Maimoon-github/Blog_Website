@@ -1,9 +1,20 @@
-Field Name,Type,Key Features / Constraints,Purpose
-name,CharField,"Unique, Max: 100",Display title in admin and frontend.
-slug,SlugField,"Unique, Max: 120, Blank Allowed, db_index=True",URL identifier for clean routing.
-description,TextField,Blank Allowed,Meta-text or category introduction block.
-cover_image,ForeignKey,"Null/Blank Allowed, on_delete=SET_NULL, links to wagtailimages.Image",Relational asset for visual category banners.
-color,CharField,"Max: 7, Blank Allowed",Hex color representation for matching frontend UI themes.
-order,PositiveIntegerField,"Default: 0, db_index=True","Controls explicit, explicit sorting in lists."
-seo_title,CharField,"Max: 255, Blank Allowed",Overrides default title for HTML header tags.
-seo_description,TextField,Blank Allowed,Meta description for search engines.
+Endpoint Pattern,Handler Component,Request Type,Target Data / Resource
+/api/v1/pages/,PagesViewSet,GET,List available core site page slugs
+/api/v1/pages/<slug>/,PagesViewSet,GET,Retrieve specific cached page configurations
+/api/v1/blog/,BlogViewSet,GET,"Fetch paginated, ordered, and filtered blog post records"
+/api/v1/blog/<slug>/,BlogViewSet,GET,Retrieve a detailed single blog post
+/api/v1/blog/featured/,BlogViewSet,GET,Retrieve a filtered array of up to 6 highlighted posts
+/api/v1/blog/slugs/,BlogViewSet,GET,Streamlined object array of all live post slugs
+/api/v1/authors/,AuthorsViewSet,GET,Fetch paginated profiles of authors
+/api/v1/authors/<slug>/,AuthorsViewSet,GET,Retrieve single author profiles with detailed objects
+/api/v1/authors/slugs/,AuthorsViewSet,GET,Streamlined layout of all live author slugs
+/api/v1/categories/,CategoriesViewSet,GET,Paginated listing of taxonomy categories
+/api/v1/categories/<slug>/,CategoriesViewSet,GET,Retrieve category details
+/api/v1/categories/<slug>/posts/,CategoriesViewSet,GET,Paginated blog posts filtered by the specific category
+/api/v1/tags/,TagsViewSet,GET,Paginated tag instances
+/api/v1/tags/<slug>/posts/,TagsViewSet,GET,Paginated blog posts associated with the specified tag
+/api/v1/settings/,SiteSettingsView,GET,Retrieve global identity attributes and tracking IDs
+/api/v1/navigation/,NavigationView,GET,"Fetch multi-section header, footer, and social menus"
+/api/v1/contact-info/,ContactInfoView,GET,"Fetch structural email, phone, and address blocks"
+/api/v1/feed/,FeedView,GET,"Expose RSS, Atom, or JSON Feed representations"
+/api/v1/revalidate/,RevalidateView,POST,Process incoming/outbound ISR cache clearing commands
