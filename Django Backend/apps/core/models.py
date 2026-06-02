@@ -1,3 +1,4 @@
+# apps/core/models.py
 """
 Abstract base models shared across the project.
 """

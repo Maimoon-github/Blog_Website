@@ -1,3 +1,4 @@
+# apps/core/mixins.py
 """
 Reusable view/serializer mixins.
 """
