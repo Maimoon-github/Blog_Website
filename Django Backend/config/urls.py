@@ -40,7 +40,7 @@ router_urls = wagtail_api_router.urls
 # ─── URL patterns ─────────────────────────────────────────────────────────────
 urlpatterns = [
     # Django admin (commented out – use Wagtail admin at /cms/)
-    # path("django-admin/", admin.site.urls),
+    path("django-admin/", admin.site.urls),
 
     # Wagtail admin – single inclusion (no namespace needed)
     path("cms/", include(wagtailadmin_urls)),
