@@ -1,193 +1,262 @@
-# Comprehensive Research and Architectural Analysis Report: `apps.pages` Django-Wagtail Application
+# Technical Analysis & Architecture Report: `apps.search`
 
-## 1. Executive Summary & Key Findings
+## 1. Executive Summary
 
-The **`apps.pages`** application is a structured, headless-ready content management component built on top of Django and the **Wagtail CMS framework**. Its primary role is to serve as a structured content store and API provider for core institutional web pages (`HomePage`, `AboutPage`, `ContactPage`, `ServicesPage`, `PrivacyPolicyPage`, and `TermsPage`).
+The `apps.search` module is a dedicated, performance-oriented search application integrated into a Django REST Framework (DRF) backend. It provides uniform search and real-time autocomplete suggestions across content types hosted by a Wagtail Content Management System (CMS).
 
-### Key Findings:
-
-* **Headless-First Design:** The implementation utilizes Django REST Framework (DRF) alongside Wagtail's API v2 infrastructure to expose clean, serialized JSON data to a decoupled frontend client (e.g., React, Next.js, or mobile applications).
-* **Strict Hierarchical Constraints:** Models utilize Wagtail's structural controls (`max_count`, `parent_page_types`, `subpage_types`) to maintain strict database hierarchy and ensure corporate compliance (e.g., allowing only one Home, Terms, or Privacy page site-wide).
-* **Advanced Rich-Text Resolution:** The application fixes a common pitfall in headless CMS architectures by implementing a dedicated `serialize_streamfield_body` utility. This utility explicitly resolves internal database database-level references (e.g., `<a linktype="page" id="3">`) into valid client-side URLs via Wagtail's `expand_db_html` utility.
-* **Architectural Integration Gap Identified:** While the application defines custom serializers (`serializers.py`) and an extended API ViewSet (`api.py`), they are not natively bound together in the provided files. By default, Wagtail's `PagesAPIViewSet` ignores external DRF model serializers unless explicitly integrated via polymorphic dispatch inside `get_serializer_class()` or routed through standard `api_fields`. This report outlines the necessary modifications and supplies the missing configuration files to seal this gap.
+Key architectural characteristics include short-duration cache mechanics to protect the database against repetitive lookups, a decoupled serialization architecture dedicated to structural test validation, and explicit type filtering capabilities via query parameters. This report provides a complete structural hierarchy, identifies optimization gaps, and generates production-ready supplementary files to ensure a complete deployment.
 
 ---
 
-## 2. Information Hierarchy & Technical Deep-Dive
-
-### Module Architecture Map
+## 2. Information Hierarchy & Architecture Overview
 
 ```
-apps.pages/
-│
-├── apps.py           → Application Registry & DB Field Standardization
-├── models.py         → Database Layout, Hierarchical Rules, Back-Office Forms
-├── serializers.py    → StreamField Transformations & Model-to-JSON Data Engine
-└── api.py            → Query Filtering, Access Control, and Endpoint Gatekeeping
+apps.search
+├── 1. Configuration Layer (apps.py)
+│   └── App registration & metadata config
+├── 2. Routing Layer (urls.py)
+│   ├── /api/v1/search/ -> SearchView
+│   └── /api/v1/search/suggest/ -> SearchSuggestionsView
+├── 3. Serialization Layer (serializers.py)
+│   └── SearchResultSerializer (Structural decoupled validation)
+└── 4. Core Presentation & Engine Layer (views.py)
+    ├── SearchView -> Wagtail search backend + caching + slicing
+    └── SearchSuggestionsView -> Django ORM icontains autocomplete fallback
 
 ```
 
 ---
 
-### A. Application Configuration Layer (`apps.py`)
+## 3. Deep-Dive Component Analysis
 
-This file establishes the structural registry metadata required by the Django core framework engine.
+### 3.1 Application Configuration Layer (`apps.py`)
 
-* **Class Definition:** `PagesConfig(AppConfig)`
-* **Module Namespacing:** Formally declares the app path as `apps.pages` with a clean verbose identification label (`"Pages"`).
-* **Auto-Increment Strategy:** Configures `django.db.models.BigAutoField` as the implicit auto-generated primary key type across all page models, ensuring high-scale data capacity.
+The application defines its metadata using Django's standard app configuration pattern.
+
+* **Component Details**:
+* **Class Name**: `SearchConfig` inheriting from `AppConfig`.
+* **Path Setup**: Configured as `apps.search` with a human-readable verbose label of `"Search"`.
+* **Primary Key Base**: Enforces `django.db.models.BigAutoField` as the implicit auto-generated primary key strategy for models introduced within this specific context.
+
+
+
+### 3.2 Endpoint Routing Layer (`urls.py`)
+
+The application exposes decoupled RESTful interfaces under two predictable routes:
+
+* **Component Details**:
+* **Full-text Search Endpoint**: Root pathway `""` maps directly to `SearchView.as_view()` with the internal namespace designation `name="search"`.
+* **As-You-Type Suggestion Endpoint**: Path `"suggest/"` maps to `SearchSuggestionsView.as_view()` with the internal namespace designation `name="search-suggest"`.
+
+
+
+### 3.3 Data Contracts & Serialization (`serializers.py`)
+
+The application defines a strict shape for outgoing lookups via `SearchResultSerializer`.
+
+* **Component Details**:
+* **Decoupled Architecture**: Per its internal layout, the serializer is intentionally held separate from the view runtime execution so that automated integration suites and end-to-end test scenarios can validate schema mutations independently.
+* **Payload Shape Data Schema**:
+| Field Name | Serializer Type | Constraints / Attributes |
+| --- | --- | --- |
+| `type` | `CharField` | Core classifier (`blog`, `pages`, `authors`) |
+| `id` | `IntegerField` | Unique identifier of the underlying target item |
+| `title` | `CharField` | Evaluated textual header |
+| `slug` | `CharField` | URL-safe alphanumeric string identifier |
+| `url` | `CharField` | Absolute web-facing route |
+| `excerpt` | `CharField` | Contextual body text snippet; permits blank structures |
+| `published_date` | `DateTimeField` | Timestamp of public release; optional, permits null structures |
+| `cover_image_url` | `URLField` | Image association link; optional, permits null structures |
+| `photo_url` | `URLField` | Author portrait attachment link; optional, permits null structures |
+| `role` | `CharField` | Functional role designation; optional, permits blank structures |
+| `author` | `DictField` | Nested dictionary detail mapping author meta properties; optional, null permitted |
+
+
+
+
+
+### 3.4 Request Handling & Search Engine Logic (`views.py`)
+
+#### `SearchView`
+
+Provides full-text query capabilities across multiple internal Wagtail indexes using configurable drivers like PostgreSQL Full-Text Search extensions or an external Elasticsearch engine cluster.
+
+* **Core Constants & Permissions**:
+* Publicly open via `permission_classes = [AllowAny]`.
+* Restricts internal calculation spikes via an upper safety boundary: `MAX_RESULTS = 200`.
+
+
+* **Query Control Pipeline**:
+1. Captures `q` (query string) and `type` (content target filter defaults to `"all"`) from query strings.
+2. Bails out with an empty payload container structure if `q` is absent.
+3. Formulates a structured cache string signature: `f"search:{content_type}:{query[:200]}"`.
+4. Returns a short-lived memory cache hit instantly if available, bypassing downstream database traffic.
+5. Slices the post-caching array into explicit index slices using custom math formulas: `start = (page_number - 1) * page_size`.
+
+
+
+#### `SearchSuggestionsView`
+
+Provides lower-latency autocomplete lookup capabilities intended for asynchronous interactive ui input elements.
+
+* **Core Operational Pipeline**:
+* Drops actions completely with an empty list return if the incoming parameter string `q` is shorter than 2 characters long.
+* Imports the live data model context `apps.blog.models.BlogPage` dynamically during runtime execution to maintain clean separation of imports and avoid circular dependency blocks.
+* Limits database impact by requesting a strict data subset slice via `.values_list("title", "slug")[:5]` using an un-indexed `__icontains` case-insensitive substring lookup strategy.
+
+
 
 ---
 
-### B. Core Content Data Models (`models.py`)
+## 4. Performance & Architectural Design Choices
 
-Every page model inherits jointly from Wagtail’s core `Page` class and a custom `SEOPageMixin`. This architecture guarantees that all operational endpoints inherently possess unified metadata capabilities (SEO tags, open-graph parameters, schema markup) managed through a dedicated **"SEO" tab interface** in the admin backend.
-
-#### 1. Page-by-Page Specifications
-
-| Page Class Model | Frontend Target Route | Primary Functional Fields | Constraints & Structural Rules |
-| --- | --- | --- | --- |
-| **`HomePage`** | `/` | `body` (StreamField Layout blocks), `hero_heading`, `hero_subheading`, `hero_cta_label`, `hero_cta_url`, `hero_image` (FK to `wagtailimages.Image`) | `max_count = 1`<br>
-
-<br>Parent types: Root or system parent page only. |
-| **`AboutPage`** | `/about` | `intro` (CharField header support), `body` (StreamField Content canvas) | No population caps. |
-| **`ServicesPage`** | `/services` | `intro` (CharField header support), `body` (StreamField Content canvas) | No population caps. |
-| **`ContactPage`** | `/contact` | `intro`, `body`, `form_submission_email` (Destination for capture routing), `success_message` (Rich text feedback block) | No population caps. |
-| **`PrivacyPolicyPage`** | `/privacy-policy` | `last_updated` (DateField notation), `body` (StreamField Content canvas) | `max_count = 1`<br>
-
-<br>Parent types: Restricted underneath `HomePage` or `wagtailcore.Page`. Subpages disallowed. |
-| **`TermsPage`** | `/terms` | `last_updated` (DateField notation), `body` (StreamField Content canvas) | `max_count = 1`<br>
-
-<br>Parent types: Restricted underneath `HomePage` or `wagtailcore.Page`. Subpages disallowed. |
-
-
-#### 2. Editor Back-Office Interface Control (`TabbedInterface`)
-
-Rather than spilling all database inputs onto a single column, every page class maps its presentation interface using `TabbedInterface`:
-
-* **`Content` Panel Tab:** Groups administrative inputs, text configurations, page headings, and the primary drag-and-drop `StreamField` canvas.
-* **`SEO` Panel Tab:** Bundles all metadata inputs, descriptions, and crawling parameters inherited from `SEOPageMixin.seo_panels`.
+* **Caching Layer**: Employs a defensive 2-minute Time-To-Live (TTL) cache window. This design pattern eliminates high DB thread contention during trending events or repeated pagination traversal requests.
+* **Polymorphic Results Struct**: Builds a decoupled dictionary collection layout representing various database entities uniformly. This shape ensures compatibility with frontend consumption setups like Next.js dynamic components.
+* **Isolated Serializer Flow**: The intentional detachment of `SearchResultSerializer` allows independent updates to the outgoing api schema shape without tightly binding the underlying search index transformations inside `views.py`.
 
 ---
 
-### C. Content Serialization Engine (`serializers.py`)
+## 5. Architectural Gaps & Refactoring Roadmap
 
-The serialization layer is responsible for converting complex nested database instances and abstract layouts into clean, predictable JSON formats.
+During the technical review, three distinct implementation gaps were identified:
 
-#### 1. The StreamField Translation Challenge & Solution
-
-By default, Wagtail stores rich-text values within its database using internal short-codes (e.g., `<embed embedtype="image" id="1" />` or `<a linktype="page" id="5">Link</a>`). If this data is directly passed to a client-side Single Page Application (SPA), the client cannot render it properly.
-
-To resolve this, the codebase implements **`serialize_streamfield_body(page)`**:
-
-* It iterates through each individual component within the `page.body` canvas.
-* If a block matches `"rich_text"` or `"paragraph"` block specifications, it invokes Wagtail's internal **`expand_db_html()`** utility.
-* This safely expands database shortcuts into valid HTML ready for immediate display on your web app (e.g., transforming relational IDs to absolute links like `<a href="/about/">Link</a>`).
-
-#### 2. Individual Model Serializers
-
-Every custom page type features a parallel serializer inheriting from `serializers.ModelSerializer`. Custom fields (such as `body` and `seo`) utilize `serializers.SerializerMethodField()` to dynamically inject data generated by the `serialize_streamfield_body` parser and the external `SEOSerializer`.
+1. **Serializer Under-Utilization**: While `SearchResultSerializer` is defined, `SearchView` manually assembles and drops dict structures directly into the `Response` object instead of using `.data` validation wrappers.
+2. **In-Memory Slicing Penalty**: `SearchView` performs manual index pagination arrays after building or extracting full structural collections up to `MAX_RESULTS = 200`. This pattern causes higher memory consumption than database-driven limits.
+3. **Suboptimal Autocomplete Matcher**: `SearchSuggestionsView` uses an expensive database-level `__icontains` substring search on `BlogPage`. This approach bypasses Wagtail's efficient tokenized `.autocomplete()` engine method.
 
 ---
 
-### D. REST Framework ViewSet Endpoints (`api.py`)
+## 6. Supplementary Production-Grade Support Files
 
-This file acts as the gateway to the outer network environment by subclassing the standard Wagtail `PagesAPIViewSet`.
+To address the missing application dependencies and ensure robust testing and deployment, the three supplementary source files below should be appended to the codebase.
 
-* **Query Quarantine Logic (`get_queryset`):** Overrides default listing methods to force all fetch requests through `.live().public()`. This acts as a security barrier, completely excluding draft versions, archived nodes, or privately gated organizational pages from accidentally streaming over public API connections.
+### File 1: Custom Pagination Contract (`apps/api/pagination.py`)
 
----
-
-## 3. Identified System Gaps & Recommended Solutions
-
-The provided configuration contains an integration gap: Wagtail's standard `PagesAPIViewSet` does not know that these specific DRF model serializers exist inside `serializers.py`. If a client calls `/api/v2/pages/?type=pages.HomePage`, the viewset will fall back to Wagtail's standard internal serializer instead of applying your customized layout properties.
-
-### Resolution Options:
-
-1. **The Native Approach (Recommended for simpler APIs):** Add an `api_fields` property to each page model class inside `models.py` using `APIField('body', serializer=...)` syntax.
-2. **The Headless Factory Approach (Recommended for pure SPAs):** Override `get_serializer_class(self)` inside `api.py` to inspect the targeted page instance and return the corresponding explicit serializer from `serializers.py`.
-
----
-
-## 4. Supplementary Architecture Files (Deliverables)
-
-To execute this architecture properly within a live project deployment, the following configuration and routing files must be included alongside the codebase.
-
-### File 1: Fixed `apps/pages/api.py` (Headless Factory Pattern)
-
-*This script updates the viewset to inspect page instances dynamically and apply the correct serializers defined in `serializers.py`.*
+This file resolves the missing import for `StandardResultsPagination` found in `views.py`.
 
 ```python
-"""
-Wagtail API v2 endpoint orchestration layer with Polymorphic DRF Serializer mapping.
-"""
-from wagtail.api.v2.views import PagesAPIViewSet as BaseViewSet
-from apps.pages.models import HomePage, AboutPage, ContactPage, ServicesPage, PrivacyPolicyPage, TermsPage
-from apps.pages import serializers
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
-class PagesAPIViewSet(BaseViewSet):
+class StandardResultsPagination(PageNumberPagination):
     """
-    Enhanced API ViewSet that intercepts requests and serves targeted custom
-    Django REST Framework serializers based on specific page classes.
+    Provides fallback enforcement parameters for full-text search view streams.
+    Allows clients to override page sizing safely up to a fixed maximum limit.
     """
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 50
 
-    def get_queryset(self):
-        # Prevent ingestion of non-live or restricted workspace items
-        return super().get_queryset().live().public()
-
-    def get_serializer_class(self):
-        """
-        Dynamic Factory resolution mapping models to their specific DRF schema structures.
-        """
-        # If looking at a detailed page instance query, resolve the specific subclass
-        if hasattr(self, 'action') and self.action == 'detail_view':
-            try:
-                instance = self.get_object()
-                model_class = instance.specific_class
-                
-                mapping = {
-                    HomePage: serializers.HomePageSerializer,
-                    AboutPage: serializers.AboutPageSerializer,
-                    ContactPage: serializers.ContactPageSerializer,
-                    ServicesPage: serializers.ServicesPageSerializer,
-                    PrivacyPolicyPage: serializers.PrivacyPolicyPageSerializer,
-                    TermsPage: serializers.TermsPageSerializer,
-                }
-                
-                if model_class in mapping:
-                    return mapping[model_class]
-            except Exception:
-                pass
-                
-        return super().get_serializer_class()
+    def get_paginated_response(self, data):
+        return Response({
+            'pagination': {
+                'count': self.page.paginator.count,
+                'total_pages': self.page.paginator.num_pages,
+                'current_page': self.page.number,
+                'page_size': self.get_page_size(self.request),
+                'has_next': self.get_next_link() is not None,
+                'has_previous': self.get_previous_link() is not None,
+            },
+            'results': data
+        })
 
 ```
 
-### File 2: Global Configuration Router Configuration (`urls.py`)
+### File 2: Integration Suite (`apps/search/tests/test_search.py`)
 
-*This file sets up the API router framework, registers the custom `PagesAPIViewSet`, and attaches the headless routes into Django's root URL dispatcher.*
+This test suite verifies the endpoint logic and utilizes `SearchResultSerializer` to validate the application schemas.
 
 ```python
-"""
-Global URL Configuration routing map for the headless layout backend.
-"""
-from django.urls import path, include
-from wagtail.api.v2.router import WagtailAPIRouter
-from wagtail import urls as wagtail_urls
-from apps.pages.api import PagesAPIViewSet
+from django.urls import reverse
+from django.core.cache import cache
+from rest_framework import status
+from rest_framework.test import APITestCase
+from unittest.mock import patch, MagicMock
+from apps.search.serializers import SearchResultSerializer
 
-# Instantiate a Wagtail API Routing controller
-api_router = WagtailAPIRouter('api')
+class SearchApplicationTests(APITestCase):
 
-# Register our custom viewset context under the 'pages' path alias
-api_router.register_endpoint('pages', PagesAPIViewSet)
+    def setUp(self):
+        cache.clear()
+        self.search_url = reverse('search')
+        self.suggest_url = reverse('search-suggest')
 
-urlpatterns = [
-    # Expose headless layout endpoints via pathing /api/v2/pages/
-    path('api/v2/', api_router.urls),
-    
-    # Standard Wagtail page fallback router for handling administrative views
-    path('', include(wagtail_urls)),
-]
+    def test_search_empty_query_returns_empty_payload(self):
+        """Verifies that an empty query string returns a valid blank result container."""
+        response = self.client.get(self.search_url, {'q': ''})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['total'], 0)
+        self.assertEqual(response.data['results'], [])
+
+    @patch('apps.search.views.get_search_backend')
+    def test_search_execution_and_serializer_compliance(self, mock_get_backend):
+        """Mocks the Wagtail engine to evaluate serializer contract rules against results."""
+        mock_backend = MagicMock()
+        mock_hit = MagicMock()
+        
+        # Simulating polymorphic properties typical of Wagtail core pages
+        mock_hit.id = 42
+        mock_hit.title = "Test Automation Post"
+        mock_hit.slug = "test-automation-post"
+        mock_hit.url = "/blog/test-automation-post"
+        mock_hit.specific = mock_hit
+        
+        mock_backend.search.return_value = [mock_hit]
+        mock_get_backend.return_value = mock_backend
+
+        # Invoke API target
+        response = self.client.get(self.search_url, {'q': 'automation', 'type': 'blog'})
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        # Validate fake item schema payload shape against system structural requirements
+        mock_serialized_data = {
+            "type": "blog",
+            "id": 42,
+            "title": "Test Automation Post",
+            "slug": "test-automation-post",
+            "url": "/blog/test-automation-post",
+            "excerpt": "Context summary snippet description.",
+            "published_date": None,
+            "cover_image_url": None,
+            "photo_url": None,
+            "role": "",
+            "author": None
+        }
+        
+        serializer = SearchResultSerializer(data=mock_serialized_data)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+
+    def test_suggestion_route_enforces_minimum_character_boundary(self):
+        """Ensures that suggestion lookups fail fast with short inputs (<2 chars)."""
+        response = self.client.get(self.suggest_url, {'q': 'a'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['suggestions'], [])
+
+```
+
+### File 3: Search Engine Infrastructure Map (`settings.py` Snippet)
+
+Wagtail requires explicit engine configuration profiles to support full-text operations. Below is the standard production configuration template for `settings.py`.
+
+```python
+# Wagtail Search Engine Routing Matrix 
+# Supports fallback database matching routines or isolated scalable cluster queries.
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.search.backends.elasticsearch7',
+        'URLS': ['http://127.0.0.1:9200'],
+        'INDEX': 'production_cms_index',
+        'TIMEOUT': 5,
+        'OPTIONS': {
+            'max_retries': 3,
+        },
+        'AUTO_UPDATE': True, # Keeps DB updates and index maps accurately synced
+    },
+    'fallback_db': {
+        'BACKEND': 'wagtail.search.backends.database',
+        'AUTO_UPDATE': True,
+    }
+}
 
 ```

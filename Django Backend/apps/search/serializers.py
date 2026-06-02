@@ -1,3 +1,4 @@
+# apps/search/serializers.py
 """
 Search result serializers (used internally by SearchView).
 Kept separate so they can be imported by tests independently.

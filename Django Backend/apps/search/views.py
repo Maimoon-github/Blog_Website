@@ -1,3 +1,4 @@
+# apps/search/views.py
 """
 Search API views.
 

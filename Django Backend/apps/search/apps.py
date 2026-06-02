@@ -1,3 +1,4 @@
+# apps/search/apps.py
 from django.apps import AppConfig
 
 
