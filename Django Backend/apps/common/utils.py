@@ -1,5 +1,5 @@
 # apps/common/utils.py
-from wagtail.core.rich_text import RichText
+from wagtail.rich_text import RichText
 
 # apps/common/utils.py
 
