@@ -21,23 +21,16 @@ SECURE_CONTENT_TYPE_NOSNIFF = False
 # CORS – allow all origins in dev
 CORS_ALLOW_ALL_ORIGINS = True
 
-# Use simpler console email backend
+# Use console email backend
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-# ─── Debug Toolbar ────────────────────────────────────────────────────────────
-INSTALLED_APPS += ["debug_toolbar", "django_extensions"]  # noqa: F405
-
-MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
-] + MIDDLEWARE  # noqa: F405
-
+# Debug Toolbar
+INSTALLED_APPS += ["debug_toolbar", "django_extensions"]
+MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware"] + MIDDLEWARE
 INTERNAL_IPS = ["127.0.0.1", "::1"]
+DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG}
 
-DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG,
-}
-
-# ─── Logging ──────────────────────────────────────────────────────────────────
+# Logging – simple console output
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -53,10 +46,7 @@ LOGGING = {
             "formatter": "verbose",
         },
     },
-    "root": {
-        "handlers": ["console"],
-        "level": "DEBUG",
-    },
+    "root": {"handlers": ["console"], "level": "DEBUG"},
     "loggers": {
         "django": {"handlers": ["console"], "level": "INFO", "propagate": False},
         "wagtail": {"handlers": ["console"], "level": "DEBUG", "propagate": False},
@@ -64,14 +54,14 @@ LOGGING = {
     },
 }
 
-# ─── Wagtail search (faster in dev) ──────────────────────────────────────────
+# Wagtail search – database backend (fast for dev)
 WAGTAILSEARCH_BACKENDS = {
     "default": {
         "BACKEND": "wagtail.search.backends.database",
     }
 }
 
-# ─── Cache – use local memory in dev (no Redis required) ─────────────────────
+# Cache – local memory (no Redis required)
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
