@@ -1,6 +1,6 @@
 // src/app/(site)/page.tsx
 import Link from "next/link";
-import { mockPosts, mockCategories } from "../../lib/mockData";
+import { mockPosts, mockCategories } from "@/lib/mockData";
 
 export default function HomePage() {
   // Get featured posts (first 3)
@@ -70,14 +70,14 @@ export default function HomePage() {
             >
               <div className="aspect-video w-full overflow-hidden bg-lotus-void">
                 <img
-                  src={post.coverImage}
+                    src={post.image}
                   alt={post.title}
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="p-4 sm:p-6">
                 <div className="flex flex-wrap gap-2 mb-2">
-                  {post.categories?.slice(0, 2).map((cat) => (
+                  {post.category ? [post.category.name].slice(0, 2).map((cat) => (
                     <span
                       key={cat}
                       className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-lotus-light bg-lotus-core/10 px-2 py-0.5 rounded-full"
@@ -187,7 +187,7 @@ export default function HomePage() {
             >
               <div className="aspect-video w-full overflow-hidden">
                 <img
-                  src={post.coverImage}
+                    src={post.image}
                   alt={post.title}
                   className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                 />
