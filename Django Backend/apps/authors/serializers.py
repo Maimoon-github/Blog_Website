@@ -1,13 +1,11 @@
+# apps/authors/serializers.py
 from rest_framework import serializers
 
 from apps.seo.serializers import SEOSerializer
 
 from .models import AuthorIndexPage, AuthorPage
 
-
 class AuthorMinimalSerializer(serializers.ModelSerializer):
-    """Compact author info embedded in blog post responses."""
-
     photo_url = serializers.ReadOnlyField()
     social_links = serializers.ReadOnlyField()
 
@@ -15,10 +13,7 @@ class AuthorMinimalSerializer(serializers.ModelSerializer):
         model = AuthorPage
         fields = ["id", "title", "slug", "role", "short_bio", "photo_url", "social_links"]
 
-
 class AuthorSerializer(serializers.ModelSerializer):
-    """Full author profile."""
-
     photo_url = serializers.ReadOnlyField()
     photo_url_large = serializers.ReadOnlyField()
     social_links = serializers.ReadOnlyField()

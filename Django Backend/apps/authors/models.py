@@ -1,9 +1,4 @@
-"""
-Author models.
-
-AuthorIndexPage  →  /authors
-AuthorPage       →  /authors/[slug]
-"""
+# apps/authors/models.py
 from django.db import models
 from wagtail.admin.panels import FieldPanel, FieldRowPanel, InlinePanel, MultiFieldPanel, ObjectList, TabbedInterface
 from wagtail.fields import RichTextField
@@ -12,13 +7,7 @@ from wagtail.search import index
 
 from apps.seo.models import SEOPageMixin
 
-
 class AuthorIndexPage(Page):
-    """
-    Listing page for all authors.
-    Frontend route: /authors
-    """
-
     intro = RichTextField(blank=True)
 
     content_panels = Page.content_panels + [
@@ -37,14 +26,7 @@ class AuthorIndexPage(Page):
     def get_api_representation(self, value, context=None):
         return {}
 
-
 class AuthorPage(SEOPageMixin, Page):
-    """
-    Individual author profile page.
-    Frontend route: /authors/[slug]
-    """
-
-    # ── Profile ───────────────────────────────────────────────────────────────
     photo = models.ForeignKey(
         "wagtailimages.Image",
         null=True,
@@ -60,8 +42,6 @@ class AuthorPage(SEOPageMixin, Page):
         max_length=300,
         help_text="Brief bio shown in blog post bylines (max 300 chars)",
     )
-
-    # ── Social links ──────────────────────────────────────────────────────────
     twitter_url = models.URLField(blank=True, verbose_name="Twitter / X URL")
     linkedin_url = models.URLField(blank=True)
     github_url = models.URLField(blank=True)
@@ -69,14 +49,12 @@ class AuthorPage(SEOPageMixin, Page):
     instagram_url = models.URLField(blank=True)
     youtube_url = models.URLField(blank=True)
 
-    # ── Search index ──────────────────────────────────────────────────────────
     search_fields = Page.search_fields + [
         index.SearchField("bio"),
         index.SearchField("role"),
         index.FilterField("slug"),
     ]
 
-    # ── Admin panels ──────────────────────────────────────────────────────────
     content_panels = Page.content_panels + [
         MultiFieldPanel(
             [
@@ -112,7 +90,6 @@ class AuthorPage(SEOPageMixin, Page):
     class Meta:
         verbose_name = "Author Page"
 
-    # ── Properties ────────────────────────────────────────────────────────────
     @property
     def photo_url(self):
         if self.photo:
@@ -143,6 +120,5 @@ class AuthorPage(SEOPageMixin, Page):
 
     @property
     def featured_posts(self):
-        """Return the 6 most recent live posts by this author."""
         from apps.blog.models import BlogPage
         return BlogPage.objects.live().filter(author=self).order_by("-published_date")[:6]
