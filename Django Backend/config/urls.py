@@ -42,8 +42,8 @@ urlpatterns = [
     # Django admin (commented out – use Wagtail admin at /cms/)
     # path("django-admin/", admin.site.urls),
 
-    # Wagtail admin – single inclusion with unique namespace
-    path("cms/", include(wagtailadmin_urls, namespace="wagtailadmin")),
+    # Wagtail admin – single inclusion (no namespace needed)
+    path("cms/", include(wagtailadmin_urls)),
 
     # Wagtail documents
     path("documents/", include(wagtaildocs_urls)),
