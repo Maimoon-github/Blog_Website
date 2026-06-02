@@ -31,14 +31,19 @@ WAGTAILSEARCH_BACKENDS = {
 # ─── S3 / R2 Media Storage ────────────────────────────────────────────────────
 _USE_S3 = config("AWS_ACCESS_KEY_ID", default=None)
 if _USE_S3:
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
-    AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
-    AWS_S3_ENDPOINT_URL = config("AWS_S3_ENDPOINT_URL", default=None)
-    AWS_DEFAULT_ACL = "public-read"
-    AWS_S3_FILE_OVERWRITE = False
-    MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
+    try:
+        import storages  # noqa: F401
+        DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+        AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+        AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+        AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
+        AWS_S3_ENDPOINT_URL = config("AWS_S3_ENDPOINT_URL", default=None)
+        AWS_DEFAULT_ACL = "public-read"
+        AWS_S3_FILE_OVERWRITE = False
+        MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
+    except ImportError:
+        # If django-storages is not installed, fall back to default filesystem storage
+        pass
 
 # ─── Cache – Redis ────────────────────────────────────────────────────────────
 CACHES = {
