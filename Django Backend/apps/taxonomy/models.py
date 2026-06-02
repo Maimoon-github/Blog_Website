@@ -1,3 +1,4 @@
+# apps/taxonomy/models.py
 """
 Taxonomy models: Category and Tag.
 
@@ -124,6 +125,5 @@ class Tag(models.Model):
 
     @property
     def post_count(self):
-        # Count live blog posts tagged with this tag's name via taggit
         from apps.blog.models import BlogPage
         return BlogPage.objects.live().filter(tags__name=self.name).count()

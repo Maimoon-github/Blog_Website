@@ -1,0 +1,9 @@
+Field Name,Type,Key Features / Constraints,Purpose
+name,CharField,"Unique, Max: 100",Display title in admin and frontend.
+slug,SlugField,"Unique, Max: 120, Blank Allowed, db_index=True",URL identifier for clean routing.
+description,TextField,Blank Allowed,Meta-text or category introduction block.
+cover_image,ForeignKey,"Null/Blank Allowed, on_delete=SET_NULL, links to wagtailimages.Image",Relational asset for visual category banners.
+color,CharField,"Max: 7, Blank Allowed",Hex color representation for matching frontend UI themes.
+order,PositiveIntegerField,"Default: 0, db_index=True","Controls explicit, explicit sorting in lists."
+seo_title,CharField,"Max: 255, Blank Allowed",Overrides default title for HTML header tags.
+seo_description,TextField,Blank Allowed,Meta description for search engines.
