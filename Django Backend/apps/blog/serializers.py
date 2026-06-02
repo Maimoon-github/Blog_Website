@@ -1,3 +1,4 @@
+# apps/blog/serializers.py
 """
 Blog serializers.
 """

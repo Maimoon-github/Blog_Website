@@ -1,3 +1,4 @@
+# apps/blog/api.py
 """
 Wagtail API v2 endpoint for BlogPage.
 """

@@ -1,3 +1,4 @@
+# apps/blog/models.py
 """
 Blog models.
 

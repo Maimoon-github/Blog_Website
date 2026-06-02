@@ -1,0 +1,4 @@
+System Layer,Target Component,Core Responsibilities & Architectural Patterns
+Data Engine,"BlogIndexPage, BlogPage","Manages node hierarchies, enforces nesting constraints, implements data hooks for automated property derivations (reading time updates), and handles taxonomy mappings via explicit relational maps."
+API / Representation,"BlogPageAPIViewSet, DRF Serializers","Eliminates database bottlenecks using O(1) relational prefetching strategies. Translates raw data into functional presentation payloads, converting interior CMS structural representations into clear JSON for decoupled client rendering."
+State Synchronization,"Django Signals, Celery Worker","Implements an asynchronous event emitter layout that delegates heavy external cache-clearing operations to out-of-band background workers, keeping backend authoring actions fast and non-blocking."

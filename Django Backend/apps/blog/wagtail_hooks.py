@@ -1,3 +1,4 @@
+# apps/blog/wagtail_hooks.py
 """
 Wagtail hooks for the blog app.
 """

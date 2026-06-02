@@ -1,3 +1,4 @@
+# apps/blog/signals.py
 """
 Signals for BlogPage – triggers Next.js ISR revalidation on publish.
 """
