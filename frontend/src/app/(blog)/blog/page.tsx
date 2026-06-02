@@ -4,7 +4,7 @@ import React, { useState, useMemo, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { mockPosts, mockCategories, Post } from "../../../lib/mockData";
+import { mockPosts, mockCategories } from "../../../lib/mockData";
 
 function BlogContent() {
   const searchParams = useSearchParams();
