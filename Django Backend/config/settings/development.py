@@ -1,13 +1,13 @@
 """
 Development settings – extends base.
 """
-from decouple import config
-
 from .base import *  # noqa: F401, F403
 
-DEBUG = True  # ← Fixed: development should have DEBUG=True
+DEBUG = True
 
-# ─── Security ────────────────────────────────────────────────────────────────
+# Allow all hosts in development
+ALLOWED_HOSTS = ["*"]
+
 # Disable security settings for local development
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
@@ -17,9 +17,6 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_HSTS_PRELOAD = False
 X_FRAME_OPTIONS = "SAMEORIGIN"
 SECURE_CONTENT_TYPE_NOSNIFF = False
-
-# Allow all hosts in development
-ALLOWED_HOSTS = ["*"]
 
 # CORS – allow all origins in dev
 CORS_ALLOW_ALL_ORIGINS = True
