@@ -1,3 +1,4 @@
+# apps/seo/models.py
 """
 SEO models.
 

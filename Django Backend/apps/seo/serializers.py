@@ -1,3 +1,4 @@
+# apps/seo/serializers.py
 """
 SEO serializers – used by all page-level API serializers.
 """
