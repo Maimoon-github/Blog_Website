@@ -149,7 +149,6 @@ STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Only include static directory if it exists (avoids warning when missing)
-
 STATICFILES_DIRS = []
 static_dir = BASE_DIR / "static"
 if static_dir.exists():
