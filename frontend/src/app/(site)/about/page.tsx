@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import { mockAuthors } from "../../../lib/mockData";
 
 export default function AboutPage() {
@@ -186,7 +187,7 @@ export default function AboutPage() {
               Dive into our curated journal of earthen architecture and romantic escapes.
             </p>
             <div className="mt-5 sm:mt-6 flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
-              <a
+              <Link
                 href="/blog"
                 className="rounded-full px-5 sm:px-6 py-2 text-xs sm:text-sm font-semibold text-white transition-all duration-200 hover:scale-105"
                 style={{
@@ -195,8 +196,8 @@ export default function AboutPage() {
                 }}
               >
                 Browse Articles
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/contact"
                 className="rounded-full px-5 sm:px-6 py-2 text-xs sm:text-sm font-semibold text-[#8B65BF] transition-all duration-200 hover:text-[#E0E0E0]"
                 style={{
@@ -204,7 +205,7 @@ export default function AboutPage() {
                 }}
               >
                 Get in Touch →
-              </a>
+              </Link>
             </div>
           </div>
         </div>

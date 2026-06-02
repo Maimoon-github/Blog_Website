@@ -212,7 +212,7 @@ export function getPageMetadata(props: PageMetadataProps): Metadata {
  */
 export function getStructuredData(
   type: string,
-  data: Record<string, any>
+  data: Record<string, unknown>
 ): string {
   const baseStructure = {
     '@context': 'https://schema.org',
@@ -338,7 +338,9 @@ export function getCanonicalUrl(path: string): string {
 export function getOpenGraphImage(title: string, path?: string): string {
   // In production, you might use a dynamic OG image service
   // For now, return default OG image
-  return `${SITE_CONFIG.url}/og-image.jpg`;
+  return `${SITE_CONFIG.url}/og-image.jpg?title=${encodeURIComponent(title)}${
+    path ? `&path=${encodeURIComponent(path)}` : ''
+  }`;
 }
 
 /**
