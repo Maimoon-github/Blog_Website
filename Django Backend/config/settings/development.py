@@ -77,52 +77,27 @@ if _SENTRY_DSN:
     )
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
-try:
-    import django_structlog  # noqa: F401
-    LOGGING = {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "formatters": {
-            "json": {
-                "()": "django_structlog.middlewares.requests.RequestMiddleware",
-            },
-            "verbose": {
-                "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-                "style": "{",
-            },
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "json": {
+            "()": "django_structlog.middlewares.RequestMiddleware",
         },
-        "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
-                "formatter": "verbose",
-            },
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
         },
-        "root": {"handlers": ["console"], "level": "WARNING"},
-        "loggers": {
-            "django": {"handlers": ["console"], "level": "WARNING", "propagate": False},
-            "apps": {"handlers": ["console"], "level": "WARNING", "propagate": False},
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
         },
-    }
-except ImportError:
-    # If django-structlog is not installed, use a simpler logging configuration
-    LOGGING = {
-        "version": 1,
-        "disable_existing_loggers": False,
-        "formatters": {
-            "verbose": {
-                "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-                "style": "{",
-            },
-        },
-        "handlers": {
-            "console": {
-                "class": "logging.StreamHandler",
-                "formatter": "verbose",
-            },
-        },
-        "root": {"handlers": ["console"], "level": "WARNING"},
-        "loggers": {
-            "django": {"handlers": ["console"], "level": "WARNING", "propagate": False},
-            "apps": {"handlers": ["console"], "level": "WARNING", "propagate": False},
-        },
-    }
+    },
+    "root": {"handlers": ["console"], "level": "WARNING"},
+    "loggers": {
+        "django": {"handlers": ["console"], "level": "WARNING", "propagate": False},
+        "apps": {"handlers": ["console"], "level": "WARNING", "propagate": False},
+    },
+}
