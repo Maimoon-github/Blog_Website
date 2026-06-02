@@ -62,8 +62,8 @@ urlpatterns = [
     path("api/docs/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("api/docs/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
 
-    # Wagtail headless preview
-    path("api/preview/", include("wagtail_headless_preview.urls")),
+    # Wagtail headless preview (no 'urls' module in installed package)
+    # path("api/preview/", include("wagtail_headless_preview.urls")),
 ]
 
 # ─── Development extras ───────────────────────────────────────────────────────
