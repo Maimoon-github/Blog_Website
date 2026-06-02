@@ -77,14 +77,16 @@ export default function HomePage() {
               </div>
               <div className="p-4 sm:p-6">
                 <div className="flex flex-wrap gap-2 mb-2">
-                  {post.category ? [post.category.name].slice(0, 2).map((cat) => (
-                    <span
-                      key={cat}
-                      className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-lotus-light bg-lotus-core/10 px-2 py-0.5 rounded-full"
-                    >
-                      {cat}
-                    </span>
-                  ))}
+                  {post.category ? (
+                    [post.category.name].slice(0, 2).map((cat) => (
+                      <span
+                        key={cat}
+                        className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-lotus-light bg-lotus-core/10 px-2 py-0.5 rounded-full"
+                      >
+                        {cat}
+                      </span>
+                    ))
+                  ) : null}
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold text-foreground line-clamp-2 group-hover:text-lotus-light transition">
                   {post.title}
@@ -93,9 +95,9 @@ export default function HomePage() {
                   {post.excerpt}
                 </p>
                 <div className="mt-4 flex items-center gap-2 text-xs text-foreground/50">
-                  <span>{post.author}</span>
+                  <span>{post.author.name}</span>
                   <span>•</span>
-                  <span>{post.date}</span>
+                  <span>{post.publishDate}</span>
                 </div>
               </div>
             </Link>
@@ -125,11 +127,11 @@ export default function HomePage() {
               />
               <div className="absolute inset-0 flex items-end p-4 sm:p-6">
                 <div>
-                  <span className="text-2xl sm:text-3xl lotus-badge block mb-1">{category.icon}</span>
+                  <span className="text-2xl sm:text-3xl lotus-badge block mb-1">✦</span>
                   <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-lotus-light transition">
                     {category.name}
                   </h3>
-                  <p className="text-xs text-foreground/50 mt-1">{category.count} articles</p>
+                  <p className="text-xs text-foreground/50 mt-1">Explore this category</p>
                 </div>
               </div>
             </Link>
@@ -198,8 +200,8 @@ export default function HomePage() {
                 </h3>
                 <p className="mt-2 text-xs text-foreground/60 line-clamp-2">{post.excerpt}</p>
                 <div className="mt-3 flex items-center justify-between text-[10px] sm:text-xs text-foreground/40">
-                  <span>{post.author}</span>
-                  <span>{post.date}</span>
+                  <span>{post.author.name}</span>
+                  <span>{post.publishDate}</span>
                 </div>
               </div>
             </Link>
