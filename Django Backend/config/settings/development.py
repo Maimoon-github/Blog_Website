@@ -2,6 +2,7 @@
 Development settings – extends base.
 """
 from .base import *  # noqa: F401, F403
+from django.core.files.storage import FileSystemStorage
 
 DEBUG = True
 
@@ -68,8 +69,8 @@ CACHES = {
     }
 }
 
-# Explicitly force the default file storage to local filesystem
-DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+# Explicitly set the default file storage to a concrete instance
+DEFAULT_FILE_STORAGE = FileSystemStorage(location=str(MEDIA_ROOT))
 
-# Explicitly force Wagtail images to use the same local filesystem storage
-WAGTAILIMAGES_STORAGE = "django.core.files.storage.FileSystemStorage"
+# Explicitly set Wagtail images storage to the same concrete instance
+WAGTAILIMAGES_STORAGE = FileSystemStorage(location=str(MEDIA_ROOT))
