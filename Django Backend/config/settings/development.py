@@ -73,3 +73,14 @@ DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 WAGTAILIMAGES_STORAGE = "django.core.files.storage.FileSystemStorage"
 # Also set rendition storage explicitly
 WAGTAILIMAGES_RENDITION_STORAGE = "django.core.files.storage.FileSystemStorage"
+
+# ─── Override database for development – use SQLite ──────────────────────────
+import os
+from pathlib import Path
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
