@@ -34,6 +34,9 @@ wagtail_api_router.register_endpoint("images", ImagesAPIViewSet)
 wagtail_api_router.register_endpoint("blog", BlogPageAPIViewSet)
 wagtail_api_router.register_endpoint("authors", AuthorPageAPIViewSet)
 
+# Unpack the 3‑tuple returned by wagtail_api_router.urls
+router_urls = wagtail_api_router.urls
+
 # ─── URL patterns ─────────────────────────────────────────────────────────────
 urlpatterns = [
     # Django admin
@@ -46,7 +49,6 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
 
     # Wagtail API v2  →  /api/wagtail/
-    router_urls = wagtail_api_router.urls
     path("api/wagtail/", include((router_urls[0], router_urls[1]), namespace=router_urls[2])),
 
     # Custom DRF API  →  /api/v1/
