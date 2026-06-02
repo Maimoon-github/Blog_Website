@@ -6,7 +6,7 @@ This backend only exposes:
   - /cms/          → Wagtail admin
   - /api/          → REST API (DRF + Wagtail API v2)
   - /api/docs/     → OpenAPI / Swagger
-  - /django-admin/ → Django admin (restricted to staff)
+  - /django-admin/ → Django admin (restricted to staff) – commented out
 """
 from django.conf import settings
 from django.conf.urls.static import static
@@ -39,11 +39,11 @@ router_urls = wagtail_api_router.urls
 
 # ─── URL patterns ─────────────────────────────────────────────────────────────
 urlpatterns = [
-    # Django admin
-    path("django-admin/", admin.site.urls),
+    # Django admin (commented out – use Wagtail admin at /cms/)
+    # path("django-admin/", admin.site.urls),
 
-    # Wagtail admin
-    path("cms/", include(wagtailadmin_urls)),
+    # Wagtail admin – single inclusion with unique namespace
+    path("cms/", include(wagtailadmin_urls, namespace="wagtailadmin")),
 
     # Wagtail documents
     path("documents/", include(wagtaildocs_urls)),
