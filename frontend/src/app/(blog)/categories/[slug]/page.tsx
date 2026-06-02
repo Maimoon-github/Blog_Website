@@ -4,13 +4,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockCategories, mockPosts } from "../../../../lib/mockData";
 
+// Pure static: disable dynamic routes for static export
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
-  // Get unique category slugs
-  const uniqueCategories = Array.from(
-    new Set(mockPosts.map((post) => post.category.slug))
-  );
-  return uniqueCategories.map((slug) => ({ slug }));
+  const { mockPosts } = await import("@/lib/mockData");
+  return Array.from(new Set(mockPosts.map((post) => post.category.slug))).map((slug) => ({ slug }));
 }
+
 
 interface PageProps {
   params: Promise<{ slug: string }>;

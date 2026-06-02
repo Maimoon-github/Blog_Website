@@ -4,11 +4,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockPosts } from "../../../../lib/mockData";
 
+// Pure static: disable dynamic routes for static export
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
-  return mockPosts.map((post) => ({
-    slug: post.slug,
-  }));
+  const { mockPosts } = await import("@/lib/mockData");
+  return mockPosts.map((post) => ({ slug: post.slug }));
 }
+
 
 interface PageProps {
   params: Promise<{ slug: string }>;

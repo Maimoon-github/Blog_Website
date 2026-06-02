@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockAuthors, mockPosts } from "../../../../lib/mockData";
 
+export const dynamicParams = false; // Disable dynamic params to ensure only generated paths are valid  
+
 export async function generateStaticParams() {
   // Get unique author slugs from all posts
   const uniqueAuthors = Array.from(

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { mockPosts, mockTags } from "../../../../lib/mockData";
 
+export const dynamicParams = false; // Disable dynamic params to ensure only generated paths are valid
+
 export async function generateStaticParams() {
   // Get unique tag slugs (flatten tags array from all posts)
   const allTags = mockPosts.flatMap((post) => post.tags || []);

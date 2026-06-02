@@ -14,13 +14,14 @@
 
 
 
-// next.config.js
-const nextConfig = {
-  output: 'export',
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  output: "export",        // 👈 generate static site
   images: {
-    unoptimized: true,
+    unoptimized: true,     // 👈 required for static export
   },
-  allowedDevOrigins: ['192.168.100.12'], // if needed
+  // Remove any rewrites, redirects, or headers – they won't work with export
 };
 
-module.exports = nextConfig;
+export default nextConfig;

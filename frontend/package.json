@@ -7,8 +7,9 @@
     "build": "next build",
     "export": "next build",
     "start": "next start",
-    "lint": "eslint"
-  },
+    "lint": "eslint",
+    "build:static": "next build && npx serve out",
+    "export:static": "next export && npx serve out"},
   "dependencies": {
     "next": "16.2.6",
     "react": "19.2.4",
@@ -25,3 +26,7 @@
     "typescript": "^5"
   }
 }
+
+
+
+write commet on the change:
