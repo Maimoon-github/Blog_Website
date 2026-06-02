@@ -2,7 +2,6 @@
 Development settings – extends base.
 """
 from .base import *  # noqa: F401, F403
-from django.core.files.storage import FileSystemStorage
 
 DEBUG = True
 
@@ -69,8 +68,8 @@ CACHES = {
     }
 }
 
-# Explicitly set the default file storage to a concrete instance
-DEFAULT_FILE_STORAGE = FileSystemStorage(location=str(MEDIA_ROOT))
-
-# Explicitly set Wagtail images storage to the same concrete instance
-WAGTAILIMAGES_STORAGE = FileSystemStorage(location=str(MEDIA_ROOT))
+# Use string-based storage settings (Django standard)
+DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+WAGTAILIMAGES_STORAGE = "django.core.files.storage.FileSystemStorage"
+# Also set rendition storage explicitly
+WAGTAILIMAGES_RENDITION_STORAGE = "django.core.files.storage.FileSystemStorage"

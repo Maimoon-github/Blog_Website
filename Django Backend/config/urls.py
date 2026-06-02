@@ -46,7 +46,8 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
 
     # Wagtail API v2  →  /api/wagtail/
-    path("api/wagtail/", include(wagtail_api_router.urls)),
+    router_urls = wagtail_api_router.urls
+    path("api/wagtail/", include((router_urls[0], router_urls[1]), namespace=router_urls[2])),
 
     # Custom DRF API  →  /api/v1/
     path("api/v1/", include("apps.api.urls", namespace="v1")),
