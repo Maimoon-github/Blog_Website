@@ -1,3 +1,4 @@
+# apps/pages/models.py
 """
 Core site page models.
 

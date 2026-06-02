@@ -1,0 +1,7 @@
+Page Class Model,Frontend Target Route,Primary Functional Fields,Constraints & Structural Rules
+HomePage,/,"body (StreamField Layout blocks), hero_heading, hero_subheading, hero_cta_label, hero_cta_url, hero_image (FK to wagtailimages.Image)",max_count = 1Parent types: Root or system parent page only.
+AboutPage,/about,"intro (CharField header support), body (StreamField Content canvas)",No population caps.
+ServicesPage,/services,"intro (CharField header support), body (StreamField Content canvas)",No population caps.
+ContactPage,/contact,"intro, body, form_submission_email (Destination for capture routing), success_message (Rich text feedback block)",No population caps.
+PrivacyPolicyPage,/privacy-policy,"last_updated (DateField notation), body (StreamField Content canvas)",max_count = 1Parent types: Restricted underneath HomePage or wagtailcore.Page. Subpages disallowed.
+TermsPage,/terms,"last_updated (DateField notation), body (StreamField Content canvas)",max_count = 1Parent types: Restricted underneath HomePage or wagtailcore.Page. Subpages disallowed.

@@ -1,3 +1,4 @@
+# apps/pages/serializers.py
 """
 Serializers for core site pages.
 """
