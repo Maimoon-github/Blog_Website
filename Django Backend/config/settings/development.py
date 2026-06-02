@@ -31,20 +31,14 @@ WAGTAILSEARCH_BACKENDS = {
 # ─── S3 / R2 Media Storage ────────────────────────────────────────────────────
 _USE_S3 = config("AWS_ACCESS_KEY_ID", default=None)
 if _USE_S3:
-    try:
-        # Ensure django-storages is available before using it
-        import storages  # noqa: F401
-        DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-        AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
-        AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
-        AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
-        AWS_S3_ENDPOINT_URL = config("AWS_S3_ENDPOINT_URL", default=None)
-        AWS_DEFAULT_ACL = "public-read"
-        AWS_S3_FILE_OVERWRITE = False
-        MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
-    except ImportError:
-        # If django-storages is not installed, fall back to default filesystem storage
-        pass
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME")
+    AWS_S3_ENDPOINT_URL = config("AWS_S3_ENDPOINT_URL", default=None)
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_S3_FILE_OVERWRITE = False
+    MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/"
 
 # ─── Cache – Redis ────────────────────────────────────────────────────────────
 CACHES = {
@@ -83,27 +77,52 @@ if _SENTRY_DSN:
     )
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "json": {
-            "()": "django_structlog.middlewares.requests.RequestMiddleware",
+try:
+    import django_structlog  # noqa: F401
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "json": {
+                "()": "django_structlog.middlewares.requests.RequestMiddleware",
+            },
+            "verbose": {
+                "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+                "style": "{",
+            },
         },
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "formatter": "verbose",
+            },
         },
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
+        "root": {"handlers": ["console"], "level": "WARNING"},
+        "loggers": {
+            "django": {"handlers": ["console"], "level": "WARNING", "propagate": False},
+            "apps": {"handlers": ["console"], "level": "WARNING", "propagate": False},
         },
-    },
-    "root": {"handlers": ["console"], "level": "WARNING"},
-    "loggers": {
-        "django": {"handlers": ["console"], "level": "WARNING", "propagate": False},
-        "apps": {"handlers": ["console"], "level": "WARNING", "propagate": False},
-    },
-}
+    }
+except ImportError:
+    # If django-structlog is not installed, use a simpler logging configuration
+    LOGGING = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "verbose": {
+                "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+                "style": "{",
+            },
+        },
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "formatter": "verbose",
+            },
+        },
+        "root": {"handlers": ["console"], "level": "WARNING"},
+        "loggers": {
+            "django": {"handlers": ["console"], "level": "WARNING", "propagate": False},
+            "apps": {"handlers": ["console"], "level": "WARNING", "propagate": False},
+        },
+    }
