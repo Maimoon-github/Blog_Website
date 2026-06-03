@@ -1,0 +1,7 @@
+# apps/taxonomy/apps.py
+from django.apps import AppConfig
+
+class TaxonomyConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.taxonomy"
+    verbose_name = "Taxonomy"
