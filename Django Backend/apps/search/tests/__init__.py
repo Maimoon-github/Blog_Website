@@ -1,0 +1,1 @@
+# apps/search/tests/__init__.py

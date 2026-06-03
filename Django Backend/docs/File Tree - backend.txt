@@ -1,0 +1,87 @@
+File Tree - Django Backend
+Root path: /home/maimoon-nixos/Antigravity code/Blog_Website/Django Backend
+
+────────────────────────────────────────────────────────────────────────────────
+
+├── 📁 apps/
+│   ├── 📁 api/
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 apps.py
+│   │   ├── 🐍 feed.py
+│   │   ├── 🐍 filters.py
+│   │   ├── 🐍 pagination.py
+│   │   ├── 🐍 permissions.py
+│   │   ├── 🐍 revalidate.py
+│   │   ├── 🐍 tasks.py
+│   │   ├── 🐍 urls.py
+│   │   └── 🐍 views.py
+│   ├── 📁 authors/
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 api.py
+│   │   ├── 🐍 apps.py
+│   │   ├── 🐍 models.py
+│   │   └── 🐍 serializers.py
+│   ├── 📁 blog/
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 api.py
+│   │   ├── 🐍 apps.py
+│   │   ├── 🐍 models.py
+│   │   ├── 🐍 serializers.py
+│   │   ├── 🐍 signals.py
+│   │   └── 🐍 wagtail_hooks.py
+│   ├── 📁 common/
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 apps.py
+│   │   ├── 🐍 blocks.py
+│   │   └── 🐍 utils.py
+│   ├── 📁 core/
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 apps.py
+│   │   ├── 🐍 mixins.py
+│   │   └── 🐍 models.py
+│   ├── 📁 pages/
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 api.py
+│   │   ├── 🐍 apps.py
+│   │   ├── 🐍 models.py
+│   │   └── 🐍 serializers.py
+│   ├── 📁 search/
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 apps.py
+│   │   ├── 🐍 serializers.py
+│   │   ├── 🐍 urls.py
+│   │   └── 🐍 views.py
+│   ├── 📁 seo/
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 apps.py
+│   │   ├── 🐍 models.py
+│   │   ├── 🐍 serializers.py
+│   │   └── 🐍 wagtail_hooks.py
+│   ├── 📁 taxonomy/
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 apps.py
+│   │   ├── 🐍 models.py
+│   │   └── 🐍 serializers.py
+│   └── 🐍 __init__.py
+├── 📁 config/
+│   ├── 📁 settings/
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 base.py
+│   │   ├── 🐍 development.py
+│   │   └── 🐍 production.py
+│   ├── 🐍 __init__.py
+│   ├── 🐍 asgi.py
+│   ├── 🐍 urls.py
+│   └── 🐍 wsgi.py
+├── 📁 docs/
+│   └── 📝 architecture.md
+├── 📁 requirements/
+│   ├── 📄 base.txt
+│   ├── 📄 development.txt
+│   └── 📄 production.txt
+├── ⚙️ .env.example
+├── 📄 File Tree - frontend.txt
+├── 🐍 celery.py
+└── 🐍 manage.py
+
+────────────────────────────────────────────────────────────────────────────────
