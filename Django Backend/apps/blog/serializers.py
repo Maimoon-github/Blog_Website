@@ -93,14 +93,23 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
         blocks = []
         for block in obj.body:
             block_data = {"type": block.block_type, "id": str(block.id) if block.id else None}
+            
+            # Extract value for processing
+            val = block.value
+            
+            # Handle ParagraphBlock (StructBlock with 'text' field)
+            if block.block_type == "paragraph" and hasattr(val, "__getitem__") and "text" in val:
+                val = val["text"]
+
             # Rich text blocks need HTML expansion
-            if block.block_type in ("rich_text", "paragraph"):
+            if block.block_type in ("rich_text", "paragraph") or hasattr(val, "source"):
                 try:
-                    raw = block.value.source if hasattr(block.value, "source") else str(block.value)
+                    raw = val.source if hasattr(val, "source") else str(val)
                     block_data["value"] = expand_db_html(raw)
                 except Exception:
-                    block_data["value"] = str(block.value)
+                    block_data["value"] = str(val)
             else:
-                block_data["value"] = block.value
+                block_data["value"] = val
+            
             blocks.append(block_data)
         return blocks

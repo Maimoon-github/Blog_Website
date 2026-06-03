@@ -26,3 +26,12 @@ def calculate_reading_time(text, words_per_minute=200):
     word_count = len(text.split())
     minutes = round(word_count / words_per_minute)
     return max(1, minutes)
+
+def get_image_rendition_url(image, filter_spec):
+    """Utility to get a Wagtail image rendition URL or None."""
+    if not image:
+        return None
+    try:
+        return image.get_rendition(filter_spec).url
+    except Exception:
+        return None
