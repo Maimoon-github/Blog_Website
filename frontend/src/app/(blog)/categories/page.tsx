@@ -1,9 +1,18 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { mockCategories } from "../../../lib/mockData";
+import { Metadata } from "next";
+import { getCategories } from "@/lib/api";
 
-export default function CategoriesPage() {
+export const metadata: Metadata = {
+  title: "Categories | Earthen Homes",
+  description: "Browse our articles by architectural style or travel theme.",
+};
+
+export default async function CategoriesPage() {
+  const categoriesResponse = await getCategories().catch(() => ({ results: [] }));
+  const categories = categoriesResponse.results;
+
   return (
     <div className="flex-1 bg-stone-50 dark:bg-stone-950 py-16 sm:py-24">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -20,26 +29,27 @@ export default function CategoriesPage() {
         </div>
 
         <div className="mx-auto max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {mockCategories.map((category) => (
+          {categories.map((category) => (
             <Link
-              key={category.slug}
+              key={category.id}
               href={`/categories/${category.slug}`}
-              className="flex flex-col bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 overflow-hidden shadow-sm hover-lift"
+              className="flex flex-col bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 overflow-hidden shadow-sm hover-lift transition-all"
             >
               <div className="h-48 relative">
-                <Image
-                  src={category.image}
-                  alt={category.name}
-                  fill
-                  unoptimized
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
+                {category.image_url && (
+                    <Image
+                        src={category.image_url}
+                        alt={category.name}
+                        fill
+                        className="absolute inset-0 h-full w-full object-cover"
+                    />
+                )}
               </div>
               <div className="p-6">
                 <h2 className="font-serif text-xl font-bold text-stone-900 dark:text-white">
                   {category.name}
                 </h2>
-                <p className="text-sm text-stone-600 dark:text-stone-400 mt-2 leading-relaxed">
+                <p className="text-sm text-stone-600 dark:text-stone-400 mt-2 line-clamp-3 leading-relaxed">
                   {category.description}
                 </p>
                 <span className="inline-flex items-center text-xs font-bold text-earth-forest dark:text-earth-gold mt-6 hover:underline">

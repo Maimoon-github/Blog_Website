@@ -2,16 +2,31 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { mockCategories, mockPosts } from "../../../../lib/mockData";
-
-// Pure static: disable dynamic routes for static export
-export const dynamicParams = false;
+import { Metadata } from "next";
+import { getCategory, getBlogPosts } from "@/lib/api";
 
 export async function generateStaticParams() {
-  const { mockPosts } = await import("@/lib/mockData");
-  return Array.from(new Set(mockPosts.map((post) => post.category.slug))).map((slug) => ({ slug }));
+  try {
+    const res = await fetch("http://localhost:8000/api/v1/categories/slugs/");
+    const slugs = await res.json();
+    return slugs.map((s: { slug: string }) => ({ slug: s.slug }));
+  } catch (error) {
+    return [];
+  }
 }
 
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const category = await getCategory(slug);
+    return {
+      title: `${category.name} | Earthen Homes`,
+      description: category.description,
+    };
+  } catch (error) {
+    return { title: "Category" };
+  }
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -19,14 +34,16 @@ interface PageProps {
 
 export default async function CategoryDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const category = mockCategories.find((c) => c.slug === slug);
+  
+  const category = await getCategory(slug).catch(() => null);
 
   if (!category) {
     notFound();
   }
 
   // Filter posts matching this category
-  const categoryPosts = mockPosts.filter((post) => post.category.slug === slug);
+  const postsResponse = await getBlogPosts({ category: slug }).catch(() => ({ results: [], count: 0 }));
+  const categoryPosts = postsResponse.results;
 
   return (
     <div className="flex-1 bg-stone-50 dark:bg-stone-950 py-16 sm:py-24">
@@ -46,15 +63,16 @@ export default async function CategoryDetailPage({ params }: PageProps) {
         </div>
 
         {/* Category Profile Header */}
-        <div className="max-w-5xl mx-auto bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 overflow-hidden shadow-sm flex flex-col md:flex-row gap-8 items-center mb-16">
+        <div className="max-w-5xl mx-auto bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 overflow-hidden shadow-sm flex flex-col md:flex-row gap-8 items-center mb-16 transition-all">
           <div className="h-64 w-full md:w-80 relative flex-shrink-0">
-              <Image
-                src={category.image}
-                alt={category.name}
-                fill
-                unoptimized
-                className="absolute inset-0 h-full w-full object-cover"
-              />
+               {category.image_url && (
+                    <Image
+                        src={category.image_url}
+                        alt={category.name}
+                        fill
+                        className="absolute inset-0 h-full w-full object-cover"
+                    />
+               )}
           </div>
           <div className="p-8 md:p-6 text-center md:text-left">
             <span className="text-xs font-bold text-earth-gold uppercase tracking-wider">
@@ -72,7 +90,7 @@ export default async function CategoryDetailPage({ params }: PageProps) {
         {/* Category Articles Grid */}
         <div className="max-w-5xl mx-auto">
           <h2 className="font-serif text-2xl font-bold text-stone-900 dark:text-white mb-8 border-b border-stone-100 dark:border-stone-800 pb-4">
-            Articles in Category ({categoryPosts.length})
+            Articles in Category ({postsResponse.count})
           </h2>
           
           {categoryPosts.length === 0 ? (
@@ -82,22 +100,20 @@ export default async function CategoryDetailPage({ params }: PageProps) {
               {categoryPosts.map((post) => (
                 <article
                   key={post.id}
-                  className="flex flex-col items-start justify-between bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/50 dark:border-stone-850 hover-lift shadow-sm"
+                  className="flex flex-col items-start justify-between bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/50 dark:border-stone-850 hover-lift shadow-sm transition-all"
                 >
                   <div className="relative w-full h-48">
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      unoptimized
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
+                    {post.cover_image_url && (
+                        <Image
+                            src={post.cover_image_url}
+                            alt={post.title}
+                            fill
+                            className="absolute inset-0 h-full w-full object-cover"
+                        />
+                    )}
                   </div>
                   <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
-                      <span className="text-xs font-semibold text-earth-forest dark:text-earth-gold tracking-widest uppercase">
-                        {post.category.name}
-                      </span>
                       <h3 className="mt-2 font-serif text-lg font-bold leading-snug text-stone-900 dark:text-white hover:text-earth-forest dark:hover:text-earth-gold transition-colors">
                         <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                       </h3>
@@ -106,19 +122,20 @@ export default async function CategoryDetailPage({ params }: PageProps) {
                       </p>
                     </div>
                     <div className="mt-6 flex items-center gap-x-3 border-t border-stone-100 dark:border-stone-800 pt-4">
-                      <Image
-                        src={post.author.avatar}
-                        alt={post.author.name}
-                        width={32}
-                        height={32}
-                        unoptimized
-                        className="h-8 w-8 rounded-full object-cover"
-                      />
+                        {post.author?.photo?.url && (
+                             <Image
+                                src={post.author.photo.url}
+                                alt={post.author.title}
+                                width={32}
+                                height={32}
+                                className="h-8 w-8 rounded-full object-cover"
+                            />
+                        )}
                       <div className="text-xs">
                         <p className="font-semibold text-stone-900 dark:text-white">
-                          {post.author.name}
+                          {post.author?.title}
                         </p>
-                        <p className="text-stone-500">{post.publishDate} • {post.readTime}</p>
+                        <p className="text-stone-500">{new Date(post.published_date).toLocaleDateString()} • {post.reading_time} min read</p>
                       </div>
                     </div>
                   </div>

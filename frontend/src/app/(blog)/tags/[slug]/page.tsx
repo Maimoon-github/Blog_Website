@@ -2,15 +2,30 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { mockPosts, mockTags } from "../../../../lib/mockData";
-
-export const dynamicParams = false; // Disable dynamic params to ensure only generated paths are valid
+import { Metadata } from "next";
+import { getTag, getBlogPosts } from "@/lib/api";
 
 export async function generateStaticParams() {
-  // Get unique tag slugs (flatten tags array from all posts)
-  const allTags = mockPosts.flatMap((post) => post.tags || []);
-  const uniqueTags = Array.from(new Set(allTags.map((tag) => tag.slug)));
-  return uniqueTags.map((slug) => ({ slug }));
+  try {
+    const res = await fetch("http://localhost:8000/api/v1/tags/slugs/");
+    const slugs = await res.json();
+    return slugs.map((s: { slug: string }) => ({ slug: s.slug }));
+  } catch (error) {
+    return [];
+  }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const tag = await getTag(slug);
+    return {
+      title: `${tag.name} | Earthen Homes`,
+      description: `Articles tagged with #${tag.name}`,
+    };
+  } catch (error) {
+    return { title: "Tag" };
+  }
 }
 
 interface PageProps {
@@ -19,24 +34,16 @@ interface PageProps {
 
 export default async function TagDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const tag = mockTags.find((t) => t.slug === slug);
+  
+  const tag = await getTag(slug).catch(() => null);
 
   if (!tag) {
-    // If the tag isn't explicitly in the initial mockTags list, but is present on a post, we can still load it
-    const tagFromPosts = mockPosts
-      .flatMap((p) => p.tags)
-      .find((t) => t.slug === slug);
-    if (!tagFromPosts) {
-      notFound();
-    }
+    notFound();
   }
 
-  const tagLabel = tag ? tag.name : slug.replace("-", " ");
-  
-  // Filter posts that contain this tag
-  const tagPosts = mockPosts.filter((post) =>
-    post.tags.some((t) => t.slug === slug)
-  );
+  // Filter posts matching this tag
+  const postsResponse = await getBlogPosts({ tag: slug }).catch(() => ({ results: [], count: 0 }));
+  const tagPosts = postsResponse.results;
 
   return (
     <div className="flex-1 bg-stone-50 dark:bg-stone-950 py-16 sm:py-24">
@@ -61,17 +68,17 @@ export default async function TagDetailPage({ params }: PageProps) {
             Tag Directory
           </span>
           <h1 className="font-serif text-4xl font-extrabold tracking-tight text-stone-900 dark:text-white sm:text-5xl mt-2">
-            #{tagLabel}
+            #{tag.name}
           </h1>
           <p className="mt-4 text-stone-600 dark:text-stone-400">
-            Viewing all articles tagged with #{tagLabel}
+            Viewing all articles tagged with #{tag.name}
           </p>
         </div>
 
         {/* Tag Articles Grid */}
         <div className="max-w-5xl mx-auto">
           <h2 className="font-serif text-2xl font-bold text-stone-900 dark:text-white mb-8 border-b border-stone-100 dark:border-stone-800 pb-4">
-            Articles Tagged ({tagPosts.length})
+            Articles Tagged ({postsResponse.count})
           </h2>
           
           {tagPosts.length === 0 ? (
@@ -81,22 +88,20 @@ export default async function TagDetailPage({ params }: PageProps) {
               {tagPosts.map((post) => (
                 <article
                   key={post.id}
-                  className="flex flex-col items-start justify-between bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/50 dark:border-stone-850 hover-lift shadow-sm"
+                  className="flex flex-col items-start justify-between bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/50 dark:border-stone-850 hover-lift shadow-sm transition-all"
                 >
                   <div className="relative w-full h-48">
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      unoptimized
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
+                    {post.cover_image_url && (
+                        <Image
+                            src={post.cover_image_url}
+                            alt={post.title}
+                            fill
+                            className="absolute inset-0 h-full w-full object-cover"
+                        />
+                    )}
                   </div>
                   <div className="p-6 flex-1 flex flex-col justify-between">
                     <div>
-                      <span className="text-xs font-semibold text-earth-forest dark:text-earth-gold tracking-widest uppercase">
-                        {post.category.name}
-                      </span>
                       <h3 className="mt-2 font-serif text-lg font-bold leading-snug text-stone-900 dark:text-white hover:text-earth-forest dark:hover:text-earth-gold transition-colors">
                         <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                       </h3>
@@ -105,19 +110,20 @@ export default async function TagDetailPage({ params }: PageProps) {
                       </p>
                     </div>
                     <div className="mt-6 flex items-center gap-x-3 border-t border-stone-100 dark:border-stone-800 pt-4">
-                      <Image
-                        src={post.author.avatar}
-                        alt={post.author.name}
-                        width={32}
-                        height={32}
-                        unoptimized
-                        className="h-8 w-8 rounded-full object-cover"
-                      />
+                        {post.author?.photo?.url && (
+                             <Image
+                                src={post.author.photo.url}
+                                alt={post.author.title}
+                                width={32}
+                                height={32}
+                                className="h-8 w-8 rounded-full object-cover"
+                            />
+                        )}
                       <div className="text-xs">
                         <p className="font-semibold text-stone-900 dark:text-white">
-                          {post.author.name}
+                          {post.author?.title}
                         </p>
-                        <p className="text-stone-500">{post.publishDate} • {post.readTime}</p>
+                        <p className="text-stone-500">{new Date(post.published_date).toLocaleDateString()} • {post.reading_time} min read</p>
                       </div>
                     </div>
                   </div>
