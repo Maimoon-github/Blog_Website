@@ -13,10 +13,15 @@ urlpatterns = [
     path("admin/", include(wagtailadmin_urls)),
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
-    
-    # API endpoints
-    path("api/blog/", include("blog.urls")),
+
+    # ── REST API ─────────────────────────────────────────────────────────
+    path("api/blog/",        include("blog.urls")),
+    path("api/authors/",     include("authors.urls")),
+    path("api/categories/",  include("categories.urls")),
+    path("api/tags/",        include("tags.urls")),
+    path("api/search/",      search_views.api_search, name="api-search"),
 ]
+
 
 
 if settings.DEBUG:
