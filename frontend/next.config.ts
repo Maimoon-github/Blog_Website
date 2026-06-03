@@ -1,27 +1,26 @@
-// // next.config.js
-// /** @type {import('next').NextConfig} */
-// const nextConfig = {
-//   output: 'export', // This enables static export
-//   // Optional: Add a trailing slash to all paths (e.g., /about/ instead of /about)
-//   // trailingSlash: true,
-//   // Optional: Change the output directory name from the default 'out'
-//   // distDir: 'dist',
-// };
-
-// module.exports = nextConfig;
-
-
-
-
-
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",        // 👈 generate static site
+  // ─── Image Optimization ────────────────────────────────────────────────────
+  // Allow Next.js <Image> to load from the Django media server.
   images: {
-    unoptimized: true,     // 👈 required for static export
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/media/**",
+      },
+    ],
   },
-  // Remove any rewrites, redirects, or headers – they won't work with export
+
+  // ─── Turbopack root (Next.js 15+ top-level key, not under experimental) ────
+  turbopack: {
+    root: process.cwd(),
+  },
+
+  // ─── Allow HMR from LAN devices (e.g., phone / tablet on same network) ─────
+  allowedDevOrigins: ["192.168.100.12"],
 };
 
 export default nextConfig;

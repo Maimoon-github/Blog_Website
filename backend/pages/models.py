@@ -1,3 +1,6 @@
+from wagtail import blocks
+from wagtail.images.blocks import ImageChooserBlock
+
 from django.db import models
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.fields import RichTextField, StreamField

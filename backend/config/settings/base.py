@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -97,6 +98,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # Wagtail settings
 WAGTAIL_SITE_NAME = "Blogging Platform"
 WAGTAILADMIN_BASE_URL = "http://localhost:8000"
+# Used to validate the draft-preview handshake between Wagtail Admin and Next.js.
+# Set this in your shell:  export WAGTAIL_PREVIEW_SECRET="your-secret"
+WAGTAIL_PREVIEW_SECRET = os.environ.get("WAGTAIL_PREVIEW_SECRET", "change-me-in-production")
+
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
