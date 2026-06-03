@@ -1,8 +1,8 @@
+// src/app/(site)/page.tsx
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { mockPosts, mockCategories } from "../../lib/mockData";
-import styles from "./page.module.css";
+import { mockPosts, mockCategories } from "@/lib/mockData";
 
 export default function HomePage() {
   const featuredPost = mockPosts.find((p) => p.featured) || mockPosts[0];
@@ -12,13 +12,13 @@ export default function HomePage() {
     <div className="flex-1 bg-[#131026]">
       {/* 1. HERO SECTION */}
       <section className="relative overflow-hidden py-24 sm:py-36">
-        <div className={`absolute inset-0 -z-10 haze-animate ${styles.heroRadialHaze}`} />
-        <div className={`absolute inset-0 -z-10 ${styles.heroDeepGlow}`} />
+        <div className="absolute inset-0 -z-10 haze-animate" />
+        <div className="absolute inset-0 -z-10" />
 
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <span
-              className={`inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold text-[#8B65BF] mb-8 ring-1 ring-inset ring-[#4E3473] ${styles.badgeBg}`}
+              className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-semibold text-[#8B65BF] mb-8 ring-1 ring-inset ring-[#4E3473]"
             >
               ✦ Welcome to the Future of Sustainable Living &amp; Travel
             </span>
@@ -35,7 +35,7 @@ export default function HomePage() {
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
                 href="/blog"
-                className={`rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 hover-lift cursor-pointer ${styles.ctaButton}`}
+                className="rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 hover-lift cursor-pointer"
               >
                 Explore the Blog
               </Link>
@@ -52,15 +52,13 @@ export default function HomePage() {
         <div className="absolute top-8 right-8 text-4xl opacity-20 lotus-badge pointer-events-none hidden lg:block">
           🪷
         </div>
-        <div
-          className={`absolute bottom-12 left-10 text-2xl opacity-10 lotus-badge pointer-events-none hidden lg:block ${styles.lotusDelay}`}
-        >
+        <div className="absolute bottom-12 left-10 text-2xl opacity-10 lotus-badge pointer-events-none hidden lg:block">
           ✦
         </div>
       </section>
 
       {/* 2. CATEGORY SHOWCASE */}
-      <section className={`py-16 sm:py-24 border-y ${styles.categorySection}`}>
+      <section className="py-16 sm:py-24 border-y">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-16">
             <h2 className="font-sans text-3xl font-bold tracking-tight text-[#E0E0E0] sm:text-4xl">
@@ -76,7 +74,7 @@ export default function HomePage() {
               <Link
                 key={cat.slug}
                 href={`/blog?category=${cat.slug}`}
-                className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl px-8 pb-8 pt-40 hover-lift shadow-md transition-all duration-300 ${styles.categoryCard}`}
+                className="group relative flex flex-col justify-end overflow-hidden rounded-2xl px-8 pb-8 pt-40 hover-lift shadow-md transition-all duration-300"
               >
                 <Image
                   src={cat.image}
@@ -84,10 +82,8 @@ export default function HomePage() {
                   fill
                   className="object-cover opacity-50 group-hover:opacity-40 group-hover:scale-105 transition-all duration-500"
                 />
-                <div className={`absolute inset-0 ${styles.categoryOverlay}`} />
-                <div
-                  className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none ${styles.categoryGlow}`}
-                />
+                <div className="absolute inset-0" />
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none" />
                 <div className="relative z-10">
                   <h3 className="font-sans text-xl font-bold text-[#E0E0E0] group-hover:text-[#8B65BF] transition-colors">
                     {cat.name}
@@ -116,9 +112,7 @@ export default function HomePage() {
                 </h2>
               </div>
 
-              <div
-                className={`grid grid-cols-1 lg:grid-cols-2 gap-0 items-center overflow-hidden rounded-3xl hover-lift transition-all duration-300 ${styles.featuredContainer}`}
-              >
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-center overflow-hidden rounded-3xl hover-lift transition-all duration-300">
                 <div className="relative h-96 lg:h-full w-full min-h-[400px]">
                   <Image
                     src={featuredPost.image}
@@ -126,7 +120,7 @@ export default function HomePage() {
                     fill
                     className="object-cover opacity-80"
                   />
-                  <div className={`absolute inset-0 ${styles.featuredImageOverlay}`} />
+                  <div className="absolute inset-0" />
                 </div>
 
                 <div className="p-8 lg:p-12 flex flex-col justify-center">
@@ -145,7 +139,7 @@ export default function HomePage() {
                         src={featuredPost.author.avatar}
                         alt={featuredPost.author.name}
                         fill
-                        className={`rounded-full object-cover ${styles.authorAvatarBorder}`}
+                        className="rounded-full object-cover"
                       />
                     </div>
                     <div className="text-sm">
@@ -156,7 +150,7 @@ export default function HomePage() {
                   <div className="mt-8">
                     <Link
                       href={`/blog/${featuredPost.slug}`}
-                      className={`inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 cursor-pointer ${styles.featuredCta}`}
+                      className="inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 cursor-pointer"
                     >
                       Read Full Article →
                     </Link>
@@ -169,7 +163,7 @@ export default function HomePage() {
       )}
 
       {/* 4. STAT CALLOUTS */}
-      <section className={`py-20 border-y ${styles.statsSection}`}>
+      <section className="py-20 border-y">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 text-center items-center">
             {[
@@ -191,9 +185,9 @@ export default function HomePage() {
             ].map((item) => (
               <div
                 key={item.title}
-                className={`p-6 rounded-2xl hover-lift transition-all duration-300 cursor-default ${styles.statCard}`}
+                className="p-6 rounded-2xl hover-lift transition-all duration-300 cursor-default"
               >
-                <span className={`text-5xl font-extrabold font-sans ${styles.statGradient}`}>
+                <span className="text-5xl font-extrabold font-sans">
                   {item.stat}
                 </span>
                 <h3 className="mt-3 text-sm font-semibold uppercase tracking-wider text-[#E0E0E0]">{item.title}</h3>
@@ -220,7 +214,7 @@ export default function HomePage() {
             {recentPosts.map((post) => (
               <article
                 key={post.id}
-                className={`flex flex-col items-start justify-between overflow-hidden rounded-2xl hover-lift transition-all duration-300 ${styles.recentCard}`}
+                className="flex flex-col items-start justify-between overflow-hidden rounded-2xl hover-lift transition-all duration-300"
               >
                 <div className="relative w-full h-48 overflow-hidden">
                   <Image
@@ -229,7 +223,7 @@ export default function HomePage() {
                     fill
                     className="object-cover opacity-80 hover:scale-105 transition-transform duration-500"
                   />
-                  <div className={`absolute inset-0 ${styles.recentImageOverlay}`} />
+                  <div className="absolute inset-0" />
                 </div>
 
                 <div className="p-6 flex-1 flex flex-col justify-between">
@@ -244,13 +238,13 @@ export default function HomePage() {
                       {post.excerpt}
                     </p>
                   </div>
-                  <div className={`mt-6 flex items-center gap-x-3 border-t pt-4 ${styles.recentDivider}`}>
+                  <div className="mt-6 flex items-center gap-x-3 border-t pt-4">
                     <div className="relative h-8 w-8">
                       <Image
                         src={post.author.avatar}
                         alt={post.author.name}
                         fill
-                        className={`rounded-full object-cover ${styles.recentAvatarBorder}`}
+                        className="rounded-full object-cover"
                       />
                     </div>
                     <div className="text-xs">
@@ -266,10 +260,10 @@ export default function HomePage() {
       </section>
 
       {/* 6. NEWSLETTER */}
-      <section className={`py-16 sm:py-24 ${styles.newsletterSection}`}>
+      <section className="py-16 sm:py-24">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className={`relative overflow-hidden rounded-3xl px-6 py-20 sm:px-24 sm:py-32 lg:flex lg:items-center lg:px-32 lg:py-24 ${styles.newsletterContainer}`}>
-            <div className={`absolute inset-0 -z-10 haze-animate pointer-events-none ${styles.newsletterGlow}`} />
+          <div className="relative overflow-hidden rounded-3xl px-6 py-20 sm:px-24 sm:py-32 lg:flex lg:items-center lg:px-32 lg:py-24">
+            <div className="absolute inset-0 -z-10 haze-animate pointer-events-none" />
 
             <div className="mx-auto max-w-2xl lg:max-w-none lg:flex-auto">
               <div className="text-4xl mb-4 lotus-badge">🪷</div>
@@ -287,12 +281,12 @@ export default function HomePage() {
                   type="email"
                   autoComplete="email"
                   required
-                  className={`w-full min-w-0 rounded-full border-0 px-4 py-2 text-[#E0E0E0] shadow-sm sm:text-sm sm:leading-6 outline-none focus:ring-2 ${styles.newsletterInput}`}
+                  className="w-full min-w-0 rounded-full border-0 px-4 py-2 text-[#E0E0E0] shadow-sm sm:text-sm sm:leading-6 outline-none focus:ring-2"
                   placeholder="Enter your email"
                 />
                 <button
                   type="submit"
-                  className={`mt-3 sm:mt-0 w-full sm:w-auto rounded-full px-6 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:scale-105 cursor-pointer ${styles.newsletterButton}`}
+                  className="mt-3 sm:mt-0 w-full sm:w-auto rounded-full px-6 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:scale-105 cursor-pointer"
                 >
                   Subscribe ✦
                 </button>

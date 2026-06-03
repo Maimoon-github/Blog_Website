@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { mockAuthors } from "../../../lib/mockData";
 
@@ -25,9 +26,12 @@ export default function AuthorsPage() {
               href={`/authors/${author.slug}`}
               className="flex flex-col items-center text-center p-8 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 shadow-sm hover-lift"
             >
-              <img
+              <Image
                 src={author.avatar}
                 alt={author.name}
+                width={112}
+                height={112}
+                unoptimized
                 className="h-28 w-28 rounded-full object-cover shadow-md mb-6"
               />
               <h2 className="font-serif text-2xl font-bold text-stone-900 dark:text-white">
