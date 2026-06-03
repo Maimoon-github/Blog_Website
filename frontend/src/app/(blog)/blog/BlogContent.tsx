@@ -1,0 +1,252 @@
+"use client";
+
+import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Category, BlogPost } from "@/types/blog";
+
+interface BlogContentProps {
+  initialPosts: BlogPost[];
+  categories: Category[];
+  totalCount: number;
+  currentPage: number;
+}
+
+export default function BlogContent({ initialPosts, categories, totalCount, currentPage }: BlogContentProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const categoryQuery = searchParams.get("category") || "all";
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams(searchParams);
+    if (searchQuery) {
+      params.set("search", searchQuery);
+    } else {
+      params.delete("search");
+    }
+    params.set("page", "1");
+    router.push(`/blog?${params.toString()}`);
+  };
+
+  const handleCategorySelect = (slug: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (slug === "all") {
+      params.delete("category");
+    } else {
+      params.set("category", slug);
+    }
+    params.set("page", "1");
+    router.push(`/blog?${params.toString()}`);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams);
+    params.set("page", newPage.toString());
+    router.push(`/blog?${params.toString()}`);
+  };
+
+  return (
+    <div className="flex-1 bg-[#131026] py-16 sm:py-24">
+      {/* Ambient radial glow */}
+      <div
+        className="fixed inset-0 -z-10 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 70% 45% at 50% 0%, rgba(95,45,166,0.2) 0%, transparent 65%)",
+        }}
+      />
+
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        {/* Header */}
+        <div className="mx-auto max-w-2xl text-center mb-12">
+          <span className="text-sm font-semibold tracking-wider uppercase text-[#8B65BF]">
+            ✦ The Journal
+          </span>
+          <h1 className="font-sans text-4xl font-extrabold tracking-tight text-[#E0E0E0] sm:text-5xl mt-2">
+            Architectural Design &amp;{" "}
+            <span className="gradient-text">Romantic Escapes</span>
+          </h1>
+          <p className="mt-4 text-[#8B65BF]/80">
+            Read our latest guides, builder interviews, and hotel recommendations.
+          </p>
+        </div>
+
+        {/* Search & Filter */}
+        <div className="max-w-4xl mx-auto mb-12 space-y-6">
+          {/* Search bar */}
+          <form onSubmit={handleSearchSubmit} className="relative">
+            <input
+              type="text"
+              placeholder="Search articles by title, tags, or content…"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="w-full rounded-2xl px-5 py-4 pl-12 text-sm text-[#E0E0E0] outline-none transition-all duration-200 placeholder:text-[#4E3473]"
+              style={{
+                background: "#1F1A40",
+                border: "1px solid rgba(78,52,115,0.6)",
+                boxShadow: "inset 0 1px 3px rgba(0,0,0,0.3)",
+              }}
+            />
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-[#4E3473]">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
+              </svg>
+            </div>
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery("");
+                  const params = new URLSearchParams(searchParams);
+                  params.delete("search");
+                  router.push(`/blog?${params.toString()}`);
+                }}
+                className="absolute inset-y-0 right-4 flex items-center text-xs text-[#8B65BF]/60 hover:text-[#8B65BF] transition-colors"
+              >
+                Clear
+              </button>
+            )}
+          </form>
+
+          {/* Category Tabs */}
+          <div className="flex flex-wrap gap-2 justify-center">
+            <button
+              onClick={() => handleCategorySelect("all")}
+              className="rounded-full px-5 py-2 text-xs font-semibold tracking-wider transition-all duration-200"
+              style={
+                categoryQuery === "all"
+                  ? { background: "#5F2DA6", color: "#fff", boxShadow: "0 0 14px rgba(95,45,166,0.5)" }
+                  : { background: "rgba(31,26,64,0.8)", color: "rgba(224,224,224,0.7)", border: "1px solid rgba(78,52,115,0.5)" }
+              }
+            >
+              All Articles
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => handleCategorySelect(cat.slug)}
+                className="rounded-full px-5 py-2 text-xs font-semibold tracking-wider transition-all duration-200"
+                style={
+                  categoryQuery === cat.slug
+                    ? { background: "#5F2DA6", color: "#fff", boxShadow: "0 0 14px rgba(95,45,166,0.5)" }
+                    : { background: "rgba(31,26,64,0.8)", color: "rgba(224,224,224,0.7)", border: "1px solid rgba(78,52,115,0.5)" }
+                }
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Posts Grid */}
+        {initialPosts.length === 0 ? (
+          <div
+            className="text-center py-24 rounded-3xl max-w-xl mx-auto"
+            style={{ background: "#1F1A40", border: "1px solid rgba(78,52,115,0.5)" }}
+          >
+            <div className="text-5xl mb-4 opacity-40">🪷</div>
+            <h3 className="font-sans text-lg font-bold text-[#E0E0E0]">No articles found</h3>
+            <p className="text-sm text-[#8B65BF]/70 mt-2 px-6">
+              We couldn&apos;t find any posts matching your search. Try adjusting your query or choosing a different category.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+              {initialPosts.map((post) => (
+                <article
+                  key={post.id}
+                  className="flex flex-col items-start justify-between overflow-hidden rounded-2xl hover-lift transition-all duration-300"
+                  style={{
+                    background: "#1F1A40",
+                    border: "1px solid rgba(78,52,115,0.5)",
+                  }}
+                >
+                  <div className="relative w-full h-48 overflow-hidden">
+                    {post.cover_image_url && (
+                      <Image
+                        src={post.cover_image_url}
+                        alt={post.title}
+                        fill
+                        className="absolute inset-0 h-full w-full object-cover opacity-80 hover:scale-105 transition-transform duration-500"
+                      />
+                    )}
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: "linear-gradient(to bottom, transparent 50%, #1F1A40 100%)" }}
+                    />
+                  </div>
+                  <div className="p-6 flex-1 flex flex-col justify-between">
+                    <div>
+                      <div className="flex flex-wrap gap-2 mb-2">
+                        {post.categories?.map((cat) => (
+                          <span key={cat.id} className="text-[10px] font-semibold text-[#8B65BF] tracking-widest uppercase">
+                            {cat.name}
+                          </span>
+                        ))}
+                      </div>
+                      <h3 className="mt-2 font-sans text-lg font-bold leading-snug text-[#E0E0E0] hover:text-[#8B65BF] transition-colors">
+                        <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                      </h3>
+                      <p className="mt-3 text-sm text-[#8B65BF]/70 line-clamp-3 leading-relaxed">
+                        {post.excerpt}
+                      </p>
+                    </div>
+                    <div
+                      className="mt-6 flex items-center gap-x-3 border-t pt-4"
+                      style={{ borderColor: "rgba(78,52,115,0.4)" }}
+                    >
+                      {post.author?.photo?.url && (
+                        <Image
+                          src={post.author.photo.url}
+                          alt={post.author.title}
+                          width={32}
+                          height={32}
+                          className="h-8 w-8 rounded-full object-cover"
+                          style={{ border: "2px solid rgba(95,45,166,0.5)" }}
+                        />
+                      )}
+                      <div className="text-xs">
+                        <p className="font-semibold text-[#E0E0E0]">{post.author?.title}</p>
+                        <p className="text-[#8B65BF]/60">
+                          {new Date(post.published_date).toLocaleDateString()} • {post.reading_time} min read
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            {/* Pagination */}
+            {totalCount > initialPosts.length && (
+              <div className="mt-12 flex justify-center gap-2">
+                {Array.from({ length: Math.ceil(totalCount / 10) }, (_, i) => i + 1).map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => handlePageChange(p)}
+                    className="rounded-lg px-4 py-2 text-sm transition-all duration-200"
+                    style={
+                      currentPage === p
+                        ? { background: "#5F2DA6", color: "#fff" }
+                        : { background: "#1F1A40", color: "#8B65BF", border: "1px solid rgba(78,52,115,0.4)" }
+                    }
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

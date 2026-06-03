@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useMemo, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { mockPosts, Post } from "../../../lib/mockData";
+import { getBlogPosts } from "@/lib/api";
+import { BlogPost } from "@/types/blog";
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -12,20 +13,19 @@ function SearchContent() {
   const initialQuery = searchParams.get("q") || "";
   
   const [query, setQuery] = useState(initialQuery);
-  const results = useMemo(() => {
-    if (query.trim() === "") {
-      return [] as Post[];
-    }
+  const [results, setResults] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(false);
 
-    const lowerQuery = query.toLowerCase();
-    return mockPosts.filter(
-      (post) =>
-        post.title.toLowerCase().includes(lowerQuery) ||
-        post.excerpt.toLowerCase().includes(lowerQuery) ||
-        post.tags.some((t) => t.name.toLowerCase().includes(lowerQuery)) ||
-        post.category.name.toLowerCase().includes(lowerQuery)
-    );
-  }, [query]);
+  useEffect(() => {
+    if (initialQuery) {
+      setLoading(true);
+      getBlogPosts({ search: initialQuery })
+        .then((res) => setResults(res.results))
+        .finally(() => setLoading(false));
+    } else {
+      setResults([]);
+    }
+  }, [initialQuery]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,7 +53,7 @@ function SearchContent() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Type your search query (e.g. Cob, Jacuzzi, Thermal...)"
-            className="w-full rounded-2xl border border-stone-200 bg-white px-5 py-4 pl-12 text-sm text-stone-900 shadow-md focus:border-earth-forest focus:ring-1 focus:ring-earth-forest dark:border-stone-800 dark:bg-stone-900 dark:text-white"
+            className="w-full rounded-2xl border border-stone-200 bg-white px-5 py-4 pl-12 text-sm text-stone-900 shadow-md focus:border-earth-forest focus:ring-1 focus:ring-earth-forest dark:border-stone-800 dark:bg-stone-900 dark:text-white outline-none"
           />
           <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-stone-400">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
@@ -65,10 +65,14 @@ function SearchContent() {
         {/* Results List */}
         <div>
           <h2 className="font-serif text-xl font-bold text-stone-900 dark:text-white mb-6">
-            Search Results {query && `for "${query}"`} ({results.length})
+            Search Results {initialQuery && `for "${initialQuery}"`} ({results.length})
           </h2>
 
-          {query.trim() === "" ? (
+          {loading ? (
+             <div className="flex justify-center py-12">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-stone-200 border-t-earth-gold dark:border-stone-850"></div>
+             </div>
+          ) : !initialQuery ? (
             <p className="text-sm text-stone-500 dark:text-stone-400">Please enter a keyword to begin searching.</p>
           ) : results.length === 0 ? (
             <div className="text-center py-16 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 p-8 shadow-sm">
@@ -81,21 +85,26 @@ function SearchContent() {
               {results.map((post) => (
                 <div
                   key={post.id}
-                  className="bg-white dark:bg-stone-900 rounded-2xl border border-stone-200/50 dark:border-stone-850 p-6 flex flex-col sm:flex-row gap-6 hover-lift shadow-sm"
+                  className="bg-white dark:bg-stone-900 rounded-2xl border border-stone-200/50 dark:border-stone-850 p-6 flex flex-col sm:flex-row gap-6 hover-lift shadow-sm transition-all"
                 >
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    width={192}
-                    height={128}
-                    unoptimized
-                    className="h-32 w-full sm:w-48 rounded-xl object-cover flex-shrink-0"
-                  />
+                    {post.cover_image_url && (
+                        <Image
+                            src={post.cover_image_url}
+                            alt={post.title}
+                            width={192}
+                            height={128}
+                            className="h-32 w-full sm:w-48 rounded-xl object-cover flex-shrink-0"
+                        />
+                    )}
                   <div className="flex flex-col justify-between">
                     <div>
-                      <span className="text-xs font-semibold text-earth-forest dark:text-earth-gold uppercase tracking-widest">
-                        {post.category.name}
-                      </span>
+                        <div className="flex flex-wrap gap-2 mb-1">
+                            {post.categories?.map(cat => (
+                                <span key={cat.id} className="text-xs font-semibold text-earth-forest dark:text-earth-gold uppercase tracking-widest">
+                                    {cat.name}
+                                </span>
+                            ))}
+                        </div>
                       <h3 className="font-serif text-lg font-bold text-stone-900 dark:text-white mt-1 hover:text-earth-forest dark:hover:text-earth-gold transition-colors">
                         <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                       </h3>
@@ -104,7 +113,7 @@ function SearchContent() {
                       </p>
                     </div>
                     <div className="text-xs text-stone-500 mt-4">
-                      By {post.author.name} • {post.publishDate}
+                      By {post.author?.title} • {new Date(post.published_date).toLocaleDateString()}
                     </div>
                   </div>
                 </div>

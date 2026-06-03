@@ -3,16 +3,20 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { NavigationItem, SiteSettings } from '@/types/wagtail';
 
-const Header = () => {
+interface HeaderProps {
+  navigation: NavigationItem[];
+  settings: SiteSettings | null;
+}
+
+const Header = ({ navigation, settings }: HeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const pathname = usePathname();
 
   // Close mobile menu on route change
   useEffect(() => {
-    // Keep mobile menu closed after route changes
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMenuOpen(false);
   }, [pathname]);
 
@@ -25,12 +29,11 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact' },
-    { href: '/search', label: 'Search' },
+  const navLinks = navigation.length > 0 ? navigation : [
+    { url: '/', label: 'Home' },
+    { url: '/blog', label: 'Blog' },
+    { url: '/about', label: 'About' },
+    { url: '/contact', label: 'Contact' },
   ];
 
   return (
@@ -38,32 +41,32 @@ const Header = () => {
       <header
         className={`sticky top-0 z-50 w-full transition-all duration-300 ${
           hasScrolled
-            ? 'glassmorphism shadow-lg backdrop-blur-xl'
+            ? 'glassmorphism shadow-lg backdrop-blur-xl bg-lotus-void/70'
             : 'bg-transparent'
         }`}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 sm:h-20 items-center justify-between">
-            {/* Logo – touch‑friendly tap area */}
+            {/* Logo */}
             <Link
               href="/"
               className="flex items-center py-2 px-1 -ml-1 rounded-lg focus:outline-none focus:ring-2 focus:ring-lotus-core"
               aria-label="Home"
             >
               <span className="text-xl sm:text-2xl font-bold gradient-text whitespace-nowrap">
-                Earthen Escapes
+                {settings?.site_name || 'Earthen Escapes'}
               </span>
             </Link>
 
-            {/* Desktop Navigation – hidden on mobile */}
+            {/* Desktop Navigation */}
             <nav className="hidden lg:block">
               <ul className="flex space-x-1 md:space-x-2 lg:space-x-4">
                 {navLinks.map((link) => (
-                  <li key={link.href}>
+                  <li key={link.url}>
                     <Link
-                      href={link.href}
+                      href={link.url}
                       className={`inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-lotus-core ${
-                        pathname === link.href
+                        pathname === link.url
                           ? 'text-lotus-light bg-lotus-core/10 border-b-2 border-lotus-core'
                           : 'text-foreground/80 hover:text-lotus-light hover:bg-lotus-core/5'
                       }`}
@@ -75,7 +78,7 @@ const Header = () => {
               </ul>
             </nav>
 
-            {/* Mobile Menu Button – touch‑optimised (min 44px) */}
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden inline-flex items-center justify-center w-11 h-11 rounded-lg focus:outline-none focus:ring-2 focus:ring-lotus-core transition-colors hover:bg-lotus-core/10"
@@ -89,19 +92,9 @@ const Header = () => {
                 viewBox="0 0 24 24"
               >
                 {isMenuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
             </button>
@@ -109,22 +102,22 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay – full screen, touch‑optimised */}
+      {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div
           className="fixed inset-0 z-40 lg:hidden bg-lotus-void/95 backdrop-blur-lg animate-in fade-in duration-300"
-          onClick={() => setIsMenuOpen(false)} // close on background tap
+          onClick={() => setIsMenuOpen(false)}
         >
           <div className="flex flex-col items-center justify-center h-full px-4">
             <nav className="w-full max-w-sm">
               <ul className="space-y-2">
                 {navLinks.map((link) => (
-                  <li key={link.href}>
+                  <li key={link.url}>
                     <Link
-                      href={link.href}
+                      href={link.url}
                       onClick={() => setIsMenuOpen(false)}
                       className={`block w-full text-center py-4 px-6 rounded-xl text-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-lotus-core ${
-                        pathname === link.href
+                        pathname === link.url
                           ? 'bg-lotus-core/20 text-lotus-light'
                           : 'text-foreground/80 hover:bg-lotus-core/10 hover:text-lotus-light'
                       }`}

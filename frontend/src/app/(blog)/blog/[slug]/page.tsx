@@ -2,16 +2,36 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { mockPosts } from "../../../../lib/mockData";
-
-// Pure static: disable dynamic routes for static export
-export const dynamicParams = false;
+import { Metadata } from "next";
+import { getBlogPost, getBlogPosts } from "@/lib/api";
 
 export async function generateStaticParams() {
-  const { mockPosts } = await import("@/lib/mockData");
-  return mockPosts.map((post) => ({ slug: post.slug }));
+  try {
+    const res = await fetch("http://localhost:8000/api/v1/blog/slugs/");
+    const slugs = await res.json();
+    return slugs.map((s: { slug: string }) => ({ slug: s.slug }));
+  } catch (error) {
+    return [];
+  }
 }
 
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const post = await getBlogPost(slug);
+    return {
+      title: post.seo?.seo_title || post.title,
+      description: post.seo?.search_description || post.excerpt,
+      openGraph: {
+        title: post.seo?.og_title || post.title,
+        description: post.seo?.og_description || post.excerpt,
+        images: post.og_image_url ? [{ url: post.og_image_url }] : [],
+      },
+    };
+  } catch (error) {
+    return { title: "Blog Post" };
+  }
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -19,15 +39,20 @@ interface PageProps {
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = mockPosts.find((p) => p.slug === slug);
+  
+  const post = await getBlogPost(slug).catch(() => null);
 
   if (!post) {
     notFound();
   }
 
   // Find related articles (same category, excluding current post)
-  const relatedPosts = mockPosts
-    .filter((p) => p.category.slug === post.category.slug && p.id !== post.id)
+  const relatedPostsResponse = await getBlogPosts({ 
+    category: post.categories?.[0]?.slug,
+  }).catch(() => ({ results: [] }));
+  
+  const relatedPosts = relatedPostsResponse.results
+    .filter((p) => p.id !== post.id)
     .slice(0, 2);
 
   return (
@@ -50,18 +75,21 @@ export default async function BlogPostPage({ params }: PageProps) {
         <article className="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 overflow-hidden shadow-sm">
           {/* Main Hero Image */}
           <div className="relative h-72 sm:h-96 md:h-[450px] w-full">
-            <Image
-              src={post.image}
-              alt={post.title}
-              fill
-              unoptimized
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+            {post.featured_image_url && (
+              <Image
+                src={post.featured_image_url}
+                alt={post.title}
+                fill
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 to-transparent" />
             <div className="absolute bottom-6 left-6 right-6 text-white">
-              <span className="inline-flex items-center rounded-md bg-earth-forest px-2.5 py-1 text-xs font-bold text-white uppercase tracking-wider mb-3">
-                {post.category.name}
-              </span>
+              {post.categories?.[0] && (
+                <span className="inline-flex items-center rounded-md bg-earth-forest px-2.5 py-1 text-xs font-bold text-white uppercase tracking-wider mb-3">
+                  {post.categories[0].name}
+                </span>
+              )}
               <h1 className="font-serif text-2xl sm:text-4xl font-extrabold tracking-tight leading-snug">
                 {post.title}
               </h1>
@@ -72,56 +100,55 @@ export default async function BlogPostPage({ params }: PageProps) {
             {/* Author info header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-8 border-b border-stone-100 dark:border-stone-800 gap-4 mb-10">
               <div className="flex items-center gap-3">
-                <Image
-                  src={post.author.avatar}
-                  alt={post.author.name}
-                  width={40}
-                  height={40}
-                  unoptimized
-                  className="h-10 w-10 rounded-full object-cover"
-                />
+                {post.author?.photo?.url && (
+                  <Image
+                    src={post.author.photo.url}
+                    alt={post.author.title}
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 rounded-full object-cover"
+                  />
+                )}
                 <div>
                   <p className="text-sm font-semibold text-stone-900 dark:text-white">
-                    By {post.author.name}
+                    By {post.author?.title}
                   </p>
-                  <p className="text-xs text-stone-500">{post.author.role}</p>
+                  <p className="text-xs text-stone-500">{post.author?.role}</p>
                 </div>
               </div>
               <div className="text-xs text-stone-500 flex items-center gap-2">
-                <span>{post.publishDate}</span>
+                <span>{new Date(post.published_date).toLocaleDateString()}</span>
                 <span>•</span>
-                <span>{post.readTime}</span>
+                <span>{post.reading_time} min read</span>
               </div>
             </div>
 
-            {/* Markdown-style Content Renderer */}
+            {/* Content Renderer */}
             <div className="prose prose-stone dark:prose-invert max-w-none text-stone-700 dark:text-stone-300 leading-relaxed text-base space-y-6">
-              {post.content.split("\n\n").map((paragraph, index) => {
-                if (paragraph.startsWith("### ")) {
+              {post.body.map((block) => {
+                if (block.type === "rich_text" || block.type === "paragraph") {
                   return (
-                    <h3 key={index} className="font-serif text-2xl font-bold text-stone-900 dark:text-white pt-4">
-                      {paragraph.replace("### ", "")}
+                    <div
+                      key={block.id}
+                      dangerouslySetInnerHTML={{ __html: block.value }}
+                    />
+                  );
+                }
+                if (block.type === "heading") {
+                  return (
+                    <h3 key={block.id} className="font-serif text-2xl font-bold text-stone-900 dark:text-white pt-4">
+                      {block.value}
                     </h3>
                   );
                 }
-                if (paragraph.startsWith("* **")) {
-                  const items = paragraph.split("\n");
+                if (block.type === "image") {
                   return (
-                    <ul key={index} className="list-disc pl-6 space-y-2 my-4">
-                      {items.map((item, iIndex) => {
-                        const cleanItem = item.replace("* **", "").replace("**", "");
-                        const parts = cleanItem.split(":");
-                        return (
-                          <li key={iIndex}>
-                            <strong className="text-stone-900 dark:text-white">{parts[0]}:</strong>
-                            {parts.slice(1).join(":")}
-                          </li>
-                        );
-                      })}
-                    </ul>
+                    <div key={block.id} className="my-8">
+                       {/* Handle image block if needed */}
+                    </div>
                   );
                 }
-                return <p key={index}>{paragraph}</p>;
+                return null;
               })}
             </div>
 
@@ -131,12 +158,12 @@ export default async function BlogPostPage({ params }: PageProps) {
                 <span className="text-xs font-semibold text-stone-400 dark:text-stone-500 uppercase tracking-wider mr-2">
                   Tags:
                 </span>
-                {post.tags.map((tag) => (
+                {post.tag_names.map((tag) => (
                   <span
-                    key={tag.slug}
+                    key={tag}
                     className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-600 dark:bg-stone-800 dark:text-stone-300"
                   >
-                    #{tag.name}
+                    #{tag}
                   </span>
                 ))}
               </div>
@@ -145,27 +172,30 @@ export default async function BlogPostPage({ params }: PageProps) {
         </article>
 
         {/* Author Bio Box */}
-        <div className="mt-8 p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 flex flex-col sm:flex-row gap-6 shadow-sm items-center">
-                  <Image
-                    src={post.author.avatar}
-                    alt={post.author.name}
-                    width={64}
-                    height={64}
-                    unoptimized
-                    className="h-16 w-16 rounded-2xl object-cover shadow-sm flex-shrink-0"
-                  />
-          <div className="text-center sm:text-left">
-            <h4 className="font-serif text-lg font-bold text-stone-900 dark:text-white">
-              About {post.author.name}
-            </h4>
-            <p className="text-xs text-earth-forest dark:text-earth-gold uppercase tracking-wider font-semibold mt-0.5">
-              {post.author.role}
-            </p>
-            <p className="text-sm text-stone-600 dark:text-stone-400 mt-2 leading-relaxed">
-              {post.author.bio}
-            </p>
+        {post.author && (
+          <div className="mt-8 p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 flex flex-col sm:flex-row gap-6 shadow-sm items-center">
+            {post.author.photo?.url && (
+              <Image
+                src={post.author.photo.url}
+                alt={post.author.title}
+                width={64}
+                height={64}
+                className="h-16 w-16 rounded-2xl object-cover shadow-sm flex-shrink-0"
+              />
+            )}
+            <div className="text-center sm:text-left">
+              <h4 className="font-serif text-lg font-bold text-stone-900 dark:text-white">
+                About {post.author.title}
+              </h4>
+              <p className="text-xs text-earth-forest dark:text-earth-gold uppercase tracking-wider font-semibold mt-0.5">
+                {post.author.role}
+              </p>
+              <p className="text-sm text-stone-600 dark:text-stone-400 mt-2 leading-relaxed">
+                {post.author.bio}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Related Posts Section */}
         {relatedPosts.length > 0 && (
@@ -181,18 +211,21 @@ export default async function BlogPostPage({ params }: PageProps) {
                   className="flex flex-col bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/50 dark:border-stone-850 hover-lift shadow-sm group"
                 >
                   <div className="h-40 w-full relative">
-                    <Image
-                      src={related.image}
-                      alt={related.title}
-                      fill
-                      unoptimized
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
+                    {related.cover_image_url && (
+                      <Image
+                        src={related.cover_image_url}
+                        alt={related.title}
+                        fill
+                        className="absolute inset-0 h-full w-full object-cover"
+                      />
+                    )}
                   </div>
                   <div className="p-6">
-                    <span className="text-xs font-semibold text-earth-forest dark:text-earth-gold tracking-widest uppercase">
-                      {related.category.name}
-                    </span>
+                    {related.categories?.[0] && (
+                      <span className="text-xs font-semibold text-earth-forest dark:text-earth-gold tracking-widest uppercase">
+                        {related.categories[0].name}
+                      </span>
+                    )}
                     <h4 className="mt-2 font-serif text-base font-bold text-stone-900 dark:text-white group-hover:text-earth-forest dark:group-hover:text-earth-gold transition-colors line-clamp-2">
                       {related.title}
                     </h4>
