@@ -104,3 +104,22 @@ class BlogPostDetailSerializer(serializers.ModelSerializer):
                 block_data["value"] = block.value
             blocks.append(block_data)
         return blocks
+
+
+class BlogIndexPageSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Blog listing index.
+    Frontend needs intro and SEO.
+    """
+    seo = serializers.SerializerMethodField()
+    intro = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BlogIndexPage
+        fields = ["id", "title", "slug", "intro", "posts_per_page", "seo"]
+
+    def get_seo(self, obj):
+        return SEOSerializer(obj).data
+
+    def get_intro(self, obj):
+        return expand_db_html(obj.intro)

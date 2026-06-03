@@ -34,7 +34,11 @@ from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
 from apps.authors.models import AuthorIndexPage, AuthorPage
 from apps.authors.serializers import AuthorMinimalSerializer, AuthorSerializer
 from apps.blog.models import BlogIndexPage, BlogPage
-from apps.blog.serializers import BlogPostDetailSerializer, BlogPostMinimalSerializer
+from apps.blog.serializers import (
+    BlogIndexPageSerializer,
+    BlogPostDetailSerializer,
+    BlogPostMinimalSerializer,
+)
 from apps.pages.models import (
     AboutPage,
     ContactPage,
@@ -78,6 +82,7 @@ class PagesViewSet(ViewSet):
         "services": (ServicesPage, ServicesPageSerializer),
         "privacy-policy": (PrivacyPolicyPage, PrivacyPolicyPageSerializer),
         "terms": (TermsPage, TermsPageSerializer),
+        "blog": (BlogIndexPage, BlogIndexPageSerializer),
     }
 
     def list(self, request):

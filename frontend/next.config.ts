@@ -17,7 +17,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",        // 👈 generate static site
+  // output: "export",        // 👈 generate static site
   images: {
     unoptimized: true,     // 👈 required for static export
   },
