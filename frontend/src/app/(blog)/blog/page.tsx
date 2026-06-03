@@ -1,46 +1,40 @@
-"use client";
-
-import React, { useState, useMemo, Suspense } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams, useRouter } from "next/navigation";
-import { mockPosts, mockCategories } from "../../../lib/mockData";
+import { getBlogList, getCategories } from "@/lib/api";
+import type { BlogPostListItem, Category } from "@/types/blog";
 
-function BlogContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const categoryQuery = searchParams.get("category") || "all";
+export const revalidate = 60; // ISR: revalidate every 60 seconds
 
-  const [searchQuery, setSearchQuery] = useState("");
+interface BlogPageProps {
+  searchParams: Promise<{ category?: string; page?: string }>;
+}
 
-  const filteredPosts = useMemo(() => {
-    let result = mockPosts;
-    if (categoryQuery !== "all") {
-      result = result.filter((post) => post.category.slug === categoryQuery);
-    }
-    if (searchQuery.trim() !== "") {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(
-        (post) =>
-          post.title.toLowerCase().includes(query) ||
-          post.excerpt.toLowerCase().includes(query) ||
-          post.tags.some((tag) => tag.name.toLowerCase().includes(query))
-      );
-    }
-    return result;
-  }, [categoryQuery, searchQuery]);
+export default async function BlogPage({ searchParams }: BlogPageProps) {
+  const { category, page } = await searchParams;
 
-  const handleCategorySelect = (slug: string) => {
-    if (slug === "all") {
-      router.push("/blog");
-    } else {
-      router.push(`/blog?category=${slug}`);
-    }
-  };
+  let posts: BlogPostListItem[] = [];
+  let categories: Category[] = [];
+  let totalCount = 0;
+  let error: string | null = null;
+
+  try {
+    const [blogData, catData] = await Promise.all([
+      getBlogList({
+        category: category,
+        page: page ? Number(page) : 1,
+      }),
+      getCategories(),
+    ]);
+    posts = blogData.results;
+    totalCount = blogData.count;
+    categories = catData;
+  } catch (e) {
+    error = e instanceof Error ? e.message : "Failed to load posts.";
+  }
 
   return (
     <div className="flex-1 bg-[#131026] py-16 sm:py-24">
-      {/* Ambient radial glow */}
       <div
         className="fixed inset-0 -z-10 pointer-events-none"
         style={{
@@ -56,139 +50,123 @@ function BlogContent() {
             ✦ The Journal
           </span>
           <h1 className="font-sans text-4xl font-extrabold tracking-tight text-[#E0E0E0] sm:text-5xl mt-2">
-            Architectural Design &amp;{" "}
-            <span className="gradient-text">Romantic Escapes</span>
+            Explore Our{" "}
+            <span style={{ color: "#8B65BF" }}>Blog</span>
           </h1>
           <p className="mt-4 text-[#8B65BF]/80">
-            Read our latest guides, builder interviews, and hotel recommendations.
+            {totalCount > 0 ? `${totalCount} articles and counting.` : "Read our latest guides and insights."}
           </p>
         </div>
 
-        {/* Search & Filter */}
-        <div className="max-w-4xl mx-auto mb-12 space-y-6">
-          {/* Search bar */}
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search articles by title, tags, or content…"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-2xl px-5 py-4 pl-12 text-sm text-[#E0E0E0] outline-none transition-all duration-200 placeholder:text-[#4E3473]"
-              style={{
-                background: "#1F1A40",
-                border: "1px solid rgba(78,52,115,0.6)",
-                boxShadow: "inset 0 1px 3px rgba(0,0,0,0.3)",
-              }}
-            />
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-[#4E3473]">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.602 10.602z" />
-              </svg>
-            </div>
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute inset-y-0 right-4 flex items-center text-xs text-[#8B65BF]/60 hover:text-[#8B65BF] transition-colors"
-              >
-                Clear
-              </button>
-            )}
-          </div>
-
-          {/* Category Tabs */}
+        {/* Category Filter */}
+        <div className="max-w-4xl mx-auto mb-12">
           <div className="flex flex-wrap gap-2 justify-center">
-            <button
-              onClick={() => handleCategorySelect("all")}
+            <Link
+              href="/blog"
               className="rounded-full px-5 py-2 text-xs font-semibold tracking-wider transition-all duration-200"
               style={
-                categoryQuery === "all"
-                  ? { background: "#5F2DA6", color: "#fff", boxShadow: "0 0 14px rgba(95,45,166,0.5)" }
+                !category
+                  ? { background: "#5F2DA6", color: "#fff" }
                   : { background: "rgba(31,26,64,0.8)", color: "rgba(224,224,224,0.7)", border: "1px solid rgba(78,52,115,0.5)" }
               }
             >
               All Articles
-            </button>
-            {mockCategories.map((cat) => (
-              <button
+            </Link>
+            {categories.map((cat) => (
+              <Link
                 key={cat.slug}
-                onClick={() => handleCategorySelect(cat.slug)}
+                href={`/blog?category=${cat.slug}`}
                 className="rounded-full px-5 py-2 text-xs font-semibold tracking-wider transition-all duration-200"
                 style={
-                  categoryQuery === cat.slug
-                    ? { background: "#5F2DA6", color: "#fff", boxShadow: "0 0 14px rgba(95,45,166,0.5)" }
+                  category === cat.slug
+                    ? { background: "#5F2DA6", color: "#fff" }
                     : { background: "rgba(31,26,64,0.8)", color: "rgba(224,224,224,0.7)", border: "1px solid rgba(78,52,115,0.5)" }
                 }
               >
                 {cat.name}
-              </button>
+              </Link>
             ))}
           </div>
         </div>
 
-        {/* Posts Grid */}
-        {filteredPosts.length === 0 ? (
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-16 text-red-400">
+            <p className="font-semibold">Could not load posts</p>
+            <p className="text-sm mt-1 opacity-70">{error}</p>
+            <p className="text-xs mt-3 opacity-50">
+              Make sure the Django server is running at{" "}
+              {process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"}
+            </p>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!error && posts.length === 0 && (
           <div
             className="text-center py-24 rounded-3xl max-w-xl mx-auto"
             style={{ background: "#1F1A40", border: "1px solid rgba(78,52,115,0.5)" }}
           >
-            <div className="text-5xl mb-4 opacity-40">🪷</div>
-            <h3 className="font-sans text-lg font-bold text-[#E0E0E0]">No articles found</h3>
+            <div className="text-5xl mb-4 opacity-40">📝</div>
+            <h3 className="font-sans text-lg font-bold text-[#E0E0E0]">No articles yet</h3>
             <p className="text-sm text-[#8B65BF]/70 mt-2 px-6">
-              We couldn&apos;t find any posts matching your search. Try adjusting your query or choosing a different category.
+              Create and publish blog posts in the{" "}
+              <a href="http://localhost:8000/admin" className="underline">Wagtail Admin</a>.
             </p>
           </div>
-        ) : (
+        )}
+
+        {/* Posts Grid */}
+        {posts.length > 0 && (
           <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-12 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-            {filteredPosts.map((post) => (
+            {posts.map((post) => (
               <article
                 key={post.id}
-                className="flex flex-col items-start justify-between overflow-hidden rounded-2xl hover-lift transition-all duration-300"
-                style={{
-                  background: "#1F1A40",
-                  border: "1px solid rgba(78,52,115,0.5)",
-                }}
+                className="flex flex-col items-start justify-between overflow-hidden rounded-2xl transition-all duration-300"
+                style={{ background: "#1F1A40", border: "1px solid rgba(78,52,115,0.5)" }}
               >
-                <div className="relative w-full h-48 overflow-hidden">
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    fill
-                    unoptimized
-                    className="absolute inset-0 h-full w-full object-cover opacity-80 hover:scale-105 transition-transform duration-500"
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{ background: "linear-gradient(to bottom, transparent 50%, #1F1A40 100%)" }}
-                  />
-                </div>
+                {post.hero_image_url && (
+                  <div className="relative w-full h-48 overflow-hidden">
+                    <Image
+                      src={post.hero_image_url}
+                      alt={post.title}
+                      fill
+                      className="object-cover opacity-80 hover:scale-105 transition-transform duration-500"
+                    />
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: "linear-gradient(to bottom, transparent 50%, #1F1A40 100%)" }}
+                    />
+                  </div>
+                )}
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
-                    <span className="text-xs font-semibold text-[#8B65BF] tracking-widest uppercase">
-                      {post.category.name}
-                    </span>
+                    {post.categories[0] && (
+                      <span className="text-xs font-semibold text-[#8B65BF] tracking-widest uppercase">
+                        {post.categories[0].name}
+                      </span>
+                    )}
                     <h3 className="mt-2 font-sans text-lg font-bold leading-snug text-[#E0E0E0] hover:text-[#8B65BF] transition-colors">
                       <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                     </h3>
                     <p className="mt-3 text-sm text-[#8B65BF]/70 line-clamp-3 leading-relaxed">
-                      {post.excerpt}
+                      {post.intro}
                     </p>
                   </div>
                   <div
                     className="mt-6 flex items-center gap-x-3 border-t pt-4"
                     style={{ borderColor: "rgba(78,52,115,0.4)" }}
                   >
-                    <Image
-                      src={post.author.avatar}
-                      alt={post.author.name}
-                      width={32}
-                      height={32}
-                      unoptimized
-                      className="h-8 w-8 rounded-full object-cover"
-                      style={{ border: "2px solid rgba(95,45,166,0.5)" }}
-                    />
                     <div className="text-xs">
-                      <p className="font-semibold text-[#E0E0E0]">{post.author.name}</p>
-                      <p className="text-[#8B65BF]/60">{post.publishDate} • {post.readTime}</p>
+                      {post.author_name && (
+                        <p className="font-semibold text-[#E0E0E0]">{post.author_name}</p>
+                      )}
+                      <p className="text-[#8B65BF]/60">
+                        {new Date(post.published_at).toLocaleDateString("en-US", {
+                          year: "numeric", month: "short", day: "numeric",
+                        })}{" "}
+                        · {post.reading_time_minutes} min read
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -198,26 +176,5 @@ function BlogContent() {
         )}
       </div>
     </div>
-  );
-}
-
-export default function BlogPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-screen flex-col items-center justify-center bg-[#131026]">
-          <div
-            className="h-12 w-12 animate-spin rounded-full"
-            style={{
-              border: "3px solid rgba(78,52,115,0.4)",
-              borderTopColor: "#5F2DA6",
-              boxShadow: "0 0 16px rgba(95,45,166,0.3)",
-            }}
-          />
-        </div>
-      }
-    >
-      <BlogContent />
-    </Suspense>
   );
 }

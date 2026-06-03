@@ -106,11 +106,19 @@ WAGTAIL_PREVIEW_SECRET = os.environ.get("WAGTAIL_PREVIEW_SECRET", "change-me-in-
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# DRF settings
+# DRF settings — public read access (no auth required for GET)
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+        "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
 }
+
+# CORS — allow Next.js dev and production origins
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://192.168.100.12:3000",
+]
+CORS_ALLOW_CREDENTIALS = True

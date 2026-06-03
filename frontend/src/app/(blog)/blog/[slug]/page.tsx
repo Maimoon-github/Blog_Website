@@ -2,16 +2,68 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { mockPosts } from "../../../../lib/mockData";
+import { getBlogPost, getBlogSlugs } from "@/lib/api";
+import type { StreamBlock } from "@/types/wagtail";
 
-// Pure static: disable dynamic routes for static export
-export const dynamicParams = false;
+export const dynamicParams = true; // allow on-demand ISR for new posts
 
 export async function generateStaticParams() {
-  const { mockPosts } = await import("@/lib/mockData");
-  return mockPosts.map((post) => ({ slug: post.slug }));
+  try {
+    const slugs = await getBlogSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  try {
+    const post = await getBlogPost(slug);
+    return {
+      title: post.seo_display_title || post.title,
+      description: post.search_description || post.intro,
+    };
+  } catch {
+    return { title: "Post not found" };
+  }
+}
+
+function renderBlock(block: StreamBlock, index: number): React.ReactNode {
+  switch (block.type) {
+    case "heading":
+      return <h2 key={index} className="font-sans text-2xl font-bold text-[#E0E0E0] mt-10 mb-4">{block.value}</h2>;
+    case "paragraph":
+      return <div key={index} className="text-[#a89cc8] leading-relaxed mb-6" dangerouslySetInnerHTML={{ __html: block.value }} />;
+    case "code":
+      return (
+        <pre key={index} className="bg-[#1F1A40] border border-[rgba(78,52,115,0.5)] rounded-xl p-4 overflow-x-auto my-6">
+          <code className="text-sm text-[#8B65BF] font-mono">{block.value.code}</code>
+        </pre>
+      );
+    case "quote":
+      return (
+        <blockquote key={index} className="border-l-4 border-[#5F2DA6] pl-6 my-8 italic">
+          <div className="text-[#E0E0E0] text-lg" dangerouslySetInnerHTML={{ __html: block.value.text }} />
+          {block.value.attribution && (
+            <cite className="text-sm text-[#8B65BF] mt-2 block not-italic">— {block.value.attribution}</cite>
+          )}
+        </blockquote>
+      );
+    case "image":
+      return (
+        <div key={index} className="relative w-full h-80 rounded-2xl overflow-hidden my-8">
+          <Image src={block.value.url} alt={block.value.alt} fill className="object-cover" />
+        </div>
+      );
+    case "embed":
+      return (
+        <div key={index} className="my-8" dangerouslySetInnerHTML={{ __html: block.value.html ?? "" }} />
+      );
+    default:
+      return null;
+  }
+}
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -19,183 +71,93 @@ interface PageProps {
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = mockPosts.find((p) => p.slug === slug);
 
-  if (!post) {
+  let post;
+  try {
+    post = await getBlogPost(slug);
+  } catch {
     notFound();
   }
 
-  // Find related articles (same category, excluding current post)
-  const relatedPosts = mockPosts
-    .filter((p) => p.category.slug === post.category.slug && p.id !== post.id)
-    .slice(0, 2);
-
   return (
-    <div className="flex-1 bg-stone-50 dark:bg-stone-950 py-12 sm:py-16">
+    <div className="flex-1 bg-[#131026] py-12 sm:py-16">
       <div className="mx-auto max-w-4xl px-6 lg:px-8">
         {/* Back Link */}
         <div className="mb-8">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-stone-500 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3.5 h-3.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-            Back to Journal
+          <Link href="/blog" className="inline-flex items-center gap-2 text-xs font-semibold text-[#8B65BF]/70 hover:text-[#8B65BF] transition-colors">
+            ← Back to Journal
           </Link>
         </div>
 
-        {/* Article Metadata */}
-        <article className="bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 overflow-hidden shadow-sm">
-          {/* Main Hero Image */}
-          <div className="relative h-72 sm:h-96 md:h-[450px] w-full">
-            <Image
-              src={post.image}
-              alt={post.title}
-              fill
-              unoptimized
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 to-transparent" />
-            <div className="absolute bottom-6 left-6 right-6 text-white">
-              <span className="inline-flex items-center rounded-md bg-earth-forest px-2.5 py-1 text-xs font-bold text-white uppercase tracking-wider mb-3">
-                {post.category.name}
-              </span>
-              <h1 className="font-serif text-2xl sm:text-4xl font-extrabold tracking-tight leading-snug">
-                {post.title}
-              </h1>
+        <article className="rounded-3xl overflow-hidden" style={{ background: "#1F1A40", border: "1px solid rgba(78,52,115,0.5)" }}>
+          {/* Hero Image */}
+          {post.hero_image_url && (
+            <div className="relative h-72 sm:h-96 w-full">
+              <Image src={post.hero_image_url} alt={post.title} fill className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1F1A40]/90 to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6 text-white">
+                {post.categories[0] && (
+                  <span className="inline-flex items-center rounded-full bg-[#5F2DA6] px-3 py-1 text-xs font-bold text-white uppercase tracking-wider mb-3">
+                    {post.categories[0].name}
+                  </span>
+                )}
+                <h1 className="font-sans text-2xl sm:text-4xl font-extrabold tracking-tight">{post.title}</h1>
+              </div>
             </div>
-          </div>
+          )}
+          {!post.hero_image_url && (
+            <div className="px-6 pt-10">
+              {post.categories[0] && (
+                <span className="inline-flex items-center rounded-full bg-[#5F2DA6] px-3 py-1 text-xs font-bold text-white uppercase tracking-wider mb-3">
+                  {post.categories[0].name}
+                </span>
+              )}
+              <h1 className="font-sans text-3xl sm:text-4xl font-extrabold text-[#E0E0E0] tracking-tight mb-6">{post.title}</h1>
+            </div>
+          )}
 
           <div className="px-6 py-10 sm:p-12">
-            {/* Author info header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-8 border-b border-stone-100 dark:border-stone-800 gap-4 mb-10">
-              <div className="flex items-center gap-3">
-                <Image
-                  src={post.author.avatar}
-                  alt={post.author.name}
-                  width={40}
-                  height={40}
-                  unoptimized
-                  className="h-10 w-10 rounded-full object-cover"
-                />
-                <div>
-                  <p className="text-sm font-semibold text-stone-900 dark:text-white">
-                    By {post.author.name}
-                  </p>
-                  <p className="text-xs text-stone-500">{post.author.role}</p>
-                </div>
-              </div>
-              <div className="text-xs text-stone-500 flex items-center gap-2">
-                <span>{post.publishDate}</span>
-                <span>•</span>
-                <span>{post.readTime}</span>
+            {/* Meta */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-8 mb-10" style={{ borderBottom: "1px solid rgba(78,52,115,0.4)" }}>
+              <div className="text-sm text-[#E0E0E0] font-semibold">{post.author?.name ?? "Staff"}</div>
+              <div className="text-xs text-[#8B65BF]/60 mt-1 sm:mt-0">
+                {new Date(post.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                {" · "}{post.reading_time_minutes} min read
               </div>
             </div>
 
-            {/* Markdown-style Content Renderer */}
-            <div className="prose prose-stone dark:prose-invert max-w-none text-stone-700 dark:text-stone-300 leading-relaxed text-base space-y-6">
-              {post.content.split("\n\n").map((paragraph, index) => {
-                if (paragraph.startsWith("### ")) {
-                  return (
-                    <h3 key={index} className="font-serif text-2xl font-bold text-stone-900 dark:text-white pt-4">
-                      {paragraph.replace("### ", "")}
-                    </h3>
-                  );
-                }
-                if (paragraph.startsWith("* **")) {
-                  const items = paragraph.split("\n");
-                  return (
-                    <ul key={index} className="list-disc pl-6 space-y-2 my-4">
-                      {items.map((item, iIndex) => {
-                        const cleanItem = item.replace("* **", "").replace("**", "");
-                        const parts = cleanItem.split(":");
-                        return (
-                          <li key={iIndex}>
-                            <strong className="text-stone-900 dark:text-white">{parts[0]}:</strong>
-                            {parts.slice(1).join(":")}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  );
-                }
-                return <p key={index}>{paragraph}</p>;
-              })}
-            </div>
+            {/* Intro */}
+            {post.intro && <p className="text-lg text-[#8B65BF]/80 leading-relaxed mb-10">{post.intro}</p>}
 
-            {/* Article Tags */}
-            <div className="mt-12 pt-8 border-t border-stone-100 dark:border-stone-800">
-              <div className="flex flex-wrap gap-2 items-center">
-                <span className="text-xs font-semibold text-stone-400 dark:text-stone-500 uppercase tracking-wider mr-2">
-                  Tags:
-                </span>
+            {/* StreamField Body */}
+            <div>{post.body.map((block, i) => renderBlock(block, i))}</div>
+
+            {/* Tags */}
+            {post.tags.length > 0 && (
+              <div className="mt-12 pt-8 flex flex-wrap gap-2" style={{ borderTop: "1px solid rgba(78,52,115,0.4)" }}>
                 {post.tags.map((tag) => (
-                  <span
-                    key={tag.slug}
-                    className="inline-flex items-center rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-600 dark:bg-stone-800 dark:text-stone-300"
-                  >
+                  <Link key={tag.slug} href={`/blog?tag=${tag.slug}`} className="rounded-full px-3 py-1 text-xs font-medium text-[#8B65BF]" style={{ background: "rgba(95,45,166,0.15)", border: "1px solid rgba(95,45,166,0.3)" }}>
                     #{tag.name}
-                  </span>
+                  </Link>
                 ))}
               </div>
-            </div>
+            )}
           </div>
         </article>
 
-        {/* Author Bio Box */}
-        <div className="mt-8 p-6 bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/50 dark:border-stone-850 flex flex-col sm:flex-row gap-6 shadow-sm items-center">
-                  <Image
-                    src={post.author.avatar}
-                    alt={post.author.name}
-                    width={64}
-                    height={64}
-                    unoptimized
-                    className="h-16 w-16 rounded-2xl object-cover shadow-sm flex-shrink-0"
-                  />
-          <div className="text-center sm:text-left">
-            <h4 className="font-serif text-lg font-bold text-stone-900 dark:text-white">
-              About {post.author.name}
-            </h4>
-            <p className="text-xs text-earth-forest dark:text-earth-gold uppercase tracking-wider font-semibold mt-0.5">
-              {post.author.role}
-            </p>
-            <p className="text-sm text-stone-600 dark:text-stone-400 mt-2 leading-relaxed">
-              {post.author.bio}
-            </p>
-          </div>
-        </div>
-
-        {/* Related Posts Section */}
-        {relatedPosts.length > 0 && (
+        {/* Related Posts */}
+        {post.related_posts.length > 0 && (
           <div className="mt-16">
-            <h3 className="font-serif text-2xl font-bold text-stone-900 dark:text-white mb-6">
-              You Might Also Like
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {relatedPosts.map((related) => (
-                <Link
-                  key={related.id}
-                  href={`/blog/${related.slug}`}
-                  className="flex flex-col bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/50 dark:border-stone-850 hover-lift shadow-sm group"
-                >
-                  <div className="h-40 w-full relative">
-                    <Image
-                      src={related.image}
-                      alt={related.title}
-                      fill
-                      unoptimized
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <span className="text-xs font-semibold text-earth-forest dark:text-earth-gold tracking-widest uppercase">
-                      {related.category.name}
-                    </span>
-                    <h4 className="mt-2 font-serif text-base font-bold text-stone-900 dark:text-white group-hover:text-earth-forest dark:group-hover:text-earth-gold transition-colors line-clamp-2">
-                      {related.title}
-                    </h4>
+            <h3 className="font-sans text-xl font-bold text-[#E0E0E0] mb-6">You Might Also Like</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {post.related_posts.map((related) => (
+                <Link key={related.id} href={`/blog/${related.slug}`} className="flex flex-col rounded-2xl overflow-hidden group" style={{ background: "#1F1A40", border: "1px solid rgba(78,52,115,0.5)" }}>
+                  {related.hero_image_url && (
+                    <div className="h-36 relative"><Image src={related.hero_image_url} alt={related.title} fill className="object-cover" /></div>
+                  )}
+                  <div className="p-5">
+                    <p className="text-xs text-[#8B65BF] font-semibold uppercase tracking-wide">{related.categories[0]?.name}</p>
+                    <h4 className="mt-1 font-sans text-sm font-bold text-[#E0E0E0] group-hover:text-[#8B65BF] transition-colors line-clamp-2">{related.title}</h4>
                   </div>
                 </Link>
               ))}
