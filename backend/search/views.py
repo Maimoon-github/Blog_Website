@@ -1,5 +1,7 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.template.response import TemplateResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from wagtail.models import Page
 from wagtail.search.models import Query
@@ -36,3 +38,25 @@ def search(request):
             "search_results": search_results,
         },
     )
+
+
+@api_view(["GET"])
+def api_search(request):
+    """
+    DRF endpoint for the Next.js frontend search.
+    Returns a JSON list of matching live pages.
+    GET /api/search/?q=<query>
+    """
+    from blog.models import BlogPage
+    from blog.serializers import BlogPageListSerializer
+
+    q = request.GET.get("q", "").strip()
+    if not q:
+        return Response([])
+
+    results = BlogPage.objects.live().search(q)
+    query_obj = Query.get(q)
+    query_obj.add_hit()
+
+    serializer = BlogPageListSerializer(results, many=True, context={"request": request})
+    return Response(serializer.data)
