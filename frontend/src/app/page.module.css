@@ -1,0 +1,148 @@
+/* ============================================
+   RESPONSIVE UTILITIES – Fluid Typography & Spacing
+   ============================================ */
+
+/* -----------------------------------------------
+   FLUID TYPOGRAPHY (clamp-based, no breakpoint gaps)
+   Usage: class="text-fluid-sm" or combine with Tailwind
+----------------------------------------------- */
+.text-fluid-xs {
+  font-size: clamp(0.75rem, 2.5vw, 0.875rem);   /* 12px → 14px */
+}
+.text-fluid-sm {
+  font-size: clamp(0.875rem, 3vw, 1rem);        /* 14px → 16px */
+}
+.text-fluid-base {
+  font-size: clamp(1rem, 3.5vw, 1.125rem);      /* 16px → 18px */
+}
+.text-fluid-md {
+  font-size: clamp(1.125rem, 4vw, 1.25rem);     /* 18px → 20px */
+}
+.text-fluid-lg {
+  font-size: clamp(1.25rem, 5vw, 1.5rem);       /* 20px → 24px */
+}
+.text-fluid-xl {
+  font-size: clamp(1.5rem, 6vw, 1.875rem);      /* 24px → 30px */
+}
+.text-fluid-2xl {
+  font-size: clamp(1.875rem, 7vw, 2.25rem);     /* 30px → 36px */
+}
+.text-fluid-3xl {
+  font-size: clamp(2.25rem, 8vw, 3rem);         /* 36px → 48px */
+}
+.text-fluid-4xl {
+  font-size: clamp(3rem, 10vw, 4rem);           /* 48px → 64px */
+}
+
+/* Fluid headings – preserve gradient-text */
+h1, .h1-fluid {
+  font-size: clamp(2rem, 8vw, 3.75rem);
+  line-height: 1.2;
+}
+h2, .h2-fluid {
+  font-size: clamp(1.5rem, 6vw, 2.25rem);
+  line-height: 1.3;
+}
+h3, .h3-fluid {
+  font-size: clamp(1.25rem, 5vw, 1.875rem);
+  line-height: 1.4;
+}
+
+/* -----------------------------------------------
+   RESPONSIVE SPACING UTILITIES
+   (dynamic padding/margin based on viewport)
+----------------------------------------------- */
+.p-responsive {
+  padding: clamp(1rem, 4vw, 2rem);
+}
+.px-responsive {
+  padding-left: clamp(1rem, 4vw, 2rem);
+  padding-right: clamp(1rem, 4vw, 2rem);
+}
+.py-responsive {
+  padding-top: clamp(1rem, 4vw, 2rem);
+  padding-bottom: clamp(1rem, 4vw, 2rem);
+}
+.m-responsive {
+  margin: clamp(1rem, 4vw, 2rem);
+}
+.mx-responsive {
+  margin-left: clamp(1rem, 4vw, 2rem);
+  margin-right: clamp(1rem, 4vw, 2rem);
+}
+.my-responsive {
+  margin-top: clamp(1rem, 4vw, 2rem);
+  margin-bottom: clamp(1rem, 4vw, 2rem);
+}
+
+/* Responsive gap for flex/grid */
+.gap-responsive {
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+/* Responsive container max-width with inner padding */
+.container-fluid {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1rem, 5vw, 2rem);
+  padding-right: clamp(1rem, 5vw, 2rem);
+}
+
+/* -----------------------------------------------
+   RESPONSIVE STACKING (vertical rhythm)
+----------------------------------------------- */
+.stack-sm > * + * {
+  margin-top: clamp(0.5rem, 1.5vw, 0.75rem);
+}
+.stack-md > * + * {
+  margin-top: clamp(1rem, 2vw, 1.5rem);
+}
+.stack-lg > * + * {
+  margin-top: clamp(1.5rem, 3vw, 2rem);
+}
+
+/* -----------------------------------------------
+   TOUCH-FRIENDLY TARGETS (min 44px)
+----------------------------------------------- */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* -----------------------------------------------
+   RESPONSIVE IMAGES (already covered by Tailwind, but safe)
+----------------------------------------------- */
+.responsive-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* -----------------------------------------------
+   SAFE AREA INSETS (for notched phones)
+----------------------------------------------- */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* -----------------------------------------------
+   REDUCED MOTION (accessibility)
+----------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
