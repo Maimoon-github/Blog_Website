@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
-from core.serializers import BasePageSerializer  # provides id, title, slug, seo...
+from core.serializers import BasePageSerializer
 from .models import BlogPage, BlogIndexPage
+
 
 
 class BlogPageListSerializer(BasePageSerializer):

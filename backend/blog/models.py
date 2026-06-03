@@ -1,16 +1,21 @@
 from django.db import models
+from django import forms
 from django.core.cache import cache
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel, FieldRowPanel
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Page
 from wagtail.search import index
+from wagtail import blocks
+from wagtail.images.blocks import ImageChooserBlock
+from wagtail.embeds.blocks import EmbedBlock
 
-from core.models import AbstractBasePage  # assumes shared base with SEO, etc.
-from images.models import CustomImage     # assumes custom image model
-from authors.models import Author         # assumes authors.Author snippet
-from categories.models import Category    # assumes categories.Category snippet
-from tags.models import Tag               # assumes tags.Tag snippet
+from core.models import AbstractBasePage
+from images.models import CustomImage
+from authors.models import Author
+from categories.models import Category
+from tags.models import Tag
 from .blocks import CodeBlock, QuoteBlock
+
 
 
 # ----------------------------------------------------------------------
